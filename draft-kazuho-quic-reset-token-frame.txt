@@ -1,0 +1,165 @@
+
+
+
+
+quic                                                    奥 一穂 (K. Oku)
+Internet-Draft                                                    Fastly
+Intended status: Standards Track                            22 July 2026
+Expires: 23 January 2027
+
+
+         QUIC Extension for Advertising Stateless Reset Tokens
+               draft-kazuho-quic-reset-token-frame-latest
+
+Abstract
+
+   TODO
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 23 January 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Conventions and Definitions
+   3.  Security Considerations
+   4.  IANA Considerations
+   5.  Normative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   Stateless reset (Section 10.3 of [RFC9000]) allows an endpoint that
+   has lost connection state to signal to its peer that a connection can
+   no longer be continued.  An endpoint associates a Stateless Reset
+   Token with each Connection ID it issues, delivering the token to the
+   peer either in the stateless_reset_token transport parameter or in a
+   NEW_CONNECTION_ID frame.  When such an endpoint later receives a
+   packet that it cannot associate with any active connection, it
+   recomputes the token from the Destination Connection ID carried in
+   that packet -- typically by applying a static key to the Connection
+   ID (Section 10.3.2 of [RFC9000]) -- and emits a Stateless Reset
+   carrying that token.  Because the token is derived from the
+   Connection ID, the resetting endpoint need not retain any per-
+   connection state; because the token is hard to guess, an off-path
+   attacker cannot forge a reset.
+
+   This mechanism is unavailable to endpoints that use zero-length
+   Connection IDs.  Such an endpoint has no Connection ID from which a
+   token could be derived, and QUIC version 1 provides no way for it to
+   advertise a token by other means: the stateless_reset_token transport
+   parameter cannot be sent by a client, and NEW_CONNECTION_ID frames
+   cannot be sent by an endpoint that issues zero-length Connection IDs
+   (Section 5.1.1 of [RFC9000]).
+
+   Yet endpoints that issue zero-length CIDs are common.  An endpoint
+   that identifies connections solely by the 5-tuple has no need to
+   issue Connection IDs and can reduce per-packet overhead by using
+   zero-length Connection IDs.  This is typical of client deployments; a
+   representative example is a mobile operating system on which a client
+   application maintains QUIC connections.
+
+   For such deployments, the ability to send a Stateless Reset is
+   valuable precisely when connection state has been lost involuntarily
+   -- for example, when the application exits or is terminated by the
+   operating system.  After the application is gone, the peer may
+   continue to send packets on the connection until its idle timeout
+   expires.  If the operating system could send a Stateless Reset in
+   response to those packets, the peer would learn immediately that the
+   connection is dead.
+
+   The operating system could instead retain a CONNECTION_CLOSE packet
+   recorded by the application and replay it, but such a packet is
+   difficult to manage.  It is protected under the connection's packet-
+   protection keys and carries a packet number that must fall within the
+   range the peer will accept; every packet the application sends
+   advances that state, so the recorded packet must be refreshed
+   continually to remain usable.  A Stateless Reset Token, by contrast,
+   is a fixed value that remains valid for the lifetime of the
+   connection.  The operating system need only remember the token
+   together with the 5-tuple, and can then emit resets indefinitely
+   without any further coordination with the application.
+
+   This document defines a frame that allows a QUIC endpoint to
+   advertise a Stateless Reset Token that is not associated with any
+   Connection ID, thereby extending stateless reset to endpoints that do
+   not issue Connection IDs.  Because the advertised token is bound to
+   the connection rather than to a Connection ID, the advertising
+   endpoint retains the token instead of recomputing it from a received
+   Connection ID.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Security Considerations
+
+   TODO Security
+
+4.  IANA Considerations
+
+   This document has no IANA actions.
+
+5.  Normative References
+
+   [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
+              Multiplexed and Secure Transport", RFC 9000,
+              DOI 10.17487/RFC9000, May 2021,
+              <https://www.rfc-editor.org/rfc/rfc9000>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Author's Address
+
+   Kazuho Oku
+   Fastly
+   Email: kazuhooku@gmail.com
+
+   Additional contact information:
+
+      奥 一穂
+      Fastly
