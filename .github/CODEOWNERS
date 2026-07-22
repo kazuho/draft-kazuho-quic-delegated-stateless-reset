@@ -1,0 +1,3 @@
+# Automatically generated CODEOWNERS
+# Regenerate with `make update-codeowners`
+draft-kazuho-quic-reset-token-frame.md kazuhooku@gmail.com
