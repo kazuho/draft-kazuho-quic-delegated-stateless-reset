@@ -23,7 +23,12 @@ informative:
 
 --- abstract
 
-TODO
+QUIC endpoints that identify connections solely by the 5-tuple can use
+zero-length connection IDs, but QUIC version 1 offers such endpoints no way to
+advertise a stateless reset token, and so no way to benefit from stateless
+reset. This document defines a transport parameter and a frame that let an
+endpoint using zero-length connection IDs supply a stateless reset token to its
+peer, extending stateless reset to those endpoints.
 
 
 --- middle
