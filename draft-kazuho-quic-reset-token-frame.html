@@ -1164,19 +1164,22 @@ peer, extending stateless reset to those endpoints.<a href="#section-abstract-1"
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-the-reset_token-frame" class="internal xref">The RESET_TOKEN Frame</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-sending-a-stateless-reset" class="internal xref">Sending a Stateless Reset</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1320,26 +1323,52 @@ on the same connection <span class="bcp14">MUST</span> treat this as a connectio
 PROTOCOL_VIOLATION.<a href="#section-4-9" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-considerations">
+<div id="sending">
 <section id="section-5">
-      <h2 id="name-security-considerations">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      <h2 id="name-sending-a-stateless-reset">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-sending-a-stateless-reset" class="section-name selfRef">Sending a Stateless Reset</a>
       </h2>
-<p id="section-5-1">TODO Security<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-1"><span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> contemplates an endpoint that has lost the state of
+a connection and is reacting to a packet it can no longer associate with one.
+Such an endpoint cannot recover the Connection ID that its peer expects, and so
+<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> observes that the Destination Connection ID of a
+Stateless Reset is necessarily a random value, and that the resulting packet
+"could be incorrectly routed" where the Connection ID is critical for routing
+toward the peer. That is the common case for load-balanced deployments.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">An endpoint using this extension is not in that position. It retains the
+Stateless Reset Token deliberately, and can retain alongside it a Connection ID
+that the peer currently accepts. When constructing a Stateless Reset, such an
+endpoint therefore <span class="bcp14">SHOULD</span> use a Connection ID issued by the peer in the position
+in which a 1-RTT packet carries the Destination Connection ID field, rather than
+unpredictable bits. Doing so allows the Stateless Reset to be routed to the peer
+and makes it less distinguishable from a valid packet. A peer that receives such
+a datagram is unable to decrypt it and therefore compares its trailing 16 bytes
+against the Stateless Reset Tokens it retains, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">Aside from the choice of the Destination Connection ID, the requirements of
+<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> and <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> governing the
+construction and sending of a Stateless Reset apply unchanged.<a href="#section-5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-6">
+      <h2 id="name-security-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-6-1">TODO Security<a href="#section-6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-6">
+<section id="section-7">
       <h2 id="name-iana-considerations">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-6-1">TBD<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-7-1">TBD<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
-<section id="section-7">
+<section id="section-8">
       <h2 id="name-normative-references">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
 <dt id="RFC9000">[RFC9000]</dt>
