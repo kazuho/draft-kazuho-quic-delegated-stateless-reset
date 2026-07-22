@@ -55,7 +55,7 @@ stateless_reset_token transport parameter cannot be sent by a client, and
 NEW_CONNECTION_ID frames cannot be sent by an endpoint that issues zero-length
 Connection IDs ({{Section 5.1.1 of RFC9000}}).
 
-Yet endpoints that issue zero-length CIDs are common. An endpoint that
+Yet endpoints that issue zero-length Connection IDs are common. An endpoint that
 identifies connections solely by the 5-tuple has no need to issue Connection IDs
 and can reduce per-packet overhead by using zero-length Connection IDs. This is
 typical of client deployments; a representative example is a mobile operating
@@ -134,11 +134,12 @@ RESET_TOKEN frame retransmits the token it carried. A RESET_TOKEN frame MUST
 only be sent in a 1-RTT packet.
 
 Only an endpoint that uses a zero-length Connection ID may send a RESET_TOKEN
-frame; the mechanism substitutes for the tokens that a CID-issuing endpoint
-would otherwise derive from the Connection IDs it issues. An endpoint that uses
-a non-zero-length Connection ID MUST NOT send a RESET_TOKEN frame. An endpoint
-that receives a RESET_TOKEN frame from a peer that uses a non-zero-length
-Connection ID MUST treat this as a connection error of type PROTOCOL_VIOLATION.
+frame; the mechanism substitutes for the tokens that a Connection ID-issuing
+endpoint would otherwise derive from the Connection IDs it issues. An endpoint
+that uses a non-zero-length Connection ID MUST NOT send a RESET_TOKEN frame. An
+endpoint that receives a RESET_TOKEN frame from a peer that uses a
+non-zero-length Connection ID MUST treat this as a connection error of type
+PROTOCOL_VIOLATION.
 
 An endpoint that does not support this extension treats a received RESET_TOKEN
 frame as a frame of unknown type, which is a connection error of type
