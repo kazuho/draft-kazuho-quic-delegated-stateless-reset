@@ -13,7 +13,24 @@ Expires: 23 January 2027
 
 Abstract
 
-   TODO
+   QUIC endpoints that identify connections solely by the 5-tuple can
+   use zero-length connection IDs, but QUIC version 1 offers such
+   endpoints no way to advertise a stateless reset token, and so no way
+   to benefit from stateless reset.  This document defines a transport
+   parameter and a frame that let an endpoint using zero-length
+   connection IDs supply a stateless reset token to its peer, extending
+   stateless reset to those endpoints.
+
+Discussion Venues
+
+   This note is to be removed before publishing as an RFC.
+
+   Discussion of this document takes place on the QUIC Working Group
+   mailing list (quic@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/quic/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/kazuho/draft-kazuho-quic-reset-token-frame.
 
 Status of This Memo
 
@@ -50,9 +67,11 @@ Table of Contents
 
    1.  Introduction
    2.  Conventions and Definitions
-   3.  Security Considerations
-   4.  IANA Considerations
-   5.  Normative References
+   3.  The reset_token Transport Parameter
+   4.  The RESET_TOKEN Frame
+   5.  Security Considerations
+   6.  IANA Considerations
+   7.  Normative References
    Acknowledgments
    Author's Address
 
@@ -125,15 +144,81 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Security Considerations
+3.  The reset_token Transport Parameter
+
+   An endpoint that supports this extension and is willing to accept
+   RESET_TOKEN frames (Section 4) from its peer advertises the
+   reset_token transport parameter (0x-TBD).
+
+   The reset_token transport parameter has a zero-length value; its
+   presence alone signals support.  An endpoint that receives a
+   reset_token transport parameter with a non-zero length MUST treat it
+   as a connection error of type TRANSPORT_PARAMETER_ERROR.
+
+   Advertising this transport parameter is a permission for the peer to
+   send RESET_TOKEN frames; it carries no implication that the
+   advertising endpoint will itself send them.
+
+4.  The RESET_TOKEN Frame
+
+   The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token
+   that the sender associates with the connection rather than with any
+   Connection ID.
+
+   RESET_TOKEN Frame {
+     Type (i) = 0x-TBD,
+     Stateless Reset Token (128),
+   }
+
+                     Figure 1: RESET_TOKEN Frame Format
+
+   The frame contains the following field:
+
+   Stateless Reset Token:  A 128-bit value that the sender will use to
+      construct a Stateless Reset (Section 10.3 of [RFC9000]) for this
+      connection.  The token MUST be generated so that it is hard to
+      guess, as required by Section 10.3 of [RFC9000].
+
+   RESET_TOKEN frames are ack-eliciting; a sender that detects the loss
+   of a RESET_TOKEN frame retransmits the token it carried.  A
+   RESET_TOKEN frame MUST only be sent in a 1-RTT packet.
+
+   Only an endpoint that uses a zero-length Connection ID may send a
+   RESET_TOKEN frame; the mechanism substitutes for the tokens that a
+   CID-issuing endpoint would otherwise derive from the Connection IDs
+   it issues.  An endpoint that uses a non-zero-length Connection ID
+   MUST NOT send a RESET_TOKEN frame.  An endpoint that receives a
+   RESET_TOKEN frame from a peer that uses a non-zero-length Connection
+   ID MUST treat this as a connection error of type PROTOCOL_VIOLATION.
+
+   An endpoint that does not support this extension treats a received
+   RESET_TOKEN frame as a frame of unknown type, which is a connection
+   error of type FRAME_ENCODING_ERROR (Section 12.4 of [RFC9000]).
+
+   An endpoint that receives a RESET_TOKEN frame recognizes the
+   contained value as a Stateless Reset Token for this connection and
+   thereafter processes it exactly as a token received in a
+   NEW_CONNECTION_ID frame, following the requirements of Section 10.3
+   of [RFC9000] for retaining the token and for detecting a Stateless
+   Reset that carries it.
+
+   An endpoint uses a single Stateless Reset Token for the lifetime of a
+   connection.  It MAY send more than one RESET_TOKEN frame -- for
+   example, to retransmit a frame that was lost -- but every RESET_TOKEN
+   frame it sends on a connection MUST carry the same token value.  An
+   endpoint that receives a RESET_TOKEN frame carrying a token value
+   different from one it received earlier on the same connection MUST
+   treat this as a connection error of type PROTOCOL_VIOLATION.
+
+5.  Security Considerations
 
    TODO Security
 
-4.  IANA Considerations
+6.  IANA Considerations
 
-   This document has no IANA actions.
+   TBD
 
-5.  Normative References
+7.  Normative References
 
    [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
               Multiplexed and Secure Transport", RFC 9000,
