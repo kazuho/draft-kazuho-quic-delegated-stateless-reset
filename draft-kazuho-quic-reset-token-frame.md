@@ -87,6 +87,73 @@ received Connection ID.
 {::boilerplate bcp14-tagged}
 
 
+# The reset_token Transport Parameter
+
+An endpoint that supports this extension and is willing to accept RESET_TOKEN
+frames ({{reset-token-frame}}) from its peer advertises the reset_token
+transport parameter (0x-TBD).
+
+The reset_token transport parameter has a zero-length value; its presence alone
+signals support. An endpoint that receives a reset_token transport parameter
+with a non-zero length MUST treat it as a connection error of type
+TRANSPORT_PARAMETER_ERROR.
+
+Advertising this transport parameter is a permission for the peer to send
+RESET_TOKEN frames; it carries no implication that the advertising endpoint will
+itself send them.
+
+
+# The RESET_TOKEN Frame {#reset-token-frame}
+
+The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token that the
+sender associates with the connection rather than with any Connection ID.
+
+~~~
+RESET_TOKEN Frame {
+  Type (i) = 0x-TBD,
+  Stateless Reset Token (128),
+}
+~~~
+{: #reset-token-format title="RESET_TOKEN Frame Format"}
+
+The frame contains the following field:
+
+Stateless Reset Token:
+: A 128-bit value that the sender will use to construct a Stateless Reset
+  ({{Section 10.3 of RFC9000}}) for this connection. The token MUST be
+  generated so that it is hard to guess, as required by {{Section 10.3 of
+  RFC9000}}.
+
+RESET_TOKEN frames are ack-eliciting; a sender that detects the loss of a
+RESET_TOKEN frame retransmits the token it carried. A RESET_TOKEN frame MUST
+only be sent in a 1-RTT packet.
+
+Only an endpoint that uses a zero-length Connection ID may send a RESET_TOKEN
+frame; the mechanism substitutes for the tokens that a CID-issuing endpoint
+would otherwise derive from the Connection IDs it issues. An endpoint that uses
+a non-zero-length Connection ID MUST NOT send a RESET_TOKEN frame. An endpoint
+that receives a RESET_TOKEN frame from a peer that uses a non-zero-length
+Connection ID MUST treat this as a connection error of type PROTOCOL_VIOLATION.
+
+An endpoint that does not support this extension treats a received RESET_TOKEN
+frame as a frame of unknown type, which is a connection error of type
+FRAME_ENCODING_ERROR ({{Section 12.4 of RFC9000}}).
+
+An endpoint that receives a RESET_TOKEN frame recognizes the contained value as
+a Stateless Reset Token for this connection and thereafter processes it exactly
+as a token received in a NEW_CONNECTION_ID frame, following the requirements of
+{{Section 10.3 of RFC9000}} for retaining the token and for detecting a
+Stateless Reset that carries it.
+
+An endpoint uses a single Stateless Reset Token for the lifetime of a
+connection. It MAY send more than one RESET_TOKEN frame -- for example, to
+retransmit a frame that was lost -- but every RESET_TOKEN frame it sends on a
+connection MUST carry the same token value. An endpoint that receives a
+RESET_TOKEN frame carrying a token value different from one it received earlier
+on the same connection MUST treat this as a connection error of type
+PROTOCOL_VIOLATION.
+
+
 # Security Considerations
 
 TODO Security
@@ -94,7 +161,7 @@ TODO Security
 
 # IANA Considerations
 
-This document has no IANA actions.
+TBD
 
 
 --- back
