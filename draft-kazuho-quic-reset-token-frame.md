@@ -160,6 +160,32 @@ on the same connection MUST treat this as a connection error of type
 PROTOCOL_VIOLATION.
 
 
+# Sending a Stateless Reset {#sending}
+
+{{Section 10.3 of RFC9000}} contemplates an endpoint that has lost the state of
+a connection and is reacting to a packet it can no longer associate with one.
+Such an endpoint cannot recover the Connection ID that its peer expects, and so
+{{Section 10.3 of RFC9000}} observes that the Destination Connection ID of a
+Stateless Reset is necessarily a random value, and that the resulting packet
+"could be incorrectly routed" where the Connection ID is critical for routing
+toward the peer. That is the common case for load-balanced deployments.
+
+An endpoint using this extension is not in that position. It retains the
+Stateless Reset Token deliberately, and can retain alongside it a Connection ID
+that the peer currently accepts. When constructing a Stateless Reset, such an
+endpoint therefore SHOULD use a Connection ID issued by the peer in the position
+in which a 1-RTT packet carries the Destination Connection ID field, rather than
+unpredictable bits. Doing so allows the Stateless Reset to be routed to the peer
+and makes it less distinguishable from a valid packet. A peer that receives such
+a datagram is unable to decrypt it and therefore compares its trailing 16 bytes
+against the Stateless Reset Tokens it retains, as required by {{Section 10.3.1
+of RFC9000}}.
+
+Aside from the choice of the Destination Connection ID, the requirements of
+{{Section 10.3 of RFC9000}} and {{Section 10.3.3 of RFC9000}} governing the
+construction and sending of a Stateless Reset apply unchanged.
+
+
 # Security Considerations
 
 TODO Security
