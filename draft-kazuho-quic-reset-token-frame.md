@@ -186,6 +186,38 @@ Aside from the choice of the Destination Connection ID, the requirements of
 construction and sending of a Stateless Reset apply unchanged.
 
 
+## Delegating a Stateless Reset to the Operating System {#os-offload}
+
+In some environments, the operating system sends a Stateless Reset on behalf of
+an application that has exited or has been terminated. The application and the
+operating system can divide the work as follows.
+
+The operating system exposes an interface through which an application
+registers, for one of its connections, the leading octets of the Stateless Reset
+that it wishes to have sent: the first octet of a 1-RTT packet header, followed
+by a Connection ID that the peer currently accepts. The operating system
+generates 20 octets at random, retains them together with the registered octets
+and the 5-tuple of the connection, and returns the last 16 of those octets to
+the application as the Stateless Reset Token. The application then advertises
+that token to its peer in a RESET_TOKEN frame.
+
+Once the application is no longer able to process packets for the connection,
+the operating system responds to a datagram received on the registered 5-tuple
+by sending the registered octets followed by the 20 retained octets. The
+trailing 16 of the retained octets are the Stateless Reset Token, and the
+leading 4 supply the unpredictable octets that separate the token from the
+header; no randomness is needed on this path. The resulting datagram is the
+smallest that can be mistaken for a 1-RTT packet carrying the Connection ID that
+was registered. The operating system sends it only if it is smaller than the
+datagram that triggered it, as required by {{Section 10.3.3 of RFC9000}}.
+
+In this division of labor, the operating system rather than the application
+generates the Stateless Reset Token, and the only octets of the Stateless Reset
+that the application supplies are those of the registered prefix. An application
+that is no longer permitted to send packets therefore cannot use the Stateless
+Reset to convey information of its own choosing.
+
+
 # Security Considerations
 
 TODO Security
