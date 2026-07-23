@@ -1361,24 +1361,24 @@ construction and sending of a Stateless Reset apply unchanged.<a href="#section-
 an application that has exited or has been terminated. The application and the
 operating system can divide the work as follows.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-2">The operating system exposes an interface through which an application
-registers, for one of its connections, the leading octets of the Stateless Reset
-that it wishes to have sent: the first octet of a 1-RTT packet header, followed
+registers, for one of its connections, the leading bytes of the Stateless Reset
+that it wishes to have sent: the first byte of a 1-RTT packet header, followed
 by a Connection ID that the peer currently accepts. The operating system
-generates 20 octets at random, retains them together with the registered octets
-and the 5-tuple of the connection, and returns the last 16 of those octets to
+generates 20 bytes at random, retains them together with the registered bytes
+and the 5-tuple of the connection, and returns the last 16 of those bytes to
 the application as the Stateless Reset Token. The application then advertises
 that token to its peer in a RESET_TOKEN frame.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
 <p id="section-5.1-3">Once the application is no longer able to process packets for the connection,
 the operating system responds to a datagram received on the registered 5-tuple
-by sending the registered octets followed by the 20 retained octets. The
-trailing 16 of the retained octets are the Stateless Reset Token, and the
-leading 4 supply the unpredictable octets that separate the token from the
-header; no randomness is needed on this path. The resulting datagram is the
-smallest that can be mistaken for a 1-RTT packet carrying the Connection ID that
-was registered. The operating system sends it only if it is smaller than the
-datagram that triggered it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+by sending the registered bytes followed by the 20 retained bytes. The trailing
+16 of the retained bytes are the Stateless Reset Token, and the leading 4 supply
+the unpredictable bytes that separate the token from the header; no randomness
+is needed on this path. The resulting datagram is the smallest that can be
+mistaken for a 1-RTT packet carrying the Connection ID that was registered. The
+operating system sends it only if it is smaller than the datagram that triggered
+it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">In this division of labor, the operating system rather than the application
-generates the Stateless Reset Token, and the only octets of the Stateless Reset
+generates the Stateless Reset Token, and the only bytes of the Stateless Reset
 that the application supplies are those of the registered prefix. An application
 that is no longer permitted to send packets therefore cannot use the Stateless
 Reset to convey information of its own choosing.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
