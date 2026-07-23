@@ -71,13 +71,13 @@ connection is dead.
 
 The operating system could instead retain a CONNECTION_CLOSE packet recorded by
 the application and replay it, but such a packet is difficult to manage. It is
-protected under the connection's packet-protection keys and carries a packet
-number that must fall within the range the peer will accept; every packet the
-application sends advances that state, so the recorded packet must be refreshed
-continually to remain usable. A Stateless Reset Token, by contrast, is a fixed
-value that remains valid for the lifetime of the connection. The operating
-system need only remember the token together with the 5-tuple, and can then emit
-resets indefinitely without any further coordination with the application.
+protected under the connection's packet-protection keys that endpoints rotate
+and carries a packet number that must fall within the range the peer will
+accept, so the recorded packet must be refreshed periodically to remain usable.
+A Stateless Reset Token, by contrast, is a fixed value that remains valid for
+the lifetime of the connection. The operating system need only remember the
+token together with the 5-tuple, and can then emit resets indefinitely without
+any further coordination with the application.
 
 This document defines a frame that allows a QUIC endpoint to advertise a
 Stateless Reset Token that is not associated with any Connection ID, thereby
