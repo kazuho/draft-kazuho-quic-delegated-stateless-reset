@@ -4,8 +4,8 @@
 
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                            22 July 2026
-Expires: 23 January 2027
+Intended status: Standards Track                            23 July 2026
+Expires: 24 January 2027
 
 
          QUIC Extension for Advertising Stateless Reset Tokens
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 January 2027.
+   This Internet-Draft will expire on 24 January 2027.
 
 Copyright Notice
 
@@ -120,14 +120,13 @@ Table of Contents
    The operating system could instead retain a CONNECTION_CLOSE packet
    recorded by the application and replay it, but such a packet is
    difficult to manage.  It is protected under the connection's packet-
-   protection keys and carries a packet number that must fall within the
-   range the peer will accept; every packet the application sends
-   advances that state, so the recorded packet must be refreshed
-   continually to remain usable.  A Stateless Reset Token, by contrast,
-   is a fixed value that remains valid for the lifetime of the
-   connection.  The operating system need only remember the token
-   together with the 5-tuple, and can then emit resets indefinitely
-   without any further coordination with the application.
+   protection keys that endpoints rotate and carries a packet number
+   that must fall within the range the peer will accept, so the recorded
+   packet must be refreshed periodically to remain usable.  A Stateless
+   Reset Token, by contrast, is a fixed value that remains valid for the
+   lifetime of the connection.  The operating system need only remember
+   the token together with the 5-tuple, and can then emit resets
+   indefinitely without any further coordination with the application.
 
    This document defines a frame that allows a QUIC endpoint to
    advertise a Stateless Reset Token that is not associated with any

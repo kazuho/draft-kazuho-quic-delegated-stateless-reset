@@ -1053,7 +1053,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Oku</td>
-<td class="center">Expires 23 January 2027</td>
+<td class="center">Expires 24 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg {
 <dd class="internet-draft">draft-kazuho-quic-reset-token-frame-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-22" class="published">22 July 2026</time>
+<time datetime="2026-07-23" class="published">23 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-23">23 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-24">24 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1122,7 +1122,7 @@ peer, extending stateless reset to those endpoints.<a href="#section-abstract-1"
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 24 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1222,13 +1222,13 @@ Reset in response to those packets, the peer would learn immediately that the
 connection is dead.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">The operating system could instead retain a CONNECTION_CLOSE packet recorded by
 the application and replay it, but such a packet is difficult to manage. It is
-protected under the connection's packet-protection keys and carries a packet
-number that must fall within the range the peer will accept; every packet the
-application sends advances that state, so the recorded packet must be refreshed
-continually to remain usable. A Stateless Reset Token, by contrast, is a fixed
-value that remains valid for the lifetime of the connection. The operating
-system need only remember the token together with the 5-tuple, and can then emit
-resets indefinitely without any further coordination with the application.<a href="#section-1-5" class="pilcrow">¶</a></p>
+protected under the connection's packet-protection keys that endpoints rotate
+and carries a packet number that must fall within the range the peer will
+accept, so the recorded packet must be refreshed periodically to remain usable.
+A Stateless Reset Token, by contrast, is a fixed value that remains valid for
+the lifetime of the connection. The operating system need only remember the
+token together with the 5-tuple, and can then emit resets indefinitely without
+any further coordination with the application.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">This document defines a frame that allows a QUIC endpoint to advertise a
 Stateless Reset Token that is not associated with any Connection ID, thereby
 extending stateless reset to endpoints that do not issue Connection IDs. Because
