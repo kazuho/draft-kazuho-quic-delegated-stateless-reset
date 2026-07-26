@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-23T01:52:02.665675+00:00",
+  "timestamp": "2026-07-26T01:50:31.787712+00:00",
   "repo": "kazuho/draft-kazuho-quic-reset-token-frame",
   "labels": [
     {
@@ -49,6 +49,63 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOTgCtSc8AAAABJ3BiTg",
+      "title": "Allowing OS to send stateless reset proactively",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/1",
+      "state": "OPEN",
+      "author": "lcolitti",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Ideally it should be possible for the OS to send the stateless packet proactively, as soon as the application is placed into the background. This is a useful signal to the server that the client is gone and that if it wants to reach the client it must do so via other means (e.g., via the OS push messaging channel).\n\nThe current Android implementation sends the app-supplied close frame exactly once, and then closes the UDP socket with ECONNABORTED so the app stack gets an error. (This obviously means that if the close frame gets lost, the OS can no longer reset the connection; perhaps we could improve this.)\n\nPerhaps we could say something like the server is allowed to proactively send the packet exactly once, to avoid looping.",
+      "createdAt": "2026-07-23T07:46:09Z",
+      "updatedAt": "2026-07-23T07:46:09Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOTgCtSc8AAAABJ3IjgA",
+      "title": "Allow OS to verify the connection ID",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/2",
+      "state": "OPEN",
+      "author": "lcolitti",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The current text says \"An application that is no longer permitted to send packets therefore cannot use the Stateless Reset to convey information of its own choosing.\" AFAICT this is not technically true because the application can specify the connection ID.\n\nCould we say that the OS may choose not to send the stateless reset if it has not observed the application-specified connection ID in all packets received on the specified 5-tuple? Or could this break if the connection ID on the 5-tuple changes (or if - super unlikely - the app receives a garbage packet on that socket)? In that case should we say something like \"the most recent received packet on the 5-tuple\"?",
+      "createdAt": "2026-07-23T08:02:08Z",
+      "updatedAt": "2026-07-23T08:02:08Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOTgCtSc8AAAABJ4DbBQ",
+      "title": "Who should issue the RESET_TOKEN?",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/3",
+      "state": "CLOSED",
+      "author": "stefanoduo-google",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "> Only an endpoint that uses a zero-length Connection ID may send a RESET_TOKEN frame; the mechanism substitutes for the tokens that a Connection ID-issuing endpoint would otherwise derive from the Connection IDs it issues. An endpoint that uses a non-zero-length Connection ID MUST NOT send a RESET_TOKEN frame.\n\nIIUC, this means that a peer, who's not issuing Connection ID is expected to be the party issuing RESET_TOKEN frame. This makes sense to maintain symmetry with how things work for a peer who's issuing Connection IDs. Let's call this peer \"client\" and the other one the \"server\".\n\nAt the same time, the client already has to also remember the connection ID, otherwise the packet might not make it to the server (due to load balancers, etc). With that in mind, I wonder if there is value in having the server issue the RESET_TOKEN? This allows the server to maintain less/no state to later validate the stateless reset packet.\n\nThis would also simplify the interface between the QUIC stack and the OS/system. The QUIC stack would simply give both the Connection ID and the RESET_TOKEN to the system (possibly alongside the 5 tuple).\n\nP.S. A possible downside of having the server issue RESET_TOKEN is that more of the packet will constructed by the QUIC stack rather than the system.",
+      "createdAt": "2026-07-23T10:06:20Z",
+      "updatedAt": "2026-07-24T09:24:10Z",
+      "closedAt": "2026-07-24T09:24:09Z",
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "NONE",
+          "body": "We chatted offline and agreed that it's best for the peer that is not issuing connection IDs to be the one issuing the RESET_TOKEN. This will allow the other peer to handle it in the same way they handle stateless resets from peer issuing connection IDs. It also allows the system to be the one generating the token and not the QUIC stack.",
+          "createdAt": "2026-07-24T09:24:09Z",
+          "updatedAt": "2026-07-24T09:24:09Z"
+        }
+      ]
+    }
+  ],
   "pulls": []
 }
