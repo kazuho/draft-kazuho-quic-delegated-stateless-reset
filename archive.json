@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-30T01:25:50.552682+00:00",
+  "timestamp": "2026-08-02T01:49:56.900781+00:00",
   "repo": "kazuho/draft-kazuho-quic-reset-token-frame",
   "labels": [
     {
@@ -62,9 +62,24 @@
       "labels": [],
       "body": "Ideally it should be possible for the OS to send the stateless packet proactively, as soon as the application is placed into the background. This is a useful signal to the server that the client is gone and that if it wants to reach the client it must do so via other means (e.g., via the OS push messaging channel).\n\nThe current Android implementation sends the app-supplied close frame exactly once, and then closes the UDP socket with ECONNABORTED so the app stack gets an error. (This obviously means that if the close frame gets lost, the OS can no longer reset the connection; perhaps we could improve this.)\n\nPerhaps we could say something like the server is allowed to proactively send the packet exactly once, to avoid looping.",
       "createdAt": "2026-07-23T07:46:09Z",
-      "updatedAt": "2026-07-23T07:46:09Z",
+      "updatedAt": "2026-07-31T14:35:53Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "NONE",
+          "body": "I have a WIP pull request in my fork (I believe we would want to add a \"MAY send a stateless packet proactively\" to section 5 \"Sending a Stateless Reset\" before deferring to RFC9000>?).\n\nI plan to clean that up tomorrow and then send it for review.",
+          "createdAt": "2026-07-30T15:21:50Z",
+          "updatedAt": "2026-07-31T14:35:53Z"
+        },
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "NONE",
+          "body": "See #5.",
+          "createdAt": "2026-07-31T14:20:56Z",
+          "updatedAt": "2026-07-31T14:20:56Z"
+        }
+      ]
     },
     {
       "number": 2,
@@ -78,9 +93,17 @@
       "labels": [],
       "body": "The current text says \"An application that is no longer permitted to send packets therefore cannot use the Stateless Reset to convey information of its own choosing.\" AFAICT this is not technically true because the application can specify the connection ID.\n\nCould we say that the OS may choose not to send the stateless reset if it has not observed the application-specified connection ID in all packets received on the specified 5-tuple? Or could this break if the connection ID on the 5-tuple changes (or if - super unlikely - the app receives a garbage packet on that socket)? In that case should we say something like \"the most recent received packet on the 5-tuple\"?",
       "createdAt": "2026-07-23T08:02:08Z",
-      "updatedAt": "2026-07-23T08:02:08Z",
+      "updatedAt": "2026-07-30T06:27:55Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "body": "Makes perfect sense. PTAL at #4.",
+          "createdAt": "2026-07-30T06:27:55Z",
+          "updatedAt": "2026-07-30T06:27:55Z"
+        }
+      ]
     },
     {
       "number": 3,
@@ -107,5 +130,72 @@
       ]
     }
   ],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 4,
+      "id": "PR_kwDOTgCtSc74Xn9h",
+      "title": "OS checks if the registered CID is actually in use",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/4",
+      "state": "OPEN",
+      "author": "kazuho",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Prevent CID being used as a loophole (#2). Also suggests the OS to generate the 1st byte so that the least significant 6 bits cannot be used too.\r\n\r\nCloses #2.",
+      "createdAt": "2026-07-30T06:27:04Z",
+      "updatedAt": "2026-07-31T14:34:49Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRefName": "main",
+      "baseRefOid": "9e6027dc81ecc5a3a454c4eda019433235e4d1d3",
+      "headRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "headRefName": "kazuho/issues/2",
+      "headRefOid": "e52f507b25c84d72e883db7500e24c910b90891e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABH9sdwA",
+          "commit": {
+            "abbreviatedOid": "e52f507"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-07-31T14:34:49Z",
+          "updatedAt": "2026-07-31T14:34:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOTgCtSc75DXSn",
+      "title": "Allow sending a Stateless Reset proactively",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/5",
+      "state": "OPEN",
+      "author": "stefanoduo-google",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Allows sending the stateless reset proactively.\r\n\r\nAlso suggest the OS to keep the generated stateless reset around for a while, to respond to future datagrams for the registered 5-tuple. This covers scenarios in which the proactive stateless reset has not been correctly delivered.\r\n\r\nCloses #1 ",
+      "createdAt": "2026-07-31T14:19:13Z",
+      "updatedAt": "2026-07-31T14:19:14Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRefName": "main",
+      "baseRefOid": "9e6027dc81ecc5a3a454c4eda019433235e4d1d3",
+      "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
+      "headRefName": "proactive_stateless_reset",
+      "headRefOid": "f5dad31f8dc48afcc20769841e145305eba47abd",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
