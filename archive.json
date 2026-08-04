@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-02T01:49:56.900781+00:00",
+  "timestamp": "2026-08-04T01:27:11.310770+00:00",
   "repo": "kazuho/draft-kazuho-quic-reset-token-frame",
   "labels": [
     {
@@ -55,26 +55,26 @@
       "id": "I_kwDOTgCtSc8AAAABJ3BiTg",
       "title": "Allowing OS to send stateless reset proactively",
       "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/1",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lcolitti",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Ideally it should be possible for the OS to send the stateless packet proactively, as soon as the application is placed into the background. This is a useful signal to the server that the client is gone and that if it wants to reach the client it must do so via other means (e.g., via the OS push messaging channel).\n\nThe current Android implementation sends the app-supplied close frame exactly once, and then closes the UDP socket with ECONNABORTED so the app stack gets an error. (This obviously means that if the close frame gets lost, the OS can no longer reset the connection; perhaps we could improve this.)\n\nPerhaps we could say something like the server is allowed to proactively send the packet exactly once, to avoid looping.",
       "createdAt": "2026-07-23T07:46:09Z",
-      "updatedAt": "2026-07-31T14:35:53Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-03T19:30:48Z",
+      "closedAt": "2026-08-03T19:30:48Z",
       "comments": [
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I have a WIP pull request in my fork (I believe we would want to add a \"MAY send a stateless packet proactively\" to section 5 \"Sending a Stateless Reset\" before deferring to RFC9000>?).\n\nI plan to clean that up tomorrow and then send it for review.",
           "createdAt": "2026-07-30T15:21:50Z",
           "updatedAt": "2026-07-31T14:35:53Z"
         },
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "See #5.",
           "createdAt": "2026-07-31T14:20:56Z",
           "updatedAt": "2026-07-31T14:20:56Z"
@@ -86,15 +86,15 @@
       "id": "I_kwDOTgCtSc8AAAABJ3IjgA",
       "title": "Allow OS to verify the connection ID",
       "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/2",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lcolitti",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "The current text says \"An application that is no longer permitted to send packets therefore cannot use the Stateless Reset to convey information of its own choosing.\" AFAICT this is not technically true because the application can specify the connection ID.\n\nCould we say that the OS may choose not to send the stateless reset if it has not observed the application-specified connection ID in all packets received on the specified 5-tuple? Or could this break if the connection ID on the 5-tuple changes (or if - super unlikely - the app receives a garbage packet on that socket)? In that case should we say something like \"the most recent received packet on the 5-tuple\"?",
       "createdAt": "2026-07-23T08:02:08Z",
-      "updatedAt": "2026-07-30T06:27:55Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-03T01:58:32Z",
+      "closedAt": "2026-08-03T01:58:32Z",
       "comments": [
         {
           "author": "kazuho",
@@ -136,24 +136,26 @@
       "id": "PR_kwDOTgCtSc74Xn9h",
       "title": "OS checks if the registered CID is actually in use",
       "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/4",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "kazuho",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "Prevent CID being used as a loophole (#2). Also suggests the OS to generate the 1st byte so that the least significant 6 bits cannot be used too.\r\n\r\nCloses #2.",
       "createdAt": "2026-07-30T06:27:04Z",
-      "updatedAt": "2026-07-31T14:34:49Z",
+      "updatedAt": "2026-08-03T01:58:32Z",
       "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
       "baseRefName": "main",
       "baseRefOid": "9e6027dc81ecc5a3a454c4eda019433235e4d1d3",
       "headRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
       "headRefName": "kazuho/issues/2",
       "headRefOid": "e52f507b25c84d72e883db7500e24c910b90891e",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-08-03T01:58:31Z",
+      "mergedAt": "2026-08-03T01:58:31Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "243cb33e11faa974d199d63c8885793d59a61117"
+      },
       "comments": [],
       "reviews": [
         {
@@ -162,7 +164,7 @@
             "abbreviatedOid": "e52f507"
           },
           "author": "stefanoduo-google",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-07-31T14:34:49Z",
@@ -176,26 +178,110 @@
       "id": "PR_kwDOTgCtSc75DXSn",
       "title": "Allow sending a Stateless Reset proactively",
       "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/5",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "stefanoduo-google",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Allows sending the stateless reset proactively.\r\n\r\nAlso suggest the OS to keep the generated stateless reset around for a while, to respond to future datagrams for the registered 5-tuple. This covers scenarios in which the proactive stateless reset has not been correctly delivered.\r\n\r\nCloses #1 ",
       "createdAt": "2026-07-31T14:19:13Z",
-      "updatedAt": "2026-07-31T14:19:14Z",
+      "updatedAt": "2026-08-03T19:30:57Z",
       "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
       "baseRefName": "main",
-      "baseRefOid": "9e6027dc81ecc5a3a454c4eda019433235e4d1d3",
+      "baseRefOid": "243cb33e11faa974d199d63c8885793d59a61117",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "proactive_stateless_reset",
-      "headRefOid": "f5dad31f8dc48afcc20769841e145305eba47abd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "headRefOid": "2744133c6a73a92514c43b213e37b42a6faf126e",
+      "closedAt": "2026-08-03T19:30:47Z",
+      "mergedAt": "2026-08-03T19:30:47Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "1af90c3f22d8b03b1fddcc783781f63e3776306a"
+      },
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Thank you for the comments.\r\n\r\nI've updated the pull request and fixed the conflicts.",
+          "createdAt": "2026-08-03T12:45:10Z",
+          "updatedAt": "2026-08-03T12:45:10Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "body": "Thank you! Merged.",
+          "createdAt": "2026-08-03T19:30:57Z",
+          "updatedAt": "2026-08-03T19:30:57Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABII2kCA",
+          "commit": {
+            "abbreviatedOid": "f5dad31"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "Thank you for the PR; looks mostly good.\n\nI've merged #4 and that'll cause conflicts, but below are my ideas to what we have here.",
+          "createdAt": "2026-08-03T05:48:00Z",
+          "updatedAt": "2026-08-03T06:33:27Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "I think RFC 9000 describes stateless reset as a response purely because that's the only possible way of generating them. How about:\n\n```suggestion\nEndpoints using this extension MAY send a single stateless reset packet\nproactively, without waiting to receive a datagram from the peer.\n{{Section 10.3 of RFC9000}} describes a Stateless Reset only as a response to a\nreceived packet, because endpoints that have lost connection state learn of\nthe connection's existence only from such a packet. Endpoints using this\nextension retain the Stateless Reset Token deliberately, and therefore know\nwhich connections they may need to reset before any packet arrives.\n{{os-offload}} describes a deployment in which this is useful.\n```",
+              "createdAt": "2026-08-03T05:48:00Z",
+              "updatedAt": "2026-08-03T06:33:27Z"
+            },
+            {
+              "originalPosition": 46,
+              "body": "Directionally good, but I think people would ask for the rationale behind recommending 30 seconds. Maybe something like below that would help people deduct the right value.\n\n```suggestion\nThe operating system also responds to a datagram received on the registered\n5-tuple by sending the same retained stateless reset, but does so only if the\nstateless reset is smaller than the datagram that triggered it, as required by\n{{Section 10.3.3 of RFC9000}}. This covers the case in which a stateless reset\nsent proactively did not reach the peer.\n\nEventually, the operating system discards the stateless reset and the 5-tuple\nregistration, as the peer will nevertheless abandon the connection due to not\nmaking progress.\n```",
+              "createdAt": "2026-08-03T06:10:29Z",
+              "updatedAt": "2026-08-03T06:33:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABILseSg",
+          "commit": {
+            "abbreviatedOid": "f5dad31"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-03T12:44:03Z",
+          "updatedAt": "2026-08-03T12:44:03Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Good point. Done.\r\n\r\n(I'll resolve the conversation, feel free to reopen if you have more concerns)",
+              "createdAt": "2026-08-03T12:44:03Z",
+              "updatedAt": "2026-08-03T12:44:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABILsgvw",
+          "commit": {
+            "abbreviatedOid": "f5dad31"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-03T12:44:08Z",
+          "updatedAt": "2026-08-03T12:44:08Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "I agree. Updated.\r\n\r\n(I'll resolve the conversation, feel free to reopen if you have more concerns)",
+              "createdAt": "2026-08-03T12:44:08Z",
+              "updatedAt": "2026-08-03T12:44:08Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
