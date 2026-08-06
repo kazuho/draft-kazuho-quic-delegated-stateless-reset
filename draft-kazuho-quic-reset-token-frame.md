@@ -126,43 +126,46 @@ an application that has exited or has been terminated. The application and the
 operating system can divide the work as follows.
 
 The operating system exposes an interface through which an application
-registers, for one of its connections, a Connection ID that the peer currently
-accepts. From that registration it forms a datagram containing, in order:
+registers, for one of its connections, a Connection ID that the peer has issued
+and currently accepts, together with what identifies that connection in the
+datagrams the peer sends -- the socket, and any Connection IDs the application
+itself has issued. From that registration it forms a datagram containing, in
+order:
 
 * a first byte of its own making, in which the two most significant bits are 01
   and the remainder is unpredictable;
 
-* the registered Connection ID, in the position in which a 1-RTT packet carries
-  the Destination Connection ID field ({{constructing}}); and
+* the peer's Connection ID, in the position in which a 1-RTT packet carries the
+  Destination Connection ID field ({{constructing}}); and
 
 * 20 bytes that it generates at random, of which the leading 4 separate the
   token from the header and the trailing 16 are the Stateless Reset Token.
 
 The datagram is the smallest that can be mistaken for a 1-RTT packet carrying the
-registered Connection ID. The operating system retains it together with the
-5-tuple of the connection and returns the token to the application, which then
-makes it known to its peer, either as the token associated with one of the
-Connection IDs it issues or, if it uses zero-length Connection IDs, in a
+peer's Connection ID. The operating system retains it against that registration
+and returns the token to the application, which then makes it known to its peer,
+either as the token associated with one of its own
+Connection IDs or, if it uses zero-length Connection IDs, in a
 RESET_TOKEN frame ({{reset-token-frame}}).
 
 Once the application is no longer able to process packets for the connection,
-the operating system responds to a datagram received on the registered 5-tuple
-by sending the retained datagram, but does so only if the retained datagram is
+the operating system responds to a datagram matching that registration by
+sending the retained datagram, but does so only if the retained datagram is
 smaller than the one that triggered it, as required by
 {{Section 10.3.3 of RFC9000}}.
 
-Eventually, the operating system discards the stateless reset and the 5-tuple
+Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
 making progress.
 
 In this division of labor, it is possible to deny an application the use of the
 Stateless Reset as a means of conveying information of its own. The Stateless
 Reset Token and the other bytes that the operating system generates are outside
-the application's control, and the Connection ID, which the application
+the application's control, and the peer's Connection ID, which the application
 supplies, is also the value that it places in the Destination Connection ID
 field of the packets it sends. An operating system can therefore monitor the
 packets that the application sends after the registration, and send the
-Stateless Reset only if those packets carried the registered Connection ID. The
+Stateless Reset only if those packets carried that Connection ID. The
 Stateless Reset then carries no Connection ID other than the one that the
 application's own packets were already carrying to the peer.
 
