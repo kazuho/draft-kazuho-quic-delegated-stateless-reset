@@ -9,7 +9,7 @@ Expires: 7 February 2027
 
 
                     Delegating QUIC Stateless Resets
-                draft-kazuho-quic-delegated-reset-latest
+               draft-kazuho-quic-reset-token-frame-latest
 
 Abstract
 
