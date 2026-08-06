@@ -1,5 +1,5 @@
 ---
-title: "QUIC Extension for Advertising Stateless Reset Tokens"
+title: "Delegating QUIC Stateless Resets"
 category: std
 docname: draft-kazuho-quic-reset-token-frame-latest
 wg: quic
