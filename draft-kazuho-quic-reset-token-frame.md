@@ -82,15 +82,6 @@ lost its state has no such value available and must use unpredictable bits
 instead, at the cost that the Stateless Reset may be misrouted ({{Section 10.3
 of RFC9000}}).
 
-The operating system could instead retain a CONNECTION_CLOSE packet recorded by
-the application and replay it, but such a packet is difficult to manage. It is
-protected under the connection's packet-protection keys that endpoints rotate
-and carries a packet number that must fall within the range the peer will
-accept, so the recorded packet must be refreshed periodically to remain usable.
-A Stateless Reset Token is tied to neither, and so does not decay on its own; it
-remains valid until the endpoint retires the Connection ID with which the token
-is associated. The operating system need only remember the token.
-
 With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
 an endpoint that uses zero-length Connection IDs cannot issue one
 ({{Section 5.1.1 of RFC9000}}). Yet they are common. A client that
@@ -183,14 +174,6 @@ application's own packets were already carrying to the peer.
 When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a
 Connection ID issued by the peer in the position in which a 1-RTT packet carries
 the Destination Connection ID field, rather than unpredictable bits.
-{{Section 10.3 of RFC9000}} calls for unpredictable bits in that position
-because an endpoint that has lost its state cannot recover a Connection ID that
-its peer accepts, and it observes that the resulting packet "could be
-incorrectly routed" where the Connection ID is critical for routing toward the
-peer, as it is in load-balanced deployments. An endpoint or delegate that has
-retained such a Connection ID sends a Stateless Reset that reaches the peer and
-is less distinguishable from a valid packet.
-
 {{Section 10.3 of RFC9000}} calls for unpredictable bits in that position
 because an endpoint that has lost its state cannot recover a Connection ID that
 its peer accepts, and it observes that the resulting packet "could be
