@@ -75,12 +75,10 @@ Token and the 5-tuple on which to send it. These remain valid until the endpoint
 retires the Connection ID with which the token is associated.
 
 A delegated Stateless Reset can also be better formed than one sent by an
-endpoint that has lost its state. The delegate holds its token deliberately, and
-can hold alongside it a Connection ID that the peer accepts, placing that value
-where a 1-RTT packet carries the Destination Connection ID. An endpoint that has
-lost its state has no such value available and must use unpredictable bits
-instead, at the cost that the Stateless Reset may be misrouted ({{Section 10.3
-of RFC9000}}).
+endpoint that has lost its state: the delegate can remember a Connection ID that
+the peer has issued and place it where a 1-RTT packet carries the Destination
+Connection ID, so that the Stateless Reset reaches the intended peer in a
+load-balanced deployment ({{constructing}}).
 
 With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
 an endpoint that uses zero-length Connection IDs cannot issue one
