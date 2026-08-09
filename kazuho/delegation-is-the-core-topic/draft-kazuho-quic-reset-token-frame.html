@@ -1237,26 +1237,17 @@ thus, the recorded packet would need constant refreshing to remain usable.<a hre
 Token and the 5-tuple on which to send it. These remain valid until the endpoint
 retires the Connection ID with which the token is associated.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <p id="section-1-7">A delegated Stateless Reset can also be better formed than one sent by an
-endpoint that has lost its state. The delegate holds its token deliberately, and
-can hold alongside it a Connection ID that the peer accepts, placing that value
-where a 1-RTT packet carries the Destination Connection ID. An endpoint that has
-lost its state has no such value available and must use unpredictable bits
-instead, at the cost that the Stateless Reset may be misrouted (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-1-7" class="pilcrow">¶</a></p>
-<p id="section-1-8">The operating system could instead retain a CONNECTION_CLOSE packet recorded by
-the application and replay it, but such a packet is difficult to manage. It is
-protected under the connection's packet-protection keys that endpoints rotate
-and carries a packet number that must fall within the range the peer will
-accept, so the recorded packet must be refreshed periodically to remain usable.
-A Stateless Reset Token is tied to neither, and so does not decay on its own; it
-remains valid until the endpoint retires the Connection ID with which the token
-is associated. The operating system need only remember the token.<a href="#section-1-8" class="pilcrow">¶</a></p>
-<p id="section-1-9">With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
+endpoint that has lost its state: the delegate can remember a Connection ID that
+the peer has issued and place it where a 1-RTT packet carries the Destination
+Connection ID, so that the Stateless Reset reaches the intended peer in a
+load-balanced deployment (<a href="#constructing" class="auto internal xref">Section 4</a>).<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
 an endpoint that uses zero-length Connection IDs cannot issue one
 (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.1.1" class="relref">Section 5.1.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). Yet they are common. A client that
 identifies connections solely by the 5-tuple has no need to issue Connection IDs
 and can reduce per-packet overhead by using zero-length Connection IDs.
 To allow such endpoints to issue Stateless Reset Tokens and delegate them, this
-document defines a transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-1-9" class="pilcrow">¶</a></p>
+document defines a transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1363,13 +1354,6 @@ incorrectly routed" where the Connection ID is critical for routing toward the
 peer, as it is in load-balanced deployments. An endpoint or delegate that has
 retained such a Connection ID sends a Stateless Reset that reaches the peer and
 is less distinguishable from a valid packet.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2"><span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> calls for unpredictable bits in that position
-because an endpoint that has lost its state cannot recover a Connection ID that
-its peer accepts, and it observes that the resulting packet "could be
-incorrectly routed" where the Connection ID is critical for routing toward the
-peer, as it is in load-balanced deployments. An endpoint or delegate that has
-retained such a Connection ID sends a Stateless Reset that reaches the peer and
-is less distinguishable from a valid packet.<a href="#section-4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="proactive">

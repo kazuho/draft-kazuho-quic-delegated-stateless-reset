@@ -128,24 +128,11 @@ Table of Contents
    the token is associated.
 
    A delegated Stateless Reset can also be better formed than one sent
-   by an endpoint that has lost its state.  The delegate holds its token
-   deliberately, and can hold alongside it a Connection ID that the peer
-   accepts, placing that value where a 1-RTT packet carries the
-   Destination Connection ID.  An endpoint that has lost its state has
-   no such value available and must use unpredictable bits instead, at
-   the cost that the Stateless Reset may be misrouted (Section 10.3 of
-   [RFC9000]).
-
-   The operating system could instead retain a CONNECTION_CLOSE packet
-   recorded by the application and replay it, but such a packet is
-   difficult to manage.  It is protected under the connection's packet-
-   protection keys that endpoints rotate and carries a packet number
-   that must fall within the range the peer will accept, so the recorded
-   packet must be refreshed periodically to remain usable.  A Stateless
-   Reset Token is tied to neither, and so does not decay on its own; it
-   remains valid until the endpoint retires the Connection ID with which
-   the token is associated.  The operating system need only remember the
-   token.
+   by an endpoint that has lost its state: the delegate can remember a
+   Connection ID that the peer has issued and place it where a 1-RTT
+   packet carries the Destination Connection ID, so that the Stateless
+   Reset reaches the intended peer in a load-balanced deployment
+   (Section 4).
 
    With QUIC version 1, Stateless Reset Tokens are issued alongside
    Connection IDs; an endpoint that uses zero-length Connection IDs
@@ -255,15 +242,6 @@ Table of Contents
    it is in load-balanced deployments.  An endpoint or delegate that has
    retained such a Connection ID sends a Stateless Reset that reaches
    the peer and is less distinguishable from a valid packet.
-
-   Section 10.3 of [RFC9000] calls for unpredictable bits in that
-   position because an endpoint that has lost its state cannot recover a
-   Connection ID that its peer accepts, and it observes that the
-   resulting packet "could be incorrectly routed" where the Connection
-   ID is critical for routing toward the peer, as it is in load-balanced
-   deployments.  An endpoint or delegate that has retained such a
-   Connection ID sends a Stateless Reset that reaches the peer and is
-   less distinguishable from a valid packet.
 
 5.  Sending a Stateless Reset Proactively
 
