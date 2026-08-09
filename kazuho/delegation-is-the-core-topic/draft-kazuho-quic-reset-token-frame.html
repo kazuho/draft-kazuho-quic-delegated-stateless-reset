@@ -1218,39 +1218,45 @@ Destination Connection ID carried in that packet -- typically by applying a
 static key to the Connection ID (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.2" class="relref">Section 10.3.2</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) -- and emits a
 Stateless Reset carrying that token. Because the token is derived from the
 Connection ID, the resetting endpoint need not retain any per-connection state.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">The same property permits a different arrangement, and it is the subject of this
-document: the entity that sends a Stateless Reset need not be the endpoint that
-ran the connection. Sending one requires only the Stateless Reset Token and the
-5-tuple on which to send it. An endpoint can hand those values to a component
-that outlives its own connection state, and that component can reset the peer
-long after the endpoint is gone (<a href="#delegation" class="auto internal xref">Section 3</a>).<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">A delegated Stateless Reset can also be better formed than one sent by an
+<p id="section-1-3">The same property permits a different arrangement, and it is the subject of
+this document: the entity that sends a Stateless Reset need not be the endpoint
+that ran the connection.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">The ability to send a Stateless Reset is valuable precisely when connection state
+has been lost involuntarily -- for example, when an application exits or is
+terminated by the operating system. After the application is gone, the peer may
+continue to send packets on the connection until its idle timeout expires. To cover
+these scenarios, an endpoint can delegate the termination of the connection to a
+component that outlives its own connection state, and that component can reset
+the peer long after the endpoint is gone (<a href="#delegation" class="auto internal xref">Section 3</a>).<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
+such a packet is difficult to manage for a delegate. It is protected under the
+connection's packet-protection keys that endpoints periodically rotate, and it
+carries a packet number that must fall within a dynamic range the peer will accept;
+thus, the recorded packet would need constant refreshing to remain usable.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">In contrast, sending a Stateless Reset requires only the static Stateless Reset
+Token and the 5-tuple on which to send it. These remain valid until the endpoint
+retires the Connection ID with which the token is associated.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">A delegated Stateless Reset can also be better formed than one sent by an
 endpoint that has lost its state. The delegate holds its token deliberately, and
 can hold alongside it a Connection ID that the peer accepts, placing that value
 where a 1-RTT packet carries the Destination Connection ID. An endpoint that has
 lost its state has no such value available and must use unpredictable bits
-instead, at the cost that the Stateless Reset may be misrouted (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">The ability to send a Stateless Reset is valuable precisely when connection
-state has been lost involuntarily -- for example, when an application exits or
-is terminated by the operating system. After the application is gone, the peer
-may continue to send packets on the connection until its idle timeout expires.
-If the operating system could send a Stateless Reset in response to those
-packets, the peer would learn immediately that the connection is dead.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">The operating system could instead retain a CONNECTION_CLOSE packet recorded by
+instead, at the cost that the Stateless Reset may be misrouted (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">The operating system could instead retain a CONNECTION_CLOSE packet recorded by
 the application and replay it, but such a packet is difficult to manage. It is
 protected under the connection's packet-protection keys that endpoints rotate
 and carries a packet number that must fall within the range the peer will
 accept, so the recorded packet must be refreshed periodically to remain usable.
 A Stateless Reset Token is tied to neither, and so does not decay on its own; it
 remains valid until the endpoint retires the Connection ID with which the token
-is associated. The operating system need only remember the token.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
+is associated. The operating system need only remember the token.<a href="#section-1-8" class="pilcrow">¶</a></p>
+<p id="section-1-9">With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs;
 an endpoint that uses zero-length Connection IDs cannot issue one
 (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.1.1" class="relref">Section 5.1.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). Yet they are common. A client that
 identifies connections solely by the 5-tuple has no need to issue Connection IDs
 and can reduce per-packet overhead by using zero-length Connection IDs.
 To allow such endpoints to issue Stateless Reset Tokens and delegate them, this
-document defines a transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-1-7" class="pilcrow">¶</a></p>
+document defines a transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-1-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
