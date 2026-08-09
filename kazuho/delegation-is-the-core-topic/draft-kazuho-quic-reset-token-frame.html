@@ -1361,7 +1361,8 @@ is less distinguishable from a valid packet.<a href="#section-4-1" class="pilcro
       <h2 id="name-sending-a-stateless-reset-p">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-sending-a-stateless-reset-p" class="section-name selfRef">Sending a Stateless Reset Proactively</a>
       </h2>
-<p id="section-5-1">A delegate <span class="bcp14">MAY</span> send a single Stateless Reset proactively,
+<p id="section-5-1">Once the endpoint that delegated the Stateless Reset has lost or abandoned its
+connection state, a delegate <span class="bcp14">MAY</span> send a single Stateless Reset proactively,
 without waiting to receive a datagram from the peer. <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>
 describes a Stateless Reset only as a response to a received packet because an
 endpoint that has lost its state learns of the connection's existence only from
