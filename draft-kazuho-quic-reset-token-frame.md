@@ -183,7 +183,8 @@ is less distinguishable from a valid packet.
 
 # Sending a Stateless Reset Proactively {#proactive}
 
-A delegate MAY send a single Stateless Reset proactively,
+Once the endpoint that delegated the Stateless Reset has lost or abandoned its
+connection state, a delegate MAY send a single Stateless Reset proactively,
 without waiting to receive a datagram from the peer. {{Section 10.3 of RFC9000}}
 describes a Stateless Reset only as a response to a received packet because an
 endpoint that has lost its state learns of the connection's existence only from
