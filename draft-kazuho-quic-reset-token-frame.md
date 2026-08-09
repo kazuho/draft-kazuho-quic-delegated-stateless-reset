@@ -157,10 +157,10 @@ Connection IDs or, if it uses zero-length Connection IDs, in a
 RESET_TOKEN frame ({{reset-token-frame}}).
 
 Once the application is no longer able to process packets for the connection,
-the operating system responds to a datagram matching that registration by
-sending the retained datagram, but does so only if the retained datagram is
-smaller than the one that triggered it, as required by
-{{Section 10.3.3 of RFC9000}}.
+the operating system sends the retained datagram once ({{proactive}}), and
+thereafter responds to datagrams matching that registration by sending it again,
+but does so only if the retained datagram is smaller than the one that triggered
+it, as required by {{Section 10.3.3 of RFC9000}}.
 
 Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
@@ -176,10 +176,6 @@ packets that the application sends after the registration, and send the
 Stateless Reset only if those packets carried that Connection ID. The
 Stateless Reset then carries no Connection ID other than the one that the
 application's own packets were already carrying to the peer.
-
-The operating system can also send the retained datagram as soon as the
-application becomes unable to process packets, without waiting for the peer to
-send anything ({{proactive}}).
 
 
 # Constructing a Routable Stateless Reset {#constructing}
