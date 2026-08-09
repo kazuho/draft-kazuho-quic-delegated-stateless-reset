@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-04T01:27:11.310770+00:00",
+  "timestamp": "2026-08-09T00:56:18.510907+00:00",
   "repo": "kazuho/draft-kazuho-quic-reset-token-frame",
   "labels": [
     {
@@ -128,6 +128,22 @@
           "updatedAt": "2026-07-24T09:24:09Z"
         }
       ]
+    },
+    {
+      "number": 7,
+      "id": "I_kwDOTgCtSc8AAAABL28ssQ",
+      "title": "Consider providing a diagram for the os-offload section",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/7",
+      "state": "OPEN",
+      "author": "stefanoduo-google",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A diagram would help readers understand more easily how the QUIC stack and the operating system collaborate when a stateless reset is being delegated.",
+      "createdAt": "2026-08-07T13:50:25Z",
+      "updatedAt": "2026-08-07T13:50:25Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -282,6 +298,109 @@
           ]
         }
       ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOTgCtSc77awiu",
+      "title": "Delegation becomes the core topic",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/6",
+      "state": "OPEN",
+      "author": "kazuho",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "The document started as a description of a mechanism missing from RFC 9000: issuing Stateless Reset Tokens when Connection IDs are not used. But we have since been adding text about how stateless resets can be delegated to a component that outlives the QUIC stack, and that applies regardless of Connection ID length -- an endpoint that issues Connection IDs delegates one of the tokens it has already issued, with no new protocol at all.\r\n\r\nIt therefore seems better to change the topic of the I-D: delegation becomes the subject, and the transport parameter and frame become one section serving the case that cannot otherwise issue a token.\r\n\r\n| before | after |\r\n| --- | --- |\r\n| 3. The reset_token Transport Parameter | 3. Delegating a Stateless Reset |\r\n| 4. The RESET_TOKEN Frame | 3.1. \u2026to the Operating System |\r\n| 5. Sending a Stateless Reset | 4. Constructing a Routable Stateless Reset |\r\n| 5.1. Delegating \u2026to the Operating System | 5. Sending a Stateless Reset Proactively |\r\n| | 6. Advertising a Token with Zero-Length Connection IDs |\r\n| | 6.1. The reset_token Transport Parameter |\r\n| | 6.2. The RESET_TOKEN Frame |\r\n\r\nAll the changes are editorial in nature, with one exception: the operating system registration in Section 3.1 relied solely on the 5-tuple to match datagrams to a connection, which only works where the application uses zero-length Connection IDs. It now registers the socket together with any Connection IDs the application itself has issued, so the arrangement works for a Connection ID-issuing application as well.\r\n\r\nThe document title becomes \"Delegating QUIC Stateless Resets\". Renaming the file and the repository to match are TODOs, kept out of this PR because file renames are not tracked well in GitHub review.",
+      "createdAt": "2026-08-06T05:13:20Z",
+      "updatedAt": "2026-08-07T13:58:20Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRefName": "main",
+      "baseRefOid": "1af90c3f22d8b03b1fddcc783781f63e3776306a",
+      "headRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "headRefName": "kazuho/delegation-is-the-core-topic",
+      "headRefOid": "251b944feb7c75859ad1e7baca13178bd5f9fd70",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABIpNqEg",
+          "commit": {
+            "abbreviatedOid": "251b944"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "+1 to making delegation the core topic of the draft.\n\nI've left a few comments, I'm happy to file issues and tackle in follow-ups if you prefer working that way.",
+          "createdAt": "2026-08-06T13:24:05Z",
+          "updatedAt": "2026-08-07T13:58:19Z",
+          "comments": [
+            {
+              "originalPosition": 165,
+              "body": "FYI: I've filed #7 to keep track of the diagram I would like to have for this section. I'll work on it in a follow-up.",
+              "createdAt": "2026-08-07T09:03:29Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            },
+            {
+              "originalPosition": 232,
+              "body": "If acting proactively, I would expect an endpoint to have enough state to send a CONNECTION_CLOSE instead. Should we scope this down to delegates?\n```suggestion\nA delegate MAY send a single Stateless Reset proactively,\n```",
+              "createdAt": "2026-08-07T09:21:13Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            },
+            {
+              "originalPosition": 96,
+              "body": "Perhaps we can shuffle this text around some more? Giving some more background before flowing into the mechanics might make this easier to parse. Here is a suggested diff of what I have in mind.\n\n(I don't feel too strongly and I'm happy to tackle this in a follow-up)\n\n```suggestion\nThe same property permits a different arrangement, and it is the subject of\nthis document: the entity that sends a Stateless Reset need not be the endpoint\nthat ran the connection.\n\nThe ability to send a Stateless Reset is valuable precisely when connection state\nhas been lost involuntarily -- for example, when an application exits or is\nterminated by the operating system. After the application is gone, the peer may\ncontinue to send packets on the connection until its idle timeout expires. To cover\nthese scenarios, an endpoint can delegate the termination of the connection to a\ncomponent that outlives its own connection state, and that component can reset\nthe peer long after the endpoint is gone ({{delegation}}).\n\nA CONNECTION_CLOSE packet could be recorded and used for this scenario, but\nsuch a packet is difficult to manage for a delegate. It is protected under the\nconnection's packet-protection keys that endpoints periodically rotate, and it\ncarries a packet number that must fall within a dynamic range the peer will accept;\nthus, the recorded packet would need constant refreshing to remain usable.\n\nIn contrast, sending a Stateless Reset requires only the static Stateless Reset\nToken and the 5-tuple on which to send it. These remain valid until the endpoint\nretires the Connection ID with which the token is associated.\n\nA delegated Stateless Reset can also be better formed than one sent by an\nendpoint that has lost its state. The delegate holds its token deliberately, and\ncan hold alongside it a Connection ID that the peer accepts, placing that value\nwhere a 1-RTT packet carries the Destination Connection ID. An endpoint that has\nlost its state has no such value available and must use unpredictable bits\ninstead, at the cost that the Stateless Reset may be misrouted ({{Section 10.3\nof RFC9000}}).\n```",
+              "createdAt": "2026-08-07T09:42:44Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            },
+            {
+              "originalPosition": 64,
+              "body": "I would explicitly call out this being the property referenced in the paragraphs that follow. This should help readers. Perhaps something along these lines?\n```suggestion\ncontinued. This mechanism relies on a specific property: the reset signal is not\nprotected by the connection's keys, nor is it tied to packet number spaces.\nInstead, it is authenticated solely by a 128-bit Stateless Reset Token, which the\nreceiver matches against tokens it previously retained.\n```",
+              "createdAt": "2026-08-07T12:52:49Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            },
+            {
+              "originalPosition": 219,
+              "body": "I feel this sentence breaks the flow from the previous one. I expect the second paragraphs to follow directly after the first sentence. Perhaps we should just drop this?\n```suggestion\nthe Destination Connection ID field, rather than unpredictable bits.\n{{Section 10.3 of RFC9000}} calls for unpredictable bits in that position\nbecause an endpoint that has lost its state cannot recover a Connection ID that\nits peer accepts, and it observes that the resulting packet \"could be\nincorrectly routed\" where the Connection ID is critical for routing toward the\npeer, as it is in load-balanced deployments. An endpoint or delegate that has\nretained such a Connection ID sends a Stateless Reset that reaches the peer and\nis less distinguishable from a valid packet.\n```",
+              "createdAt": "2026-08-07T13:12:24Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            },
+            {
+              "originalPosition": 187,
+              "body": "Should we keep the text that describes the operating system proactively sending of the stateless reset?\n```suggestion\nOnce the application is no longer able to process packets for the connection,\nthe operating system sends the retained datagram. The resulting datagram is\nthe smallest that can be mistaken for a 1-RTT packet carrying the Connection\nID that was registered.\n\nThe operating system also responds to a datagram received on the registered\n5-tuple by sending the same retained stateless reset, but does so only if the\nstateless reset is smaller than the datagram that triggered it, as required by\n{{Section 10.3.3 of RFC9000}}. This covers the case in which a stateless reset\nsent proactively did not reach the peer.\n```",
+              "createdAt": "2026-08-07T13:27:47Z",
+              "updatedAt": "2026-08-07T13:58:19Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOTgCtSc78E3hD",
+      "title": "Add Stefano Duo as co-author",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/8",
+      "state": "OPEN",
+      "author": "stefanoduo-google",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-08-07T14:16:53Z",
+      "updatedAt": "2026-08-07T14:16:54Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRefName": "main",
+      "baseRefOid": "1af90c3f22d8b03b1fddcc783781f63e3776306a",
+      "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
+      "headRefName": "add_stefanoduo_coauthor",
+      "headRefOid": "31c674005617cf2b001fff96afefbbf7592c9e28",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
