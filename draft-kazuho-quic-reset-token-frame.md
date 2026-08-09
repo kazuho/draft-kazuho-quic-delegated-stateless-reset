@@ -186,10 +186,14 @@ send anything ({{proactive}}).
 
 When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a
 Connection ID issued by the peer in the position in which a 1-RTT packet carries
-the Destination Connection ID field, rather than unpredictable bits. A peer
-receiving the datagram is unable to decrypt it and therefore compares its
-trailing 16 bytes against the Stateless Reset Tokens it retains
-({{Section 10.3.1 of RFC9000}}).
+the Destination Connection ID field, rather than unpredictable bits.
+{{Section 10.3 of RFC9000}} calls for unpredictable bits in that position
+because an endpoint that has lost its state cannot recover a Connection ID that
+its peer accepts, and it observes that the resulting packet "could be
+incorrectly routed" where the Connection ID is critical for routing toward the
+peer, as it is in load-balanced deployments. An endpoint or delegate that has
+retained such a Connection ID sends a Stateless Reset that reaches the peer and
+is less distinguishable from a valid packet.
 
 {{Section 10.3 of RFC9000}} calls for unpredictable bits in that position
 because an endpoint that has lost its state cannot recover a Connection ID that
