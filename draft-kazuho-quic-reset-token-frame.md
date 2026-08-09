@@ -52,12 +52,27 @@ static key to the Connection ID ({{Section 10.3.2 of RFC9000}}) -- and emits a
 Stateless Reset carrying that token. Because the token is derived from the
 Connection ID, the resetting endpoint need not retain any per-connection state.
 
-The same property permits a different arrangement, and it is the subject of this
-document: the entity that sends a Stateless Reset need not be the endpoint that
-ran the connection. Sending one requires only the Stateless Reset Token and the
-5-tuple on which to send it. An endpoint can hand those values to a component
-that outlives its own connection state, and that component can reset the peer
-long after the endpoint is gone ({{delegation}}).
+The same property permits a different arrangement, and it is the subject of
+this document: the entity that sends a Stateless Reset need not be the endpoint
+that ran the connection.
+
+The ability to send a Stateless Reset is valuable precisely when connection state
+has been lost involuntarily -- for example, when an application exits or is
+terminated by the operating system. After the application is gone, the peer may
+continue to send packets on the connection until its idle timeout expires. To cover
+these scenarios, an endpoint can delegate the termination of the connection to a
+component that outlives its own connection state, and that component can reset
+the peer long after the endpoint is gone ({{delegation}}).
+
+A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
+such a packet is difficult to manage for a delegate. It is protected under the
+connection's packet-protection keys that endpoints periodically rotate, and it
+carries a packet number that must fall within a dynamic range the peer will accept;
+thus, the recorded packet would need constant refreshing to remain usable.
+
+In contrast, sending a Stateless Reset requires only the static Stateless Reset
+Token and the 5-tuple on which to send it. These remain valid until the endpoint
+retires the Connection ID with which the token is associated.
 
 A delegated Stateless Reset can also be better formed than one sent by an
 endpoint that has lost its state. The delegate holds its token deliberately, and
@@ -66,13 +81,6 @@ where a 1-RTT packet carries the Destination Connection ID. An endpoint that has
 lost its state has no such value available and must use unpredictable bits
 instead, at the cost that the Stateless Reset may be misrouted ({{Section 10.3
 of RFC9000}}).
-
-The ability to send a Stateless Reset is valuable precisely when connection
-state has been lost involuntarily -- for example, when an application exits or
-is terminated by the operating system. After the application is gone, the peer
-may continue to send packets on the connection until its idle timeout expires.
-If the operating system could send a Stateless Reset in response to those
-packets, the peer would learn immediately that the connection is dead.
 
 The operating system could instead retain a CONNECTION_CLOSE packet recorded by
 the application and replay it, but such a packet is difficult to manage. It is
