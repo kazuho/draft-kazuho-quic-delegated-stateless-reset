@@ -1358,10 +1358,14 @@ send anything (<a href="#proactive" class="auto internal xref">Section 5</a>).<a
       </h2>
 <p id="section-4-1">When constructing a Stateless Reset, the endpoint or its delegate <span class="bcp14">SHOULD</span> place a
 Connection ID issued by the peer in the position in which a 1-RTT packet carries
-the Destination Connection ID field, rather than unpredictable bits. A peer
-receiving the datagram is unable to decrypt it and therefore compares its
-trailing 16 bytes against the Stateless Reset Tokens it retains
-(<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-4-1" class="pilcrow">¶</a></p>
+the Destination Connection ID field, rather than unpredictable bits.
+<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> calls for unpredictable bits in that position
+because an endpoint that has lost its state cannot recover a Connection ID that
+its peer accepts, and it observes that the resulting packet "could be
+incorrectly routed" where the Connection ID is critical for routing toward the
+peer, as it is in load-balanced deployments. An endpoint or delegate that has
+retained such a Connection ID sends a Stateless Reset that reaches the peer and
+is less distinguishable from a valid packet.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2"><span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> calls for unpredictable bits in that position
 because an endpoint that has lost its state cannot recover a Connection ID that
 its peer accepts, and it observes that the resulting packet "could be
