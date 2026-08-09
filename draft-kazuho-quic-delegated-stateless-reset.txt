@@ -10,7 +10,7 @@ Expires: 10 February 2027                                         Google
 
 
                     Delegating QUIC Stateless Resets
-               draft-kazuho-quic-reset-token-frame-latest
+           draft-kazuho-quic-delegated-stateless-reset-latest
 
 Abstract
 
@@ -31,7 +31,8 @@ Discussion Venues
    https://mailarchive.ietf.org/arch/browse/quic/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/kazuho/draft-kazuho-quic-reset-token-frame.
+   https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-
+   reset.
 
 Status of This Memo
 
