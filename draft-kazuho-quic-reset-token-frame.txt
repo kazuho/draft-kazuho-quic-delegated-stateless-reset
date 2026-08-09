@@ -4,8 +4,9 @@
 
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           3 August 2026
-Expires: 4 February 2027
+Intended status: Standards Track                                  S. Duo
+Expires: 10 February 2027                                         Google
+                                                           9 August 2026
 
 
          QUIC Extension for Advertising Stateless Reset Tokens
@@ -47,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 February 2027.
+   This Internet-Draft will expire on 10 February 2027.
 
 Copyright Notice
 
@@ -75,7 +76,7 @@ Table of Contents
    7.  IANA Considerations
    8.  Normative References
    Acknowledgments
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -327,7 +328,7 @@ Acknowledgments
 
    TODO acknowledge.
 
-Author's Address
+Authors' Addresses
 
    Kazuho Oku
    Fastly
@@ -337,3 +338,8 @@ Author's Address
 
       奥 一穂
       Fastly
+
+
+   Stefano Duo
+   Google
+   Email: stefanoduo@google.com

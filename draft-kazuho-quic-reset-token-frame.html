@@ -6,6 +6,7 @@
 <meta content="initial-scale=1.0" name="viewport">
 <title>QUIC Extension for Advertising Stateless Reset Tokens</title>
 <meta content="奥 一穂 (Kazuho Oku)" name="author">
+<meta content="Stefano Duo" name="author">
 <meta content="
        QUIC endpoints that identify connections solely by the 5-tuple can use
 zero-length connection IDs, but QUIC version 1 offers such endpoints no way to
@@ -1049,8 +1050,8 @@ svg {
 <td class="right">August 2026</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Oku</td>
-<td class="center">Expires 4 February 2027</td>
+<td class="left">Oku &amp; Duo</td>
+<td class="center">Expires 10 February 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1063,18 +1064,22 @@ svg {
 <dd class="internet-draft">draft-kazuho-quic-reset-token-frame-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-08-03" class="published">3 August 2026</time>
+<time datetime="2026-08-09" class="published">9 August 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-02-04">4 February 2027</time></dd>
-<dt class="label-authors">Author:</dt>
+<dd class="expires"><time datetime="2027-02-10">10 February 2027</time></dd>
+<dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">
 <span class="non-ascii">奥 一穂</span> (<span class="ascii">K. Oku</span>)</div>
 <div class="org">Fastly</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Duo</div>
+<div class="org">Google</div>
 </div>
 </dd>
 </dl>
@@ -1119,7 +1124,7 @@ peer, extending stateless reset to those endpoints.<a href="#section-abstract-1"
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 February 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 10 February 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1181,7 +1186,7 @@ peer, extending stateless reset to those endpoints.<a href="#section-abstract-1"
             <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1449,8 +1454,8 @@ application's own packets were already carrying to the peer.<a href="#section-5.
 </div>
 <div id="authors-addresses">
 <section id="appendix-B">
-      <h2 id="name-authors-address">
-<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
         <div class="ascii">
@@ -1465,6 +1470,14 @@ application's own packets were already carrying to the peer.<a href="#section-5.
 <div class="non-ascii">
 <div dir="auto" class="left"><span class="fn nameRole">奥 一穂</span></div>
 <div dir="auto" class="left"><span class="org">Fastly</span></div>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Stefano Duo</span></div>
+<div dir="auto" class="left"><span class="org">Google</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:stefanoduo@google.com" class="email">stefanoduo@google.com</a>
 </div>
 </address>
 </section>
