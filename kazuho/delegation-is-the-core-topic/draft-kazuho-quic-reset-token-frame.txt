@@ -4,8 +4,8 @@
 
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           6 August 2026
-Expires: 7 February 2027
+Intended status: Standards Track                           9 August 2026
+Expires: 10 February 2027
 
 
                     Delegating QUIC Stateless Resets
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 February 2027.
+   This Internet-Draft will expire on 10 February 2027.
 
 Copyright Notice
 
@@ -257,13 +257,13 @@ Table of Contents
 
 5.  Sending a Stateless Reset Proactively
 
-   An endpoint or its delegate MAY send a single Stateless Reset
-   proactively, without waiting to receive a datagram from the peer.
-   Section 10.3 of [RFC9000] describes a Stateless Reset only as a
-   response to a received packet because an endpoint that has lost its
-   state learns of the connection's existence only from one; an endpoint
-   or delegate that retains the token knows which connections it may
-   need to reset before any packet arrives.
+   A delegate MAY send a single Stateless Reset proactively, without
+   waiting to receive a datagram from the peer.  Section 10.3 of
+   [RFC9000] describes a Stateless Reset only as a response to a
+   received packet because an endpoint that has lost its state learns of
+   the connection's existence only from one; an endpoint or delegate
+   that retains the token knows which connections it may need to reset
+   before any packet arrives.
 
 6.  Advertising a Token with Zero-Length Connection IDs
 
