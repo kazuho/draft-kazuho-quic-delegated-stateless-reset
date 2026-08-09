@@ -1,7 +1,7 @@
 ---
 title: "Delegating QUIC Stateless Resets"
 category: std
-docname: draft-kazuho-quic-reset-token-frame-latest
+docname: draft-kazuho-quic-delegated-stateless-reset-latest
 wg: quic
 ipr: trust200902
 keyword: internet-draft
