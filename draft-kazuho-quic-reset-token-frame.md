@@ -14,6 +14,10 @@ author:
       ascii: Kazuho Oku
     org: Fastly
     email: kazuhooku@gmail.com
+ -
+    fullname: Stefano Duo
+    org: Google
+    email: stefanoduo@google.com
 
 normative:
 
