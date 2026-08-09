@@ -1327,10 +1327,10 @@ either as the token associated with one of its own
 Connection IDs or, if it uses zero-length Connection IDs, in a
 RESET_TOKEN frame (<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>).<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 <p id="section-3.1-5">Once the application is no longer able to process packets for the connection,
-the operating system responds to a datagram matching that registration by
-sending the retained datagram, but does so only if the retained datagram is
-smaller than the one that triggered it, as required by
-<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+the operating system sends the retained datagram once (<a href="#proactive" class="auto internal xref">Section 5</a>), and
+thereafter responds to datagrams matching that registration by sending it again,
+but does so only if the retained datagram is smaller than the one that triggered
+it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
 <p id="section-3.1-6">Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
 making progress.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
@@ -1344,9 +1344,6 @@ packets that the application sends after the registration, and send the
 Stateless Reset only if those packets carried that Connection ID. The
 Stateless Reset then carries no Connection ID other than the one that the
 application's own packets were already carrying to the peer.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
-<p id="section-3.1-8">The operating system can also send the retained datagram as soon as the
-application becomes unable to process packets, without waiting for the peer to
-send anything (<a href="#proactive" class="auto internal xref">Section 5</a>).<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
