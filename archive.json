@@ -1,7 +1,7 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-09T00:56:18.510907+00:00",
-  "repo": "kazuho/draft-kazuho-quic-reset-token-frame",
+  "timestamp": "2026-08-11T00:57:48.364574+00:00",
+  "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
       "name": "bug",
@@ -54,7 +54,7 @@
       "number": 1,
       "id": "I_kwDOTgCtSc8AAAABJ3BiTg",
       "title": "Allowing OS to send stateless reset proactively",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/1",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/1",
       "state": "CLOSED",
       "author": "lcolitti",
       "authorAssociation": "NONE",
@@ -67,14 +67,14 @@
       "comments": [
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "I have a WIP pull request in my fork (I believe we would want to add a \"MAY send a stateless packet proactively\" to section 5 \"Sending a Stateless Reset\" before deferring to RFC9000>?).\n\nI plan to clean that up tomorrow and then send it for review.",
           "createdAt": "2026-07-30T15:21:50Z",
           "updatedAt": "2026-07-31T14:35:53Z"
         },
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "See #5.",
           "createdAt": "2026-07-31T14:20:56Z",
           "updatedAt": "2026-07-31T14:20:56Z"
@@ -85,7 +85,7 @@
       "number": 2,
       "id": "I_kwDOTgCtSc8AAAABJ3IjgA",
       "title": "Allow OS to verify the connection ID",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/2",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/2",
       "state": "CLOSED",
       "author": "lcolitti",
       "authorAssociation": "NONE",
@@ -109,10 +109,10 @@
       "number": 3,
       "id": "I_kwDOTgCtSc8AAAABJ4DbBQ",
       "title": "Who should issue the RESET_TOKEN?",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/3",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/3",
       "state": "CLOSED",
       "author": "stefanoduo-google",
-      "authorAssociation": "NONE",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "> Only an endpoint that uses a zero-length Connection ID may send a RESET_TOKEN frame; the mechanism substitutes for the tokens that a Connection ID-issuing endpoint would otherwise derive from the Connection IDs it issues. An endpoint that uses a non-zero-length Connection ID MUST NOT send a RESET_TOKEN frame.\n\nIIUC, this means that a peer, who's not issuing Connection ID is expected to be the party issuing RESET_TOKEN frame. This makes sense to maintain symmetry with how things work for a peer who's issuing Connection IDs. Let's call this peer \"client\" and the other one the \"server\".\n\nAt the same time, the client already has to also remember the connection ID, otherwise the packet might not make it to the server (due to load balancers, etc). With that in mind, I wonder if there is value in having the server issue the RESET_TOKEN? This allows the server to maintain less/no state to later validate the stateless reset packet.\n\nThis would also simplify the interface between the QUIC stack and the OS/system. The QUIC stack would simply give both the Connection ID and the RESET_TOKEN to the system (possibly alongside the 5 tuple).\n\nP.S. A possible downside of having the server issue RESET_TOKEN is that more of the packet will constructed by the QUIC stack rather than the system.",
@@ -122,7 +122,7 @@
       "comments": [
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "We chatted offline and agreed that it's best for the peer that is not issuing connection IDs to be the one issuing the RESET_TOKEN. This will allow the other peer to handle it in the same way they handle stateless resets from peer issuing connection IDs. It also allows the system to be the one generating the token and not the QUIC stack.",
           "createdAt": "2026-07-24T09:24:09Z",
           "updatedAt": "2026-07-24T09:24:09Z"
@@ -133,10 +133,10 @@
       "number": 7,
       "id": "I_kwDOTgCtSc8AAAABL28ssQ",
       "title": "Consider providing a diagram for the os-offload section",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/issues/7",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/7",
       "state": "OPEN",
       "author": "stefanoduo-google",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "A diagram would help readers understand more easily how the QUIC stack and the operating system collaborate when a stateless reset is being delegated.",
@@ -151,7 +151,7 @@
       "number": 4,
       "id": "PR_kwDOTgCtSc74Xn9h",
       "title": "OS checks if the registered CID is actually in use",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/4",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/4",
       "state": "MERGED",
       "author": "kazuho",
       "authorAssociation": "OWNER",
@@ -160,10 +160,10 @@
       "body": "Prevent CID being used as a loophole (#2). Also suggests the OS to generate the 1st byte so that the least significant 6 bits cannot be used too.\r\n\r\nCloses #2.",
       "createdAt": "2026-07-30T06:27:04Z",
       "updatedAt": "2026-08-03T01:58:32Z",
-      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "9e6027dc81ecc5a3a454c4eda019433235e4d1d3",
-      "headRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "headRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "kazuho/issues/2",
       "headRefOid": "e52f507b25c84d72e883db7500e24c910b90891e",
       "closedAt": "2026-08-03T01:58:31Z",
@@ -180,7 +180,7 @@
             "abbreviatedOid": "e52f507"
           },
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-07-31T14:34:49Z",
@@ -193,16 +193,16 @@
       "number": 5,
       "id": "PR_kwDOTgCtSc75DXSn",
       "title": "Allow sending a Stateless Reset proactively",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/5",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/5",
       "state": "MERGED",
       "author": "stefanoduo-google",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Allows sending the stateless reset proactively.\r\n\r\nAlso suggest the OS to keep the generated stateless reset around for a while, to respond to future datagrams for the registered 5-tuple. This covers scenarios in which the proactive stateless reset has not been correctly delivered.\r\n\r\nCloses #1 ",
       "createdAt": "2026-07-31T14:19:13Z",
       "updatedAt": "2026-08-03T19:30:57Z",
-      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "243cb33e11faa974d199d63c8885793d59a61117",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
@@ -217,7 +217,7 @@
       "comments": [
         {
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "Thank you for the comments.\r\n\r\nI've updated the pull request and fixed the conflicts.",
           "createdAt": "2026-08-03T12:45:10Z",
           "updatedAt": "2026-08-03T12:45:10Z"
@@ -263,7 +263,7 @@
             "abbreviatedOid": "f5dad31"
           },
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2026-08-03T12:44:03Z",
@@ -283,7 +283,7 @@
             "abbreviatedOid": "f5dad31"
           },
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2026-08-03T12:44:08Z",
@@ -303,25 +303,27 @@
       "number": 6,
       "id": "PR_kwDOTgCtSc77awiu",
       "title": "Delegation becomes the core topic",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/6",
-      "state": "OPEN",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/6",
+      "state": "MERGED",
       "author": "kazuho",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "The document started as a description of a mechanism missing from RFC 9000: issuing Stateless Reset Tokens when Connection IDs are not used. But we have since been adding text about how stateless resets can be delegated to a component that outlives the QUIC stack, and that applies regardless of Connection ID length -- an endpoint that issues Connection IDs delegates one of the tokens it has already issued, with no new protocol at all.\r\n\r\nIt therefore seems better to change the topic of the I-D: delegation becomes the subject, and the transport parameter and frame become one section serving the case that cannot otherwise issue a token.\r\n\r\n| before | after |\r\n| --- | --- |\r\n| 3. The reset_token Transport Parameter | 3. Delegating a Stateless Reset |\r\n| 4. The RESET_TOKEN Frame | 3.1. \u2026to the Operating System |\r\n| 5. Sending a Stateless Reset | 4. Constructing a Routable Stateless Reset |\r\n| 5.1. Delegating \u2026to the Operating System | 5. Sending a Stateless Reset Proactively |\r\n| | 6. Advertising a Token with Zero-Length Connection IDs |\r\n| | 6.1. The reset_token Transport Parameter |\r\n| | 6.2. The RESET_TOKEN Frame |\r\n\r\nAll the changes are editorial in nature, with one exception: the operating system registration in Section 3.1 relied solely on the 5-tuple to match datagrams to a connection, which only works where the application uses zero-length Connection IDs. It now registers the socket together with any Connection IDs the application itself has issued, so the arrangement works for a Connection ID-issuing application as well.\r\n\r\nThe document title becomes \"Delegating QUIC Stateless Resets\". Renaming the file and the repository to match are TODOs, kept out of this PR because file renames are not tracked well in GitHub review.",
       "createdAt": "2026-08-06T05:13:20Z",
-      "updatedAt": "2026-08-07T13:58:20Z",
-      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "updatedAt": "2026-08-09T02:04:04Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "1af90c3f22d8b03b1fddcc783781f63e3776306a",
-      "headRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "headRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "kazuho/delegation-is-the-core-topic",
-      "headRefOid": "251b944feb7c75859ad1e7baca13178bd5f9fd70",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "175085f0a8baa0200dd857900b272ecca8c4fbf3",
+      "closedAt": "2026-08-09T02:04:04Z",
+      "mergedAt": "2026-08-09T02:04:04Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "680362696f454b7781b9cdeae2db187959dfdd78"
+      },
       "comments": [],
       "reviews": [
         {
@@ -330,7 +332,7 @@
             "abbreviatedOid": "251b944"
           },
           "author": "stefanoduo-google",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "+1 to making delegation the core topic of the draft.\n\nI've left a few comments, I'm happy to file issues and tackle in follow-ups if you prefer working that way.",
           "createdAt": "2026-08-06T13:24:05Z",
@@ -373,6 +375,46 @@
               "updatedAt": "2026-08-07T13:58:19Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABI3ttsA",
+          "commit": {
+            "abbreviatedOid": "a08ffeb"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-09T01:24:39Z",
+          "updatedAt": "2026-08-09T01:24:39Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "Thanks, this is better.",
+              "createdAt": "2026-08-09T01:24:39Z",
+              "updatedAt": "2026-08-09T01:24:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABI3ws7A",
+          "commit": {
+            "abbreviatedOid": "251b944"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-09T02:01:39Z",
+          "updatedAt": "2026-08-09T02:01:40Z",
+          "comments": [
+            {
+              "originalPosition": 187,
+              "body": "Thank you, that was actually in the last paragraph of section but it would make sense to write them in the order of events; PTAL ffa2b75.",
+              "createdAt": "2026-08-09T02:01:39Z",
+              "updatedAt": "2026-08-09T02:01:40Z"
+            }
+          ]
         }
       ]
     },
@@ -380,26 +422,36 @@
       "number": 8,
       "id": "PR_kwDOTgCtSc78E3hD",
       "title": "Add Stefano Duo as co-author",
-      "url": "https://github.com/kazuho/draft-kazuho-quic-reset-token-frame/pull/8",
-      "state": "OPEN",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/8",
+      "state": "MERGED",
       "author": "stefanoduo-google",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-08-07T14:16:53Z",
-      "updatedAt": "2026-08-07T14:16:54Z",
-      "baseRepository": "kazuho/draft-kazuho-quic-reset-token-frame",
+      "updatedAt": "2026-08-09T01:17:47Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "1af90c3f22d8b03b1fddcc783781f63e3776306a",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "add_stefanoduo_coauthor",
       "headRefOid": "31c674005617cf2b001fff96afefbbf7592c9e28",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2026-08-09T01:16:56Z",
+      "mergedAt": "2026-08-09T01:16:56Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "353d88eeecf15985c711718cb1a83031d1e96ae5"
+      },
+      "comments": [
+        {
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "body": "Thank you!",
+          "createdAt": "2026-08-09T01:17:47Z",
+          "updatedAt": "2026-08-09T01:17:47Z"
+        }
+      ],
       "reviews": []
     }
   ]
