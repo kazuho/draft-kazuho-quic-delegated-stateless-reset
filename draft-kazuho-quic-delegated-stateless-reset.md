@@ -183,16 +183,46 @@ making progress.
 ~~~
 {: #fig-os-offload title="Delegating a Stateless Reset to the Operating System"}
 
-In this division of labor, it is possible to deny an application the use of the
-Stateless Reset as a means of conveying information of its own. The Stateless
-Reset Token and the other bytes that the operating system generates are outside
-the application's control, and the peer's Connection ID, which the application
-supplies, is also the value that it places in the Destination Connection ID
-field of the packets it sends. An operating system can therefore monitor the
-packets that the application sends after the registration, and send the
-Stateless Reset only if those packets carried that Connection ID. The
-Stateless Reset then carries no Connection ID other than the one that the
-application's own packets were already carrying to the peer.
+In this division of labor ({{fig-division-of-labor}}), it is possible to deny
+an application the use of the Stateless Reset as a means of conveying
+information of its own. The Stateless Reset Token and the other bytes that the
+operating system generates are outside the application's control, and the
+peer's Connection ID, which the application supplies, is also the value that
+it places in the Destination Connection ID field of the packets it sends. An
+operating system can therefore monitor the packets that the application sends
+after the registration, and send the Stateless Reset only if those packets
+carried that Connection ID. The Stateless Reset then carries no Connection ID
+other than the one that the application's own packets were already carrying to
+the peer.
+
+~~~ aasvg
++-------------------------------------------------------------------+
+|                                                                   |
+|   Stateless Reset Packet Layout           Source / Origin         |
+|                                                                   |
+|   +---+---+-----------------------+                               |
+|   | 0 | 1 | Unpredictable (6 bits)| <---- OS (First Byte):        |
+|   +---+---+-----------------------+         0: Short Header Form  |
+|   |                               |         1: Fixed Bit          |
+|   | Destination Connection ID     |         6 random bits         |
+|   | (variable length)             |                               |
+|   |                               | <---- Application             |
+|   |                               |       (Peer's active CID)     |
+|   +-------------------------------+                               |
+|   |                               |                               |
+|   | Unpredictable Payload         | <---- OS (Random bytes)       |
+|   | (4 bytes)                     |                               |
+|   |                               |                               |
+|   +-------------------------------+                               |
+|   |                               |                               |
+|   | Stateless Reset Token         | <---- OS (Random token)       |
+|   | (16 bytes)                    |                               |
+|   |                               |                               |
+|   +-------------------------------+                               |
+|                                                                   |
++-------------------------------------------------------------------+
+~~~
+{: #fig-division-of-labor title="Division of labor between application and operating system"}
 
 
 # Constructing a Routable Stateless Reset {#constructing}
