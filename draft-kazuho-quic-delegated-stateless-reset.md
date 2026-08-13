@@ -129,9 +129,9 @@ operating system can divide the work as follows.
 The operating system exposes an interface through which an application
 registers, for one of its connections, a Connection ID that the peer has issued
 and currently accepts, together with what identifies that connection in the
-datagrams the peer sends -- the socket, and any Connection IDs the application
-itself has issued. From that registration it forms a datagram containing, in
-order:
+datagrams the peer sends -- the socket, and the Connection ID that the
+application is issuing, if any. From that registration it forms a datagram
+containing, in order:
 
 * a first byte of its own making, in which the two most significant bits are 01
   and the remainder is unpredictable;
@@ -145,8 +145,8 @@ order:
 The datagram is the smallest that can be mistaken for a 1-RTT packet carrying the
 peer's Connection ID. The operating system retains it against that registration
 and returns the token to the application, which then makes it known to its peer,
-either as the token associated with one of its own
-Connection IDs or, if it uses zero-length Connection IDs, in a
+either as the token associated with the issued Connection ID (e.g., in a
+NEW_CONNECTION_ID frame) or, if it uses zero-length Connection IDs, in a
 RESET_TOKEN frame ({{reset-token-frame}}).
 
 Once the application is no longer able to process packets for the connection,
