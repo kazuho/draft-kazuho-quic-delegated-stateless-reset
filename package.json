@@ -1,0 +1,6 @@
+{
+  "name": "draft-kazuho-quic-delegated-stateless-reset",
+  "dependencies": {
+    "aasvg": "0.4.3"
+  }
+}
