@@ -124,7 +124,7 @@ construction and sending of a Stateless Reset apply unchanged.
 
 In some environments, the operating system sends a Stateless Reset on behalf of
 an application that has exited or has been terminated. The application and the
-operating system can divide the work as follows.
+operating system can divide the work as follows ({{fig-os-offload}}).
 
 The operating system exposes an interface through which an application
 registers, for one of its connections, a Connection ID that the peer has issued
@@ -147,6 +147,41 @@ it, as required by {{Section 10.3.3 of RFC9000}}.
 Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
 making progress.
+
+~~~ aasvg
++-----------------------------------------------------------------+
+|                                                                 |
+|   Application                 OS                      Peer      |
+|        |                      |                         |       |
+|        |------ Register ----->|                         |       |
+|        |     (Peer CID,       |                         |       |
+|        |      Socket, etc.)   |                         |       |
+|        |                      | (Generates Token        |       |
+|        |                      |  & Reset Packet)        |       |
+|        |<--- Reset Token -----|                         |       |
+|        |                      |                         |       |
+|        |--------------- Advertise Token --------------->|       |
+|        |       (RESET_TOKEN or NEW_CONNECTION_ID)       |       |
+|        |                      |                         |       |
+|   [App Exits]                 |---- Proactive Reset --->|       |
+|                               |   (Usually sufficient)  |       |
+|                               |                         |       |
+|                       +--------------------------------------+  |
+|                       |  Optional (if more packets arrive):  |  |
+|                       |       |                         |    |  |
+|                       |       |<-- Incoming Datagram ---|    |  |
+|                       |       |                         |    |  |
+|                       |       |---- Stateless Reset --->|    |  |
+|                       |       |   (If smaller than Rx)  |    |  |
+|                       |       |                         |    |  |
+|                       +--------------------------------------+  |
+|                               |                         |       |
+|                               | (Discards Reset         |       |
+|                               |  & Registration)        |       |
+|                                                                 |
++-----------------------------------------------------------------+
+~~~
+{: #fig-os-offload title="Delegating a Stateless Reset to the Operating System"}
 
 In this division of labor, it is possible to deny an application the use of the
 Stateless Reset as a means of conveying information of its own. The Stateless
