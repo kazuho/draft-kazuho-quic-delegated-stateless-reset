@@ -164,11 +164,7 @@ application's own packets were already carrying to the peer.
 
 When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a
 Connection ID issued by the peer in the position in which a 1-RTT packet carries
-the Destination Connection ID field. To maintain indistinguishability from a
-valid 1-RTT packet, the endpoint or delegate MUST include at least one
-unpredictable byte following the Destination Connection ID, such that the combined
-length of the Destination Connection ID and the unpredictable bytes preceding the
-token is at least 4 bytes.
+the Destination Connection ID field.
 
 {{Section 10.3 of RFC9000}} calls for unpredictable bits, rather than the
 Destination Connection ID, because an endpoint that has lost its state cannot
@@ -178,14 +174,22 @@ the peer, as in load-balanced deployments. Because a delegate retains state, it 
 send a Stateless Reset that reaches the peer and is less distinguishable from a valid
 packet.
 
-Requiring the combined length of the Destination Connection ID and unpredictable
-bytes to be at least 4 bytes ensures that the packet satisfies the 21-byte
-minimum size requirement of {{Section 10.3 of RFC9000}} when zero-length
-Connection IDs are used. Requiring at least one unpredictable byte after the
-Destination Connection ID ensures that space corresponding to a Packet Number is
-present; otherwise, an on-path observer aware of the peer's Connection ID length
-could recognize the Stateless Reset by the fact that only 16 bytes follow the
-Connection ID, allowing the observer to extract the Stateless Reset Token.
+To maintain indistinguishability from a valid 1-RTT packet, the endpoint or
+delegate MUST include at least 4 unpredictable bytes following the Destination
+Connection ID. Doing so satisfies both the 21-byte minimum size requirement of
+{{Section 10.3 of RFC9000}}, when zero-length Connection IDs are used, and provides
+the 4-byte offset required by {{Section 5.4.2 of !RFC9001}}.
+
+~~~
+Stateless Reset {
+  Fixed Bits (2) = 1,
+  Unpredictable Bits (6),
+  Destination Connection ID (0..160),
+  Unpredictable Bits (32..),
+  Stateless Reset Token (128),
+}
+~~~
+{: #fig-reset-format title="Routable Stateless Reset Format"}
 
 # Sending a Stateless Reset Proactively {#proactive}
 
