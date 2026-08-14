@@ -5,8 +5,8 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 10 February 2027                                         Google
-                                                           9 August 2026
+Expires: 15 February 2027                                         Google
+                                                          14 August 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 February 2027.
+   This Internet-Draft will expire on 15 February 2027.
 
 Copyright Notice
 
@@ -188,8 +188,9 @@ Table of Contents
    application registers, for one of its connections, a Connection ID
    that the peer has issued and currently accepts, together with what
    identifies that connection in the datagrams the peer sends -- the
-   socket, and any Connection IDs the application itself has issued.
-   From that registration it forms a datagram containing, in order:
+   socket, and the Connection ID that the application is issuing, if
+   any.  From that registration it forms a datagram containing, in
+   order:
 
    *  a first byte of its own making, in which the two most significant
       bits are 01 and the remainder is unpredictable;
@@ -205,8 +206,9 @@ Table of Contents
    carrying the peer's Connection ID.  The operating system retains it
    against that registration and returns the token to the application,
    which then makes it known to its peer, either as the token associated
-   with one of its own Connection IDs or, if it uses zero-length
-   Connection IDs, in a RESET_TOKEN frame (Section 6.2).
+   with the issued Connection ID (e.g., in a NEW_CONNECTION_ID frame)
+   or, if it uses zero-length Connection IDs, in a RESET_TOKEN frame
+   (Section 6.2).
 
    Once the application is no longer able to process packets for the
    connection, the operating system sends the retained datagram once
