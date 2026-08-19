@@ -5,8 +5,8 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 15 February 2027                                         Google
-                                                          14 August 2026
+Expires: 20 February 2027                                         Google
+                                                          19 August 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 February 2027.
+   This Internet-Draft will expire on 20 February 2027.
 
 Copyright Notice
 
@@ -189,26 +189,14 @@ Table of Contents
    that the peer has issued and currently accepts, together with what
    identifies that connection in the datagrams the peer sends -- the
    socket, and the Connection ID that the application is issuing, if
-   any.  From that registration it forms a datagram containing, in
-   order:
+   any.
 
-   *  a first byte of its own making, in which the two most significant
-      bits are 01 and the remainder is unpredictable;
-
-   *  the peer's Connection ID, in the position in which a 1-RTT packet
-      carries the Destination Connection ID field (Section 4); and
-
-   *  20 bytes that it generates at random, of which the leading 4
-      separate the token from the header and the trailing 16 are the
-      Stateless Reset Token.
-
-   The datagram is the smallest that can be mistaken for a 1-RTT packet
-   carrying the peer's Connection ID.  The operating system retains it
-   against that registration and returns the token to the application,
-   which then makes it known to its peer, either as the token associated
-   with the issued Connection ID (e.g., in a NEW_CONNECTION_ID frame)
-   or, if it uses zero-length Connection IDs, in a RESET_TOKEN frame
-   (Section 6.2).
+   From that registration, the operating system generates a Stateless
+   Reset Token, forms and retains a Stateless Reset datagram
+   (Section 4), and returns the token to the application.  The
+   application makes the token known to its peer, either as the token
+   associated with the issued Connection ID or, if it uses zero-length
+   Connection IDs, in a RESET_TOKEN frame (Section 6.2).
 
    Once the application is no longer able to process packets for the
    connection, the operating system sends the retained datagram once
@@ -237,15 +225,33 @@ Table of Contents
 
    When constructing a Stateless Reset, the endpoint or its delegate
    SHOULD place a Connection ID issued by the peer in the position in
-   which a 1-RTT packet carries the Destination Connection ID field,
-   rather than unpredictable bits.  Section 10.3 of [RFC9000] calls for
-   unpredictable bits in that position because an endpoint that has lost
-   its state cannot recover a Connection ID that its peer accepts, and
-   it observes that the resulting packet "could be incorrectly routed"
-   where the Connection ID is critical for routing toward the peer, as
-   it is in load-balanced deployments.  An endpoint or delegate that has
-   retained such a Connection ID sends a Stateless Reset that reaches
-   the peer and is less distinguishable from a valid packet.
+   which a 1-RTT packet carries the Destination Connection ID field.
+
+   Section 10.3 of [RFC9000] calls for unpredictable bits, rather than
+   the Destination Connection ID, because an endpoint that has lost its
+   state cannot recover a Connection ID that its peer accepts, observing
+   that the resulting packet "could be incorrectly routed" where the
+   Connection ID is critical for routing toward the peer, as in load-
+   balanced deployments.  Because a delegate retains state, it can send
+   a Stateless Reset that reaches the peer and is less distinguishable
+   from a valid packet.
+
+   To maintain indistinguishability from a valid 1-RTT packet, the
+   endpoint or delegate MUST include at least 4 unpredictable bytes
+   following the Destination Connection ID.  Doing so satisfies both the
+   21-byte minimum size requirement of Section 10.3 of [RFC9000], when
+   zero-length Connection IDs are used, and provides the 4-byte offset
+   required by Section 5.4.2 of [RFC9001].
+
+   Stateless Reset {
+     Fixed Bits (2) = 1,
+     Unpredictable Bits (6),
+     Destination Connection ID (0..160),
+     Unpredictable Bits (32..),
+     Stateless Reset Token (128),
+   }
+
+                 Figure 1: Routable Stateless Reset Format
 
 5.  Sending a Stateless Reset Proactively
 
@@ -291,7 +297,7 @@ Table of Contents
      Stateless Reset Token (128),
    }
 
-                     Figure 1: RESET_TOKEN Frame Format
+                     Figure 2: RESET_TOKEN Frame Format
 
    The frame contains the following field:
 
@@ -355,6 +361,10 @@ Table of Contents
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC9001]  Thomson, M., Ed. and S. Turner, Ed., "Using TLS to Secure
+              QUIC", RFC 9001, DOI 10.17487/RFC9001, May 2021,
+              <https://www.rfc-editor.org/rfc/rfc9001>.
 
 Acknowledgments
 
