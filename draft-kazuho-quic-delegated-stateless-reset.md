@@ -130,24 +130,13 @@ The operating system exposes an interface through which an application
 registers, for one of its connections, a Connection ID that the peer has issued
 and currently accepts, together with what identifies that connection in the
 datagrams the peer sends -- the socket, and the Connection ID that the
-application is issuing, if any. From that registration it forms a datagram
-containing, in order:
+application is issuing, if any.
 
-* a first byte of its own making, in which the two most significant bits are 01
-  and the remainder is unpredictable;
-
-* the peer's Connection ID, in the position in which a 1-RTT packet carries the
-  Destination Connection ID field ({{constructing}}); and
-
-* 20 bytes that it generates at random, of which the leading 4 separate the
-  token from the header and the trailing 16 are the Stateless Reset Token.
-
-The datagram is the smallest that can be mistaken for a 1-RTT packet carrying the
-peer's Connection ID. The operating system retains it against that registration
-and returns the token to the application, which then makes it known to its peer,
-either as the token associated with the issued Connection ID (e.g., in a
-NEW_CONNECTION_ID frame) or, if it uses zero-length Connection IDs, in a
-RESET_TOKEN frame ({{reset-token-frame}}).
+From that registration, the operating system generates a Stateless Reset Token,
+forms and retains a Stateless Reset datagram ({{constructing}}), and returns the
+token to the application. The application makes the token known to its peer,
+either as the token associated with the issued Connection ID or, if it uses
+zero-length Connection IDs, in a RESET_TOKEN frame ({{reset-token-frame}}).
 
 Once the application is no longer able to process packets for the connection,
 the operating system sends the retained datagram once ({{proactive}}), and
@@ -175,15 +164,32 @@ application's own packets were already carrying to the peer.
 
 When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a
 Connection ID issued by the peer in the position in which a 1-RTT packet carries
-the Destination Connection ID field, rather than unpredictable bits.
-{{Section 10.3 of RFC9000}} calls for unpredictable bits in that position
-because an endpoint that has lost its state cannot recover a Connection ID that
-its peer accepts, and it observes that the resulting packet "could be
-incorrectly routed" where the Connection ID is critical for routing toward the
-peer, as it is in load-balanced deployments. An endpoint or delegate that has
-retained such a Connection ID sends a Stateless Reset that reaches the peer and
-is less distinguishable from a valid packet.
+the Destination Connection ID field.
 
+{{Section 10.3 of RFC9000}} calls for unpredictable bits, rather than the
+Destination Connection ID, because an endpoint that has lost its state cannot
+recover a Connection ID that its peer accepts, observing that the resulting packet
+"could be incorrectly routed" where the Connection ID is critical for routing toward
+the peer, as in load-balanced deployments. Because a delegate retains state, it can
+send a Stateless Reset that reaches the peer and is less distinguishable from a valid
+packet.
+
+To maintain indistinguishability from a valid 1-RTT packet, the endpoint or
+delegate MUST include at least 4 unpredictable bytes following the Destination
+Connection ID. Doing so satisfies both the 21-byte minimum size requirement of
+{{Section 10.3 of RFC9000}}, when zero-length Connection IDs are used, and provides
+the 4-byte offset required by {{Section 5.4.2 of !RFC9001}}.
+
+~~~
+Stateless Reset {
+  Fixed Bits (2) = 1,
+  Unpredictable Bits (6),
+  Destination Connection ID (0..160),
+  Unpredictable Bits (32..),
+  Stateless Reset Token (128),
+}
+~~~
+{: #fig-reset-format title="Routable Stateless Reset Format"}
 
 # Sending a Stateless Reset Proactively {#proactive}
 
