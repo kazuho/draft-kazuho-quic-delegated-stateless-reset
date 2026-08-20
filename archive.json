@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-16T00:41:21.742071+00:00",
+  "timestamp": "2026-08-20T00:39:28.082561+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -150,15 +150,15 @@
       "id": "I_kwDOTgCtSc8AAAABMnaL4w",
       "title": "Clarify unpredictable bits for a delegated stateless reset token",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/9",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Section 3.1 states:\n> * the peer's Connection ID, in the position in which a 1-RTT packet carries the Destination Connection ID field (Section 4); and\n> * 20 bytes that it generates at random, of which the leading 4 separate the token from the header and the trailing 16 are the Stateless Reset Token.\n\nSection 4 states:\n> When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a Connection ID issued by the peer in the position in which a 1-RTT packet carries the Destination Connection ID field, rather than unpredictable bits.\n\nTo keep delegated stateless resets undistinguishable from regular packets, Section 4 should still require at least 1 unpredictable byte (section 3.1 asks for 4) between the destination connection ID and the stateless reset token.\n\nOtherwise, an on-path observer, that knows the peer's Connection ID length, could recognize the Stateless Reset by the fact that exactly 16 bytes follow the Connection ID, and extract the token.",
       "createdAt": "2026-08-13T12:51:18Z",
-      "updatedAt": "2026-08-13T12:51:18Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-19T23:00:11Z",
+      "closedAt": "2026-08-19T23:00:11Z",
       "comments": []
     },
     {
@@ -498,7 +498,7 @@
       "labels": [],
       "body": "Provides diagrams for this section could help a reader understand the division of work more easily. Closes #7.\r\n\r\nDrafting this diagrams also helped me find some issues with the current text. I've opened issues #9 and #10 to track these (I'll follow-up with some text for these).",
       "createdAt": "2026-08-13T13:16:51Z",
-      "updatedAt": "2026-08-14T15:27:12Z",
+      "updatedAt": "2026-08-19T23:07:05Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "dcebfaa2d30ee58bbb5a31ecb04cde015a6e84c3",
@@ -554,6 +554,26 @@
               "body": "Would we have a way to describe who (application vs OS) provides what when using the QUIC notational  convention? My main goal for this diagram was to visualize that.\r\n\r\n#13 moves the text for packet construction to section 4 and adds a version that uses the convention there. With this in mind, how would you feel about keeping this here and having both? (I'm debating myself whether to just drop this and wondering if you have a strong opinion?)",
               "createdAt": "2026-08-14T15:27:11Z",
               "updatedAt": "2026-08-14T15:27:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABKK8sbg",
+          "commit": {
+            "abbreviatedOid": "7dd4f63"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-19T23:07:05Z",
+          "updatedAt": "2026-08-19T23:07:05Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "> Would we have a way to describe who (application vs OS) provides what when using the QUIC notational convention? My main goal for this diagram was to visualize that.\n\nI see, missed that goal, which makes perfect sense.\n\nIf I were writing I think I would have used a list, e.g.:\n```\n  * Unpredictable Payload: OS provided; random bytes.\n```\n\nThat said, I'm happy to see this merged as-is.",
+              "createdAt": "2026-08-19T23:07:05Z",
+              "updatedAt": "2026-08-19T23:07:05Z"
             }
           ]
         }
@@ -613,24 +633,26 @@
       "id": "PR_kwDOTgCtSc7-pohI",
       "title": "Clarify and consolidate stateless reset construction text in section 4",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/13",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This started as an attempt to clarify the unpredictable bytes between the destination connection ID and the stateless reset token. While doing that, I found myself duplicating too much text between section 3.1 and 4, making me wonder whether we should move all packet construction text to section 4, leaving section 3.1 to describe only the OS interface and registration lifecycle. Let me know your thoughts!\r\n\r\nThis closes #9.",
       "createdAt": "2026-08-13T15:04:49Z",
-      "updatedAt": "2026-08-14T15:14:39Z",
+      "updatedAt": "2026-08-19T23:00:40Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "b2852c15a2988635606bec919c2369f17ce4628e",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "aug_13_26-unpredictable_bits_for_delegated_stateless_reset",
       "headRefOid": "8e4ee1e80e818b3fb19016ce6b817839f6c98031",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-08-19T23:00:10Z",
+      "mergedAt": "2026-08-19T23:00:10Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "a91e17a859131a06a79e1a3f075be4eb243114ed"
+      },
       "comments": [
         {
           "author": "stefanoduo-google",
@@ -638,6 +660,13 @@
           "body": "P.S. Following [this comment](https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/11#discussion_r3780446951) of yours in #11, I've added the shape of a routable stateless reset (using the notational convention used by QUIC documents) here.\r\n\r\nLet's keep discussing in #11 whether we should keep the diagram that shows what is filled by the application vs the os during os-delegation.",
           "createdAt": "2026-08-14T15:14:39Z",
           "updatedAt": "2026-08-14T15:14:39Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "body": "Thank you for the changes. Looks good, let's get this in.",
+          "createdAt": "2026-08-19T23:00:40Z",
+          "updatedAt": "2026-08-19T23:00:40Z"
         }
       ],
       "reviews": [
