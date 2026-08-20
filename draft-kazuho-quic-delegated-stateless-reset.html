@@ -1051,7 +1051,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Oku &amp; Duo</td>
-<td class="center">Expires 20 February 2027</td>
+<td class="center">Expires 21 February 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1064,12 +1064,12 @@ svg {
 <dd class="internet-draft">draft-kazuho-quic-delegated-stateless-reset-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-08-19" class="published">19 August 2026</time>
+<time datetime="2026-08-20" class="published">20 August 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-02-20">20 February 2027</time></dd>
+<dd class="expires"><time datetime="2027-02-21">21 February 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1124,7 +1124,7 @@ a frame that allow those endpoints to advertise a Stateless Reset Token.<a href=
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 February 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 21 February 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1295,7 +1295,7 @@ construction and sending of a Stateless Reset apply unchanged.<a href="#section-
         </h3>
 <p id="section-3.1-1">In some environments, the operating system sends a Stateless Reset on behalf of
 an application that has exited or has been terminated. The application and the
-operating system can divide the work as follows.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+operating system can divide the work as follows (<a href="#fig-os-offload" class="auto internal xref">Figure 1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">The operating system exposes an interface through which an application
 registers, for one of its connections, a Connection ID that the peer has issued
 and currently accepts, together with what identifies that connection in the
@@ -1314,16 +1314,192 @@ it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.
 <p id="section-3.1-5">Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
 making progress.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">In this division of labor, it is possible to deny an application the use of the
-Stateless Reset as a means of conveying information of its own. The Stateless
-Reset Token and the other bytes that the operating system generates are outside
-the application's control, and the peer's Connection ID, which the application
-supplies, is also the value that it places in the Destination Connection ID
-field of the packets it sends. An operating system can therefore monitor the
-packets that the application sends after the registration, and send the
-Stateless Reset only if those packets carried that Connection ID. The
-Stateless Reset then carries no Connection ID other than the one that the
-application's own packets were already carrying to the peer.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<span id="name-delegating-a-stateless-reset-"></span><div id="fig-os-offload">
+<figure id="figure-1">
+          <div id="section-3.1-6.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-6.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="528" width="544" viewBox="0 0 544 528" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,512" fill="none" stroke="black"></path>
+                <path d="M 80,80 L 80,240" fill="none" stroke="black"></path>
+                <path d="M 200,304 L 200,432" fill="none" stroke="black"></path>
+                <path d="M 264,80 L 264,192" fill="none" stroke="black"></path>
+                <path d="M 264,240 L 264,296" fill="none" stroke="black"></path>
+                <path d="M 264,336 L 264,424" fill="none" stroke="black"></path>
+                <path d="M 264,440 L 264,480" fill="none" stroke="black"></path>
+                <path d="M 472,80 L 472,296" fill="none" stroke="black"></path>
+                <path d="M 472,336 L 472,424" fill="none" stroke="black"></path>
+                <path d="M 472,440 L 472,480" fill="none" stroke="black"></path>
+                <path d="M 512,304 L 512,432" fill="none" stroke="black"></path>
+                <path d="M 536,32 L 536,512" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 536,32" fill="none" stroke="black"></path>
+                <path d="M 88,96 L 128,96" fill="none" stroke="black"></path>
+                <path d="M 216,96 L 256,96" fill="none" stroke="black"></path>
+                <path d="M 88,176 L 112,176" fill="none" stroke="black"></path>
+                <path d="M 224,176 L 256,176" fill="none" stroke="black"></path>
+                <path d="M 88,208 L 200,208" fill="none" stroke="black"></path>
+                <path d="M 344,208 L 464,208" fill="none" stroke="black"></path>
+                <path d="M 272,256 L 296,256" fill="none" stroke="black"></path>
+                <path d="M 440,256 L 464,256" fill="none" stroke="black"></path>
+                <path d="M 200,304 L 512,304" fill="none" stroke="black"></path>
+                <path d="M 272,352 L 288,352" fill="none" stroke="black"></path>
+                <path d="M 448,352 L 464,352" fill="none" stroke="black"></path>
+                <path d="M 272,384 L 296,384" fill="none" stroke="black"></path>
+                <path d="M 440,384 L 464,384" fill="none" stroke="black"></path>
+                <path d="M 200,432 L 512,432" fill="none" stroke="black"></path>
+                <path d="M 8,512 L 536,512" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="472,384 460,378.4 460,389.6" fill="black" transform="rotate(0,464,384)"></polygon>
+                <polygon class="arrowhead" points="472,256 460,250.4 460,261.6" fill="black" transform="rotate(0,464,256)"></polygon>
+                <polygon class="arrowhead" points="472,208 460,202.4 460,213.6" fill="black" transform="rotate(0,464,208)"></polygon>
+                <polygon class="arrowhead" points="280,352 268,346.4 268,357.6" fill="black" transform="rotate(180,272,352)"></polygon>
+                <polygon class="arrowhead" points="264,96 252,90.4 252,101.6" fill="black" transform="rotate(0,256,96)"></polygon>
+                <polygon class="arrowhead" points="96,176 84,170.4 84,181.6" fill="black" transform="rotate(180,88,176)"></polygon>
+                <g class="text">
+                  <text x="80" y="68">Application</text>
+                  <text x="268" y="68">OS</text>
+                  <text x="468" y="68">Peer</text>
+                  <text x="172" y="100">Register</text>
+                  <text x="144" y="116">(Peer</text>
+                  <text x="188" y="116">CID,</text>
+                  <text x="160" y="132">Socket,</text>
+                  <text x="216" y="132">etc.)</text>
+                  <text x="316" y="148">(Generates</text>
+                  <text x="384" y="148">Token</text>
+                  <text x="288" y="164">&amp;</text>
+                  <text x="320" y="164">Reset</text>
+                  <text x="376" y="164">Packet)</text>
+                  <text x="144" y="180">Reset</text>
+                  <text x="192" y="180">Token</text>
+                  <text x="248" y="212">Advertise</text>
+                  <text x="312" y="212">Token</text>
+                  <text x="188" y="228">(RESET_TOKEN</text>
+                  <text x="252" y="228">or</text>
+                  <text x="340" y="228">NEW_CONNECTION_ID)</text>
+                  <text x="52" y="260">[App</text>
+                  <text x="100" y="260">Exits]</text>
+                  <text x="344" y="260">Proactive</text>
+                  <text x="408" y="260">Reset</text>
+                  <text x="324" y="276">(Usually</text>
+                  <text x="408" y="276">sufficient)</text>
+                  <text x="252" y="324">Optional</text>
+                  <text x="304" y="324">(if</text>
+                  <text x="340" y="324">more</text>
+                  <text x="392" y="324">packets</text>
+                  <text x="460" y="324">arrive):</text>
+                  <text x="332" y="356">Incoming</text>
+                  <text x="404" y="356">Datagram</text>
+                  <text x="344" y="388">Stateless</text>
+                  <text x="408" y="388">Reset</text>
+                  <text x="304" y="404">(If</text>
+                  <text x="352" y="404">smaller</text>
+                  <text x="404" y="404">than</text>
+                  <text x="440" y="404">Rx)</text>
+                  <text x="312" y="468">(Discards</text>
+                  <text x="376" y="468">Reset</text>
+                  <text x="288" y="484">&amp;</text>
+                  <text x="352" y="484">Registration)</text>
+                </g>
+              </svg><a href="#section-3.1-6.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-delegating-a-stateless-reset-" class="selfRef">Delegating a Stateless Reset to the Operating System</a>
+          </figcaption></figure>
+</div>
+<p id="section-3.1-7">In this division of labor (<a href="#fig-division-of-labor" class="auto internal xref">Figure 2</a>), it is possible to deny
+an application the use of the Stateless Reset as a means of conveying
+information of its own. The Stateless Reset Token and the other bytes that the
+operating system generates are outside the application's control, and the
+peer's Connection ID, which the application supplies, is also the value that
+it places in the Destination Connection ID field of the packets it sends. An
+operating system can therefore monitor the packets that the application sends
+after the registration, and send the Stateless Reset only if those packets
+carried that Connection ID. The Stateless Reset then carries no Connection ID
+other than the one that the application's own packets were already carrying to
+the peer.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<span id="name-division-of-labor-between-a"></span><div id="fig-division-of-labor">
+<figure id="figure-2">
+          <div id="section-3.1-8.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-8.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="432" width="560" viewBox="0 0 560 432" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,416" fill="none" stroke="black"></path>
+                <path d="M 40,96 L 40,384" fill="none" stroke="black"></path>
+                <path d="M 72,96 L 72,128" fill="none" stroke="black"></path>
+                <path d="M 104,96 L 104,128" fill="none" stroke="black"></path>
+                <path d="M 296,96 L 296,384" fill="none" stroke="black"></path>
+                <path d="M 552,32 L 552,416" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 552,32" fill="none" stroke="black"></path>
+                <path d="M 40,96 L 296,96" fill="none" stroke="black"></path>
+                <path d="M 312,112 L 344,112" fill="none" stroke="black"></path>
+                <path d="M 40,128 L 296,128" fill="none" stroke="black"></path>
+                <path d="M 312,192 L 344,192" fill="none" stroke="black"></path>
+                <path d="M 40,224 L 296,224" fill="none" stroke="black"></path>
+                <path d="M 312,256 L 344,256" fill="none" stroke="black"></path>
+                <path d="M 40,304 L 296,304" fill="none" stroke="black"></path>
+                <path d="M 312,336 L 344,336" fill="none" stroke="black"></path>
+                <path d="M 40,384 L 296,384" fill="none" stroke="black"></path>
+                <path d="M 8,416 L 552,416" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="320,336 308,330.4 308,341.6" fill="black" transform="rotate(180,312,336)"></polygon>
+                <polygon class="arrowhead" points="320,256 308,250.4 308,261.6" fill="black" transform="rotate(180,312,256)"></polygon>
+                <polygon class="arrowhead" points="320,192 308,186.4 308,197.6" fill="black" transform="rotate(180,312,192)"></polygon>
+                <polygon class="arrowhead" points="320,112 308,106.4 308,117.6" fill="black" transform="rotate(180,312,112)"></polygon>
+                <g class="text">
+                  <text x="72" y="68">Stateless</text>
+                  <text x="136" y="68">Reset</text>
+                  <text x="188" y="68">Packet</text>
+                  <text x="244" y="68">Layout</text>
+                  <text x="380" y="68">Source</text>
+                  <text x="416" y="68">/</text>
+                  <text x="452" y="68">Origin</text>
+                  <text x="56" y="116">0</text>
+                  <text x="88" y="116">1</text>
+                  <text x="168" y="116">Unpredictable</text>
+                  <text x="236" y="116">(6</text>
+                  <text x="272" y="116">bits)</text>
+                  <text x="364" y="116">OS</text>
+                  <text x="404" y="116">(First</text>
+                  <text x="460" y="116">Byte):</text>
+                  <text x="380" y="132">0:</text>
+                  <text x="416" y="132">Short</text>
+                  <text x="468" y="132">Header</text>
+                  <text x="516" y="132">Form</text>
+                  <text x="380" y="148">1:</text>
+                  <text x="416" y="148">Fixed</text>
+                  <text x="456" y="148">Bit</text>
+                  <text x="96" y="164">Destination</text>
+                  <text x="188" y="164">Connection</text>
+                  <text x="244" y="164">ID</text>
+                  <text x="376" y="164">6</text>
+                  <text x="412" y="164">random</text>
+                  <text x="460" y="164">bits</text>
+                  <text x="88" y="180">(variable</text>
+                  <text x="160" y="180">length)</text>
+                  <text x="400" y="196">Application</text>
+                  <text x="384" y="212">(Peer's</text>
+                  <text x="444" y="212">active</text>
+                  <text x="492" y="212">CID)</text>
+                  <text x="104" y="260">Unpredictable</text>
+                  <text x="192" y="260">Payload</text>
+                  <text x="364" y="260">OS</text>
+                  <text x="408" y="260">(Random</text>
+                  <text x="468" y="260">bytes)</text>
+                  <text x="60" y="276">(4</text>
+                  <text x="100" y="276">bytes)</text>
+                  <text x="88" y="340">Stateless</text>
+                  <text x="152" y="340">Reset</text>
+                  <text x="200" y="340">Token</text>
+                  <text x="364" y="340">OS</text>
+                  <text x="408" y="340">(Random</text>
+                  <text x="468" y="340">token)</text>
+                  <text x="64" y="356">(16</text>
+                  <text x="108" y="356">bytes)</text>
+                </g>
+              </svg><a href="#section-3.1-8.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-division-of-labor-between-a" class="selfRef">Division of labor between application and operating system</a>
+          </figcaption></figure>
+</div>
 </section>
 </div>
 </section>
@@ -1349,7 +1525,7 @@ Connection ID. Doing so satisfies both the 21-byte minimum size requirement of
 <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>, when zero-length Connection IDs are used, and provides
 the 4-byte offset required by <span><a href="https://rfc-editor.org/rfc/rfc9001#section-5.4.2" class="relref">Section 5.4.2</a> of [<a href="#RFC9001" class="cite xref">RFC9001</a>]</span>.<a href="#section-4-3" class="pilcrow">¶</a></p>
 <span id="name-routable-stateless-reset-fo"></span><div id="fig-reset-format">
-<figure id="figure-1">
+<figure id="figure-3">
         <div class="alignLeft art-text artwork" id="section-4-4.1">
 <pre>
 Stateless Reset {
@@ -1361,7 +1537,7 @@ Stateless Reset {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
 <a href="#name-routable-stateless-reset-fo" class="selfRef">Routable Stateless Reset Format</a>
         </figcaption></figure>
 </div>
@@ -1414,7 +1590,7 @@ will itself send RESET_TOKEN frames.<a href="#section-6.1-3" class="pilcrow">¶<
 <p id="section-6.2-1">The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token that the
 sender associates with the connection rather than with any Connection ID.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <span id="name-reset_token-frame-format"></span><div id="reset-token-format">
-<figure id="figure-2">
+<figure id="figure-4">
           <div class="alignLeft art-text artwork" id="section-6.2-2.1">
 <pre>
 RESET_TOKEN Frame {
@@ -1423,7 +1599,7 @@ RESET_TOKEN Frame {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
 <a href="#name-reset_token-frame-format" class="selfRef">RESET_TOKEN Frame Format</a>
           </figcaption></figure>
 </div>
