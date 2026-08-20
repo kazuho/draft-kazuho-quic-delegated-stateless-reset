@@ -124,7 +124,7 @@ construction and sending of a Stateless Reset apply unchanged.
 
 In some environments, the operating system sends a Stateless Reset on behalf of
 an application that has exited or has been terminated. The application and the
-operating system can divide the work as follows.
+operating system can divide the work as follows ({{fig-os-offload}}).
 
 The operating system exposes an interface through which an application
 registers, for one of its connections, a Connection ID that the peer has issued
@@ -148,16 +148,81 @@ Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
 making progress.
 
-In this division of labor, it is possible to deny an application the use of the
-Stateless Reset as a means of conveying information of its own. The Stateless
-Reset Token and the other bytes that the operating system generates are outside
-the application's control, and the peer's Connection ID, which the application
-supplies, is also the value that it places in the Destination Connection ID
-field of the packets it sends. An operating system can therefore monitor the
-packets that the application sends after the registration, and send the
-Stateless Reset only if those packets carried that Connection ID. The
-Stateless Reset then carries no Connection ID other than the one that the
-application's own packets were already carrying to the peer.
+~~~ aasvg
++-----------------------------------------------------------------+
+|                                                                 |
+|   Application                 OS                      Peer      |
+|        |                      |                         |       |
+|        |------ Register ----->|                         |       |
+|        |     (Peer CID,       |                         |       |
+|        |      Socket, etc.)   |                         |       |
+|        |                      | (Generates Token        |       |
+|        |                      |  & Reset Packet)        |       |
+|        |<--- Reset Token -----|                         |       |
+|        |                      |                         |       |
+|        |--------------- Advertise Token --------------->|       |
+|        |       (RESET_TOKEN or NEW_CONNECTION_ID)       |       |
+|        |                      |                         |       |
+|   [App Exits]                 |---- Proactive Reset --->|       |
+|                               |   (Usually sufficient)  |       |
+|                               |                         |       |
+|                       +--------------------------------------+  |
+|                       |  Optional (if more packets arrive):  |  |
+|                       |       |                         |    |  |
+|                       |       |<-- Incoming Datagram ---|    |  |
+|                       |       |                         |    |  |
+|                       |       |---- Stateless Reset --->|    |  |
+|                       |       |   (If smaller than Rx)  |    |  |
+|                       |       |                         |    |  |
+|                       +--------------------------------------+  |
+|                               |                         |       |
+|                               | (Discards Reset         |       |
+|                               |  & Registration)        |       |
+|                                                                 |
++-----------------------------------------------------------------+
+~~~
+{: #fig-os-offload title="Delegating a Stateless Reset to the Operating System"}
+
+In this division of labor ({{fig-division-of-labor}}), it is possible to deny
+an application the use of the Stateless Reset as a means of conveying
+information of its own. The Stateless Reset Token and the other bytes that the
+operating system generates are outside the application's control, and the
+peer's Connection ID, which the application supplies, is also the value that
+it places in the Destination Connection ID field of the packets it sends. An
+operating system can therefore monitor the packets that the application sends
+after the registration, and send the Stateless Reset only if those packets
+carried that Connection ID. The Stateless Reset then carries no Connection ID
+other than the one that the application's own packets were already carrying to
+the peer.
+
+~~~ aasvg
++-------------------------------------------------------------------+
+|                                                                   |
+|   Stateless Reset Packet Layout           Source / Origin         |
+|                                                                   |
+|   +---+---+-----------------------+                               |
+|   | 0 | 1 | Unpredictable (6 bits)| <---- OS (First Byte):        |
+|   +---+---+-----------------------+         0: Short Header Form  |
+|   |                               |         1: Fixed Bit          |
+|   | Destination Connection ID     |         6 random bits         |
+|   | (variable length)             |                               |
+|   |                               | <---- Application             |
+|   |                               |       (Peer's active CID)     |
+|   +-------------------------------+                               |
+|   |                               |                               |
+|   | Unpredictable Payload         | <---- OS (Random bytes)       |
+|   | (4 bytes)                     |                               |
+|   |                               |                               |
+|   +-------------------------------+                               |
+|   |                               |                               |
+|   | Stateless Reset Token         | <---- OS (Random token)       |
+|   | (16 bytes)                    |                               |
+|   |                               |                               |
+|   +-------------------------------+                               |
+|                                                                   |
++-------------------------------------------------------------------+
+~~~
+{: #fig-division-of-labor title="Division of labor between application and operating system"}
 
 
 # Constructing a Routable Stateless Reset {#constructing}
