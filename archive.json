@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-20T00:39:28.082561+00:00",
+  "timestamp": "2026-08-23T00:42:02.140021+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -134,15 +134,15 @@
       "id": "I_kwDOTgCtSc8AAAABL28ssQ",
       "title": "Consider providing a diagram for the os-offload section",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/7",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "A diagram would help readers understand more easily how the QUIC stack and the operating system collaborate when a stateless reset is being delegated.",
       "createdAt": "2026-08-07T13:50:25Z",
-      "updatedAt": "2026-08-07T13:50:25Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-20T08:27:49Z",
+      "closedAt": "2026-08-20T08:27:49Z",
       "comments": []
     },
     {
@@ -491,24 +491,26 @@
       "id": "PR_kwDOTgCtSc7-meUO",
       "title": "Diagrams to capture the division of work between the application/QUIC stack and the operating system",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/11",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Provides diagrams for this section could help a reader understand the division of work more easily. Closes #7.\r\n\r\nDrafting this diagrams also helped me find some issues with the current text. I've opened issues #9 and #10 to track these (I'll follow-up with some text for these).",
       "createdAt": "2026-08-13T13:16:51Z",
-      "updatedAt": "2026-08-19T23:07:05Z",
+      "updatedAt": "2026-08-20T08:27:48Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
-      "baseRefOid": "dcebfaa2d30ee58bbb5a31ecb04cde015a6e84c3",
+      "baseRefOid": "a91e17a859131a06a79e1a3f075be4eb243114ed",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "aug_13_26-os_section_diagrams",
-      "headRefOid": "7dd4f6340bf0af6ab629bb63ede962bbb69c5f0f",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "13cc55c55021ef669f24e38a3e5b7b6ca7b06365",
+      "closedAt": "2026-08-20T08:27:48Z",
+      "mergedAt": "2026-08-20T08:27:48Z",
+      "mergedBy": "stefanoduo-google",
+      "mergeCommit": {
+        "oid": "ad817377085452cae9a1be693ff5b5a1a7373202"
+      },
       "comments": [],
       "reviews": [
         {
@@ -574,6 +576,26 @@
               "body": "> Would we have a way to describe who (application vs OS) provides what when using the QUIC notational convention? My main goal for this diagram was to visualize that.\n\nI see, missed that goal, which makes perfect sense.\n\nIf I were writing I think I would have used a list, e.g.:\n```\n  * Unpredictable Payload: OS provided; random bytes.\n```\n\nThat said, I'm happy to see this merged as-is.",
               "createdAt": "2026-08-19T23:07:05Z",
               "updatedAt": "2026-08-19T23:07:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABKN32yA",
+          "commit": {
+            "abbreviatedOid": "7dd4f63"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-20T08:27:26Z",
+          "updatedAt": "2026-08-20T08:27:26Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "As discussed offline, let's go ahead as-is and fix forward if we end up preferring the non-diagram format.",
+              "createdAt": "2026-08-20T08:27:26Z",
+              "updatedAt": "2026-08-20T08:27:26Z"
             }
           ]
         }
