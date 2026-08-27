@@ -76,13 +76,12 @@ Table of Contents
      3.1.  Delegating a Stateless Reset to the Operating System
    4.  Constructing a Routable Stateless Reset
    5.  Sending a Stateless Reset Proactively
-   6.  Sending a Stateless Reset in Response to a Datagram
-   7.  Advertising a Token with Zero-Length Connection IDs
-     7.1.  The reset_token Transport Parameter
-     7.2.  The RESET_TOKEN Frame
-   8.  Security Considerations
-   9.  IANA Considerations
-   10. Normative References
+   6.  Advertising a Token with Zero-Length Connection IDs
+     6.1.  The reset_token Transport Parameter
+     6.2.  The RESET_TOKEN Frame
+   7.  Security Considerations
+   8.  IANA Considerations
+   9.  Normative References
    Acknowledgments
    Authors' Addresses
 
@@ -151,14 +150,15 @@ Table of Contents
    Connection ID in the stateless_reset_token transport parameter,
    including when that Connection ID is zero length.  A client cannot
    use that transport parameter because client transport parameters are
-   not confidential.
+   not confidential.  A server therefore does not need the extension in
+   Section 6 when it uses a zero-length Connection ID.
 
-   Zero-length Connection IDs are common.  A client that identifies
-   connections solely by the 5-tuple has no need to issue Connection IDs
-   and can reduce per-packet overhead by using zero-length Connection
-   IDs.  To allow such clients to issue Stateless Reset Tokens and
-   delegate them, this document defines a transport parameter and a
-   frame (Section 7).
+   Zero-length Connection IDs are common for clients.  A client that
+   identifies connections solely by the 5-tuple has no need to issue
+   Connection IDs and can reduce per-packet overhead by using zero-
+   length Connection IDs.  To allow such clients to issue Stateless
+   Reset Tokens and delegate them, this document defines a transport
+   parameter and a frame (Section 6).
 
 2.  Conventions and Definitions
 
@@ -167,14 +167,6 @@ Table of Contents
    "OPTIONAL" in this document are to be interpreted as described in
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
-
-   In this document, a *delegate* is a component that sends a Stateless
-   Reset on behalf of a QUIC endpoint.  The delegate can outlive the
-   endpoint's connection state.  It does not need packet-protection keys
-   or packet-number state.
-
-   An endpoint *uses a zero-length Connection ID* when it requires its
-   peer to send packets with a zero-length Destination Connection ID.
 
 3.  Delegating a Stateless Reset
 
@@ -189,59 +181,36 @@ Table of Contents
    peer issued (Section 4).  It needs no packet-protection keys and no
    packet number.
 
+   Both clients and servers can delegate a Stateless Reset in this way.
+
    Any endpoint that has issued a Stateless Reset Token can delegate it,
    whatever the length of the Connection IDs it issues.  An endpoint
    that issues Connection IDs delegates one of the tokens it has already
    distributed, in the stateless_reset_token transport parameter or in a
    NEW_CONNECTION_ID frame.  A client that uses a zero-length Connection
-   ID cannot issue a token under QUIC version 1; Section 7 defines how
+   ID cannot issue a token under QUIC version 1; Section 6 defines how
    it does so.
 
-   The endpoint or the delegate can generate the token.  In either case,
-   the endpoint makes the token known to the peer.  The delegate also
-   retains the source and destination addresses for a path on which the
-   endpoint recently received packets.
-
-   When the token is bound to a Connection ID, its registration MUST use
-   that Connection ID to match incoming datagrams.  A separate
-   registration can be used for each delegated Connection ID.
-
-   An endpoint can delegate a token that it advertised in the
-   stateless_reset_token transport parameter or a NEW_CONNECTION_ID
-   frame.  For a token from a NEW_CONNECTION_ID frame, the endpoint MUST
-   NOT authorize the delegate until it receives a packet that uses the
-   associated Connection ID.  The token stops being usable when that
-   Connection ID is retired.  These rules follow Section 10.3.1 of
-   [RFC9000], which excludes tokens for unused or retired Connection
-   IDs.
+   For each connection, the delegate maintains at most one token
+   registration at a time.  A token from a NEW_CONNECTION_ID frame can
+   be registered only after the peer uses the associated Connection ID
+   and only until that Connection ID is retired.
 
    A client that uses a zero-length Connection ID can advertise a token
-   for the whole connection using the extension in Section 7.  The
+   for the whole connection using the extension in Section 6.  The
    client MUST NOT authorize the delegate to use that token before a
    packet containing the RESET_TOKEN frame is acknowledged.
 
-   While it can process the connection, the endpoint MUST stop the
-   delegate from using a registration when its token or routing
-   information is no longer valid.  It updates the registration when the
-   selected Connection ID or network path changes.  Before it loses
-   connection state, the endpoint MUST designate at most one
-   registration for proactive use.  That registration uses a token the
-   peer can recognize and the most recent routing information available
-   to the endpoint.
-
-   After the endpoint loses connection state, the delegate uses the most
-   recent registration on a best-effort basis.  The information can
-   become stale, so a reset can be lost or rejected.  The lifetime of
-   retained registrations is an implementation decision.
+   The endpoint updates the registration when the selected token,
+   Connection ID, or network path changes.  A reset sent before the
+   delegate receives an update might be lost or rejected.
 
    This document does not define an interface between an endpoint and a
-   delegate.  The interface needs to support the lifecycle described
-   above.
+   delegate.
 
-   The Destination Connection ID construction in Section 4 and the
-   proactive trigger in Section 5 are the only changes to the sending
-   behavior in Section 10.3 of [RFC9000].  The other requirements of
-   that section and Section 10.3.3 of [RFC9000] continue to apply.
+   Except as described in Section 4 and Section 5, the requirements of
+   Section 10.3 of [RFC9000] and Section 10.3.3 of [RFC9000] governing
+   the construction and sending of a Stateless Reset apply unchanged.
 
 3.1.  Delegating a Stateless Reset to the Operating System
 
@@ -258,18 +227,12 @@ Table of Contents
    any.
 
    From that registration, the operating system generates a Stateless
-   Reset Token, forms and retains a Stateless Reset datagram for
-   proactive use (Section 4), and returns the token to the application.
-   The application makes the token known to its peer, either as the
-   token associated with the issued Connection ID or, if it is a client
-   that uses zero-length Connection IDs, in a RESET_TOKEN frame
-   (Section 7.2).
-
-   The application tells the operating system when the registration can
-   become active.  For a token in a NEW_CONNECTION_ID frame, this
-   happens after the peer uses the associated Connection ID.  For a
-   connection-level token, this happens after a packet containing the
-   RESET_TOKEN frame is acknowledged.
+   Reset Token, forms and retains a Stateless Reset datagram
+   (Section 4), and returns the token to the application.  The
+   application makes the token known to its peer, either as the token
+   associated with the issued Connection ID or, if it is a client that
+   uses zero-length Connection IDs, in a RESET_TOKEN frame
+   (Section 6.2).
 
    Once the application is no longer able to process packets for the
    connection, the operating system sends the retained datagram once
@@ -278,7 +241,7 @@ Table of Contents
    datagram is smaller than the one that triggered it, as required by
    Section 10.3.3 of [RFC9000].
 
-   Eventually, the operating system discards the Stateless eset and the
+   Eventually, the operating system discards the stateless reset and the
    registration, as the peer will nevertheless abandon the connection
    due to not making progress.
 
@@ -296,9 +259,6 @@ Table of Contents
    |        |--------------- Advertise Token --------------->|       |
    |        |       (RESET_TOKEN or NEW_CONNECTION_ID)       |       |
    |        |                      |                         |       |
-   |        |<---------- Token Confirmed or Used ------------|       |
-   |        |------ Activate ----->|                         |       |
-   |        |                      |                         |       |
    |   [App Exits]                 |---- Proactive Reset --->|       |
    |                               |   (Usually sufficient)  |       |
    |                               |                         |       |
@@ -307,8 +267,8 @@ Table of Contents
    |                       |       |                         |    |  |
    |                       |       |<-- Incoming Datagram ---|    |  |
    |                       |       |                         |    |  |
-   |                       |       |---- New Reset --------->|    |  |
-   |                       |       |  (Subject to Rx size)   |    |  |
+   |                       |       |---- Stateless Reset --->|    |  |
+   |                       |       |   (If smaller than Rx)  |    |  |
    |                       |       |                         |    |  |
    |                       +--------------------------------------+  |
    |                               |                         |       |
@@ -327,15 +287,10 @@ Table of Contents
    application supplies, is also the value that it places in the
    Destination Connection ID field of the packets it sends.  An
    operating system can therefore monitor the packets that the
-   application sends after the registration, and accept the registration
-   only if those packets carried that Connection ID.  The Stateless
-   Reset then carries no Connection ID other than the one that the
-   application's own packets were already carrying to the peer.
-
-   Another implementation can let the application generate the token and
-   give it to the operating system.  That design needs a handoff that
-   protects confidentiality and integrity.  It also gives the
-   application control over the bits carried in the token.
+   application sends after the registration, and send the Stateless
+   Reset only if those packets carried that Connection ID.  The
+   Stateless Reset then carries no Connection ID other than the one that
+   the application's own packets were already carrying to the peer.
 
    +-------------------------------------------------------------------+
    |                                                                   |
@@ -421,20 +376,7 @@ Table of Contents
    A delegate MUST NOT send a Stateless Reset while the endpoint can
    still process packets for the connection.
 
-6.  Sending a Stateless Reset in Response to a Datagram
-
-   After the endpoint loses or abandons its connection state, a delegate
-   MAY also respond to a datagram that matches a registration.  A
-   reactive reset MUST follow the size and loop-prevention rules in
-   Section 10.3 of [RFC9000] and Section 10.3.3 of [RFC9000].
-
-   A retained proactive reset might be too large for a particular
-   response.  In that case, the delegate constructs a new reset with the
-   same token and fresh unpredictable bits, or it sends nothing.  The
-   delegate MUST NOT send a reset that violates the response-size
-   limits.
-
-7.  Advertising a Token with Zero-Length Connection IDs
+6.  Advertising a Token with Zero-Length Connection IDs
 
    A client that uses zero-length Connection IDs cannot advertise a
    Stateless Reset Token by any means available in QUIC version 1.  This
@@ -442,9 +384,9 @@ Table of Contents
    can do so.  The token is bound to the connection and can be delegated
    as described in Section 3.
 
-7.1.  The reset_token Transport Parameter
+6.1.  The reset_token Transport Parameter
 
-   A server that is willing to accept RESET_TOKEN frames (Section 7.2)
+   A server that is willing to accept RESET_TOKEN frames (Section 6.2)
    from its client advertises the reset_token transport parameter (0x-
    TBD).
 
@@ -454,7 +396,7 @@ Table of Contents
    receipt of a non-zero value, MUST be treated as a connection error of
    type TRANSPORT_PARAMETER_ERROR.
 
-7.2.  The RESET_TOKEN Frame
+6.2.  The RESET_TOKEN Frame
 
    The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token
    that a client associates with the connection rather than with any
@@ -472,8 +414,7 @@ Table of Contents
    Stateless Reset Token:  A 128-bit value that the sender will use to
       construct a Stateless Reset (Section 10.3 of [RFC9000]) for this
       connection.  The token MUST be generated so that it is hard to
-      guess, as required by Section 10.3 of [RFC9000].  The client or
-      its delegate can generate the value.
+      guess, as required by Section 10.3 of [RFC9000].
 
    RESET_TOKEN frames are ack-eliciting; a sender that detects the loss
    of a RESET_TOKEN frame retransmits the token it carried.  A
@@ -515,7 +456,7 @@ Table of Contents
    of the same value more than once is idempotent.  The token MUST NOT
    be used for another connection or for a Connection ID.
 
-8.  Security Considerations
+7.  Security Considerations
 
    Knowledge of a Stateless Reset Token allows an entity to terminate
    the connection.  A token MUST be difficult to guess and MUST NOT be
@@ -528,10 +469,7 @@ Table of Contents
 
    The endpoint and delegate need to protect their coordination
    interface.  The token and routing information MUST have
-   confidentiality and integrity in transit and at rest.  The delegate
-   also needs to authenticate requests that create, update, activate, or
-   remove a registration.  A compromised delegate can terminate every
-   connection for which it holds a usable token.
+   confidentiality and integrity in transit and at rest.
 
    A RESET_TOKEN frame is protected by 1-RTT packet protection.  A
    Stateless Reset reveals its token to an on-path observer.  This does
@@ -544,16 +482,11 @@ Table of Contents
    allows the peer to apply the remote-address check in Section 10.3.1
    of [RFC9000].
 
-   A token or unpredictable field can provide a covert channel when an
-   application controls its value.  A delegate can prevent this by
-   generating those values.  The operating system design in Section 3.1
-   uses this approach.
-
-9.  IANA Considerations
+8.  IANA Considerations
 
    TBD
 
-10.  Normative References
+9.  Normative References
 
    [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
               Multiplexed and Secure Transport", RFC 9000,

@@ -1184,33 +1184,30 @@ a frame that allow those clients to advertise a Stateless Reset Token.<a href="#
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-sending-a-stateless-reset-p" class="internal xref">Sending a Stateless Reset Proactively</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-sending-a-stateless-reset-i" class="internal xref">Sending a Stateless Reset in Response to a Datagram</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-advertising-a-token-with-ze" class="internal xref">Advertising a Token with Zero-Length Connection IDs</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-advertising-a-token-with-ze" class="internal xref">Advertising a Token with Zero-Length Connection IDs</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-the-reset_token-transport-p" class="internal xref">The reset_token Transport Parameter</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-the-reset_token-transport-p" class="internal xref">The reset_token Transport Parameter</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-the-reset_token-frame" class="internal xref">The RESET_TOKEN Frame</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-the-reset_token-frame" class="internal xref">The RESET_TOKEN Frame</a></p>
 </li>
             </ul>
 </li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1269,12 +1266,13 @@ NEW_CONNECTION_ID frame (<span><a href="https://rfc-editor.org/rfc/rfc9000#secti
 token for its handshake Connection ID in the stateless_reset_token transport
 parameter, including when that Connection ID is zero length. A client cannot use
 that transport parameter because client transport parameters are not
-confidential.<a href="#section-1-9" class="pilcrow">¶</a></p>
-<p id="section-1-10">Zero-length Connection IDs are common. A client that identifies connections
+confidential. A server therefore does not need the extension in <a href="#advertising" class="auto internal xref">Section 6</a>
+when it uses a zero-length Connection ID.<a href="#section-1-9" class="pilcrow">¶</a></p>
+<p id="section-1-10">Zero-length Connection IDs are common for clients. A client that identifies connections
 solely by the 5-tuple has no need to issue Connection IDs and can reduce
 per-packet overhead by using zero-length Connection IDs. To allow such clients
 to issue Stateless Reset Tokens and delegate them, this document defines a
-transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 7</a>).<a href="#section-1-10" class="pilcrow">¶</a></p>
+transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-1-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1286,11 +1284,6 @@ transport parameter and a frame (<a href="#advertising" class="auto internal xre
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">In this document, a <strong>delegate</strong> is a component that sends a Stateless Reset on
-behalf of a QUIC endpoint. The delegate can outlive the endpoint's connection
-state. It does not need packet-protection keys or packet-number state.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">An endpoint <strong>uses a zero-length Connection ID</strong> when it requires its peer to
-send packets with a zero-length Destination Connection ID.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="delegation">
@@ -1306,46 +1299,28 @@ connection -- a Connection ID, or the 5-tuple when a client uses a zero-length
 Connection ID (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). To construct a reset that
 can be routed to the peer, it also needs a Connection ID that the peer issued
 (<a href="#constructing" class="auto internal xref">Section 4</a>). It needs no packet-protection keys and no packet number.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">Any endpoint that has issued a Stateless Reset Token can delegate it, whatever
+<p id="section-3-2">Both clients and servers can delegate a Stateless Reset in this way.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">Any endpoint that has issued a Stateless Reset Token can delegate it, whatever
 the length of the Connection IDs it issues. An endpoint that issues Connection
 IDs delegates one of the tokens it has already distributed, in the
 stateless_reset_token transport parameter or in a NEW_CONNECTION_ID frame. A
 client that uses a zero-length Connection ID cannot issue a token under QUIC
-version 1; <a href="#advertising" class="auto internal xref">Section 7</a> defines how it does so.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">The endpoint or the delegate can generate the token. In either case, the
-endpoint makes the token known to the peer. The delegate also retains the source
-and destination addresses for a path on which the endpoint recently received
-packets.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<p id="section-3-4">When the token is bound to a Connection ID, its registration <span class="bcp14">MUST</span> use that
-Connection ID to match incoming datagrams. A separate registration can be used
-for each delegated Connection ID.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">An endpoint can delegate a token that it advertised in the
-stateless_reset_token transport parameter or a NEW_CONNECTION_ID frame. For a
-token from a NEW_CONNECTION_ID frame, the endpoint <span class="bcp14">MUST NOT</span> authorize the
-delegate until it receives a packet that uses the associated Connection ID.
-The token stops being usable when that Connection ID is retired. These rules
-follow <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>, which excludes tokens for unused or retired
-Connection IDs.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">A client that uses a zero-length Connection ID can advertise a token for the
-whole connection using the extension in <a href="#advertising" class="auto internal xref">Section 7</a>. The client <span class="bcp14">MUST NOT</span>
+version 1; <a href="#advertising" class="auto internal xref">Section 6</a> defines how it does so.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">For each connection, the delegate maintains at most one token registration at
+a time. A token from a NEW_CONNECTION_ID frame can be registered only after the
+peer uses the associated Connection ID and only until that Connection ID is
+retired.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">A client that uses a zero-length Connection ID can advertise a token for the
+whole connection using the extension in <a href="#advertising" class="auto internal xref">Section 6</a>. The client <span class="bcp14">MUST NOT</span>
 authorize the delegate to use that token before a packet containing the
-RESET_TOKEN frame is acknowledged.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">While it can process the connection, the endpoint <span class="bcp14">MUST</span> stop the delegate from
-using a registration when its token or routing information is no longer valid.
-It updates the registration when the selected Connection ID or network path
-changes. Before it loses connection state, the endpoint <span class="bcp14">MUST</span> designate at most
-one registration for proactive use. That registration uses a token the peer can
-recognize and the most recent routing information available to the endpoint.<a href="#section-3-7" class="pilcrow">¶</a></p>
-<p id="section-3-8">After the endpoint loses connection state, the delegate uses the most recent
-registration on a best-effort basis. The information can become stale, so a
-reset can be lost or rejected. The lifetime of retained registrations is an
-implementation decision.<a href="#section-3-8" class="pilcrow">¶</a></p>
-<p id="section-3-9">This document does not define an interface between an endpoint and a delegate.
-The interface needs to support the lifecycle described above.<a href="#section-3-9" class="pilcrow">¶</a></p>
-<p id="section-3-10">The Destination Connection ID construction in <a href="#constructing" class="auto internal xref">Section 4</a> and the
-proactive trigger in <a href="#proactive" class="auto internal xref">Section 5</a> are the only changes to the sending behavior
-in <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>. The other requirements of that section and
-<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> continue to apply.<a href="#section-3-10" class="pilcrow">¶</a></p>
+RESET_TOKEN frame is acknowledged.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">The endpoint updates the registration when the selected token, Connection ID,
+or network path changes. A reset sent before the delegate receives an update
+might be lost or rejected.<a href="#section-3-6" class="pilcrow">¶</a></p>
+<p id="section-3-7">This document does not define an interface between an endpoint and a delegate.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">Except as described in <a href="#constructing" class="auto internal xref">Section 4</a> and <a href="#proactive" class="auto internal xref">Section 5</a>, the requirements of
+<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> and <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> governing the
+construction and sending of a Stateless Reset apply unchanged.<a href="#section-3-8" class="pilcrow">¶</a></p>
 <div id="os-offload">
 <section id="section-3.1">
         <h3 id="name-delegating-a-stateless-reset">
@@ -1360,40 +1335,36 @@ and currently accepts, together with what identifies that connection in the
 datagrams the peer sends -- the socket, and the Connection ID that the
 application is issuing, if any.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">From that registration, the operating system generates a Stateless Reset Token,
-forms and retains a Stateless Reset datagram for proactive use
-(<a href="#constructing" class="auto internal xref">Section 4</a>), and returns the token to the application. The application
-makes the token known to its peer, either as the token associated with the
-issued Connection ID or, if it is a client that uses zero-length Connection
-IDs, in a RESET_TOKEN frame (<a href="#reset-token-frame" class="auto internal xref">Section 7.2</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">The application tells the operating system when the registration can become
-active. For a token in a NEW_CONNECTION_ID frame, this happens after the peer
-uses the associated Connection ID. For a connection-level token, this happens
-after a packet containing the RESET_TOKEN frame is acknowledged.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Once the application is no longer able to process packets for the connection,
+forms and retains a Stateless Reset datagram (<a href="#constructing" class="auto internal xref">Section 4</a>), and returns the
+token to the application. The application makes the token known to its peer,
+either as the token associated with the issued Connection ID or, if it is a
+client that uses zero-length Connection IDs, in a RESET_TOKEN frame
+(<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">Once the application is no longer able to process packets for the connection,
 the operating system sends the retained datagram once (<a href="#proactive" class="auto internal xref">Section 5</a>), and
 thereafter responds to datagrams matching that registration by sending it again,
 but does so only if the retained datagram is smaller than the one that triggered
-it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">Eventually, the operating system discards the Stateless eset and the
+it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">Eventually, the operating system discards the stateless reset and the
 registration, as the peer will nevertheless abandon the connection due to not
-making progress.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+making progress.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
 <span id="name-delegating-a-stateless-reset-"></span><div id="fig-os-offload">
 <figure id="figure-1">
-          <div id="section-3.1-7.1">
-            <div class="alignLeft art-svg artwork" id="section-3.1-7.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="576" width="544" viewBox="0 0 544 576" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                <path d="M 8,32 L 8,560" fill="none" stroke="black"></path>
-                <path d="M 80,80 L 80,288" fill="none" stroke="black"></path>
-                <path d="M 200,352 L 200,480" fill="none" stroke="black"></path>
+          <div id="section-3.1-6.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-6.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="528" width="544" viewBox="0 0 544 528" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,512" fill="none" stroke="black"></path>
+                <path d="M 80,80 L 80,240" fill="none" stroke="black"></path>
+                <path d="M 200,304 L 200,432" fill="none" stroke="black"></path>
                 <path d="M 264,80 L 264,192" fill="none" stroke="black"></path>
-                <path d="M 264,272 L 264,344" fill="none" stroke="black"></path>
-                <path d="M 264,384 L 264,472" fill="none" stroke="black"></path>
-                <path d="M 264,488 L 264,528" fill="none" stroke="black"></path>
-                <path d="M 472,80 L 472,344" fill="none" stroke="black"></path>
-                <path d="M 472,384 L 472,472" fill="none" stroke="black"></path>
-                <path d="M 472,488 L 472,528" fill="none" stroke="black"></path>
-                <path d="M 512,352 L 512,480" fill="none" stroke="black"></path>
-                <path d="M 536,32 L 536,560" fill="none" stroke="black"></path>
+                <path d="M 264,240 L 264,296" fill="none" stroke="black"></path>
+                <path d="M 264,336 L 264,424" fill="none" stroke="black"></path>
+                <path d="M 264,440 L 264,480" fill="none" stroke="black"></path>
+                <path d="M 472,80 L 472,296" fill="none" stroke="black"></path>
+                <path d="M 472,336 L 472,424" fill="none" stroke="black"></path>
+                <path d="M 472,440 L 472,480" fill="none" stroke="black"></path>
+                <path d="M 512,304 L 512,432" fill="none" stroke="black"></path>
+                <path d="M 536,32 L 536,512" fill="none" stroke="black"></path>
                 <path d="M 8,32 L 536,32" fill="none" stroke="black"></path>
                 <path d="M 88,96 L 128,96" fill="none" stroke="black"></path>
                 <path d="M 216,96 L 256,96" fill="none" stroke="black"></path>
@@ -1401,26 +1372,20 @@ making progress.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
                 <path d="M 224,176 L 256,176" fill="none" stroke="black"></path>
                 <path d="M 88,208 L 200,208" fill="none" stroke="black"></path>
                 <path d="M 344,208 L 464,208" fill="none" stroke="black"></path>
-                <path d="M 88,256 L 168,256" fill="none" stroke="black"></path>
-                <path d="M 376,256 L 464,256" fill="none" stroke="black"></path>
-                <path d="M 88,272 L 128,272" fill="none" stroke="black"></path>
-                <path d="M 216,272 L 256,272" fill="none" stroke="black"></path>
-                <path d="M 272,304 L 296,304" fill="none" stroke="black"></path>
-                <path d="M 440,304 L 464,304" fill="none" stroke="black"></path>
-                <path d="M 200,352 L 512,352" fill="none" stroke="black"></path>
-                <path d="M 272,400 L 288,400" fill="none" stroke="black"></path>
-                <path d="M 448,400 L 464,400" fill="none" stroke="black"></path>
-                <path d="M 272,432 L 296,432" fill="none" stroke="black"></path>
-                <path d="M 392,432 L 464,432" fill="none" stroke="black"></path>
-                <path d="M 200,480 L 512,480" fill="none" stroke="black"></path>
-                <path d="M 8,560 L 536,560" fill="none" stroke="black"></path>
-                <polygon class="arrowhead" points="472,432 460,426.4 460,437.6" fill="black" transform="rotate(0,464,432)"></polygon>
-                <polygon class="arrowhead" points="472,304 460,298.4 460,309.6" fill="black" transform="rotate(0,464,304)"></polygon>
+                <path d="M 272,256 L 296,256" fill="none" stroke="black"></path>
+                <path d="M 440,256 L 464,256" fill="none" stroke="black"></path>
+                <path d="M 200,304 L 512,304" fill="none" stroke="black"></path>
+                <path d="M 272,352 L 288,352" fill="none" stroke="black"></path>
+                <path d="M 448,352 L 464,352" fill="none" stroke="black"></path>
+                <path d="M 272,384 L 296,384" fill="none" stroke="black"></path>
+                <path d="M 440,384 L 464,384" fill="none" stroke="black"></path>
+                <path d="M 200,432 L 512,432" fill="none" stroke="black"></path>
+                <path d="M 8,512 L 536,512" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="472,384 460,378.4 460,389.6" fill="black" transform="rotate(0,464,384)"></polygon>
+                <polygon class="arrowhead" points="472,256 460,250.4 460,261.6" fill="black" transform="rotate(0,464,256)"></polygon>
                 <polygon class="arrowhead" points="472,208 460,202.4 460,213.6" fill="black" transform="rotate(0,464,208)"></polygon>
-                <polygon class="arrowhead" points="280,400 268,394.4 268,405.6" fill="black" transform="rotate(180,272,400)"></polygon>
-                <polygon class="arrowhead" points="264,272 252,266.4 252,277.6" fill="black" transform="rotate(0,256,272)"></polygon>
+                <polygon class="arrowhead" points="280,352 268,346.4 268,357.6" fill="black" transform="rotate(180,272,352)"></polygon>
                 <polygon class="arrowhead" points="264,96 252,90.4 252,101.6" fill="black" transform="rotate(0,256,96)"></polygon>
-                <polygon class="arrowhead" points="96,256 84,250.4 84,261.6" fill="black" transform="rotate(180,88,256)"></polygon>
                 <polygon class="arrowhead" points="96,176 84,170.4 84,181.6" fill="black" transform="rotate(180,88,176)"></polygon>
                 <g class="text">
                   <text x="80" y="68">Application</text>
@@ -1443,62 +1408,52 @@ making progress.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
                   <text x="188" y="228">(RESET_TOKEN</text>
                   <text x="252" y="228">or</text>
                   <text x="340" y="228">NEW_CONNECTION_ID)</text>
-                  <text x="264" y="244">|</text>
-                  <text x="200" y="260">Token</text>
-                  <text x="264" y="260">Confirmed</text>
-                  <text x="316" y="260">or</text>
-                  <text x="348" y="260">Used</text>
-                  <text x="172" y="276">Activate</text>
-                  <text x="52" y="308">[App</text>
-                  <text x="100" y="308">Exits]</text>
-                  <text x="344" y="308">Proactive</text>
-                  <text x="408" y="308">Reset</text>
-                  <text x="324" y="324">(Usually</text>
-                  <text x="408" y="324">sufficient)</text>
-                  <text x="252" y="372">Optional</text>
-                  <text x="304" y="372">(if</text>
-                  <text x="340" y="372">more</text>
-                  <text x="392" y="372">packets</text>
-                  <text x="460" y="372">arrive):</text>
-                  <text x="332" y="404">Incoming</text>
-                  <text x="404" y="404">Datagram</text>
-                  <text x="320" y="436">New</text>
-                  <text x="360" y="436">Reset</text>
-                  <text x="316" y="452">(Subject</text>
-                  <text x="364" y="452">to</text>
-                  <text x="388" y="452">Rx</text>
-                  <text x="424" y="452">size)</text>
-                  <text x="312" y="516">(Discards</text>
-                  <text x="376" y="516">Reset</text>
-                  <text x="288" y="532">&amp;</text>
-                  <text x="352" y="532">Registration)</text>
+                  <text x="52" y="260">[App</text>
+                  <text x="100" y="260">Exits]</text>
+                  <text x="344" y="260">Proactive</text>
+                  <text x="408" y="260">Reset</text>
+                  <text x="324" y="276">(Usually</text>
+                  <text x="408" y="276">sufficient)</text>
+                  <text x="252" y="324">Optional</text>
+                  <text x="304" y="324">(if</text>
+                  <text x="340" y="324">more</text>
+                  <text x="392" y="324">packets</text>
+                  <text x="460" y="324">arrive):</text>
+                  <text x="332" y="356">Incoming</text>
+                  <text x="404" y="356">Datagram</text>
+                  <text x="344" y="388">Stateless</text>
+                  <text x="408" y="388">Reset</text>
+                  <text x="304" y="404">(If</text>
+                  <text x="352" y="404">smaller</text>
+                  <text x="404" y="404">than</text>
+                  <text x="440" y="404">Rx)</text>
+                  <text x="312" y="468">(Discards</text>
+                  <text x="376" y="468">Reset</text>
+                  <text x="288" y="484">&amp;</text>
+                  <text x="352" y="484">Registration)</text>
                 </g>
-              </svg><a href="#section-3.1-7.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-3.1-6.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
 <a href="#name-delegating-a-stateless-reset-" class="selfRef">Delegating a Stateless Reset to the Operating System</a>
           </figcaption></figure>
 </div>
-<p id="section-3.1-8">In this division of labor (<a href="#fig-division-of-labor" class="auto internal xref">Figure 2</a>), it is possible to deny
+<p id="section-3.1-7">In this division of labor (<a href="#fig-division-of-labor" class="auto internal xref">Figure 2</a>), it is possible to deny
 an application the use of the Stateless Reset as a means of conveying
 information of its own. The Stateless Reset Token and the other bytes that the
 operating system generates are outside the application's control, and the
 peer's Connection ID, which the application supplies, is also the value that
 it places in the Destination Connection ID field of the packets it sends. An
 operating system can therefore monitor the packets that the application sends
-after the registration, and accept the registration only if those packets
+after the registration, and send the Stateless Reset only if those packets
 carried that Connection ID. The Stateless Reset then carries no Connection ID
 other than the one that the application's own packets were already carrying to
-the peer.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
-<p id="section-3.1-9">Another implementation can let the application generate the token and give it
-to the operating system. That design needs a handoff that protects
-confidentiality and integrity. It also gives the application control over the
-bits carried in the token.<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+the peer.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <span id="name-division-of-labor-between-a"></span><div id="fig-division-of-labor">
 <figure id="figure-2">
-          <div id="section-3.1-10.1">
-            <div class="alignLeft art-svg artwork" id="section-3.1-10.1.1">
+          <div id="section-3.1-8.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-8.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="432" width="560" viewBox="0 0 560 432" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,416" fill="none" stroke="black"></path>
                 <path d="M 40,96 L 40,384" fill="none" stroke="black"></path>
@@ -1572,7 +1527,7 @@ bits carried in the token.<a href="#section-3.1-9" class="pilcrow">¶</a></p>
                   <text x="64" y="356">(16</text>
                   <text x="108" y="356">bytes)</text>
                 </g>
-              </svg><a href="#section-3.1-10.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-3.1-8.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
@@ -1645,54 +1600,39 @@ may need to reset before any packet arrives.<a href="#section-5-2" class="pilcro
 packets for the connection.<a href="#section-5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="reactive">
-<section id="section-6">
-      <h2 id="name-sending-a-stateless-reset-i">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-sending-a-stateless-reset-i" class="section-name selfRef">Sending a Stateless Reset in Response to a Datagram</a>
-      </h2>
-<p id="section-6-1">After the endpoint loses or abandons its connection state, a delegate <span class="bcp14">MAY</span> also
-respond to a datagram that matches a registration. A reactive reset <span class="bcp14">MUST</span> follow
-the size and loop-prevention rules in <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> and
-<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<p id="section-6-2">A retained proactive reset might be too large for a particular response. In
-that case, the delegate constructs a new reset with the same token and fresh
-unpredictable bits, or it sends nothing. The delegate <span class="bcp14">MUST NOT</span> send a reset that
-violates the response-size limits.<a href="#section-6-2" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="advertising">
-<section id="section-7">
+<section id="section-6">
       <h2 id="name-advertising-a-token-with-ze">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-advertising-a-token-with-ze" class="section-name selfRef">Advertising a Token with Zero-Length Connection IDs</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-advertising-a-token-with-ze" class="section-name selfRef">Advertising a Token with Zero-Length Connection IDs</a>
       </h2>
-<p id="section-7-1">A client that uses zero-length Connection IDs cannot advertise a Stateless
+<p id="section-6-1">A client that uses zero-length Connection IDs cannot advertise a Stateless
 Reset Token by any means available in QUIC version 1. This section defines a
 transport parameter and a frame through which it can do so. The token is bound
-to the connection and can be delegated as described in <a href="#delegation" class="auto internal xref">Section 3</a>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+to the connection and can be delegated as described in <a href="#delegation" class="auto internal xref">Section 3</a>.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <div id="reset-token-tp">
-<section id="section-7.1">
+<section id="section-6.1">
         <h3 id="name-the-reset_token-transport-p">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-the-reset_token-transport-p" class="section-name selfRef">The reset_token Transport Parameter</a>
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-the-reset_token-transport-p" class="section-name selfRef">The reset_token Transport Parameter</a>
         </h3>
-<p id="section-7.1-1">A server that is willing to accept RESET_TOKEN frames
-(<a href="#reset-token-frame" class="auto internal xref">Section 7.2</a>) from its client advertises the reset_token transport
-parameter (0x-TBD).<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">The reset_token transport parameter has a zero-length value; its presence alone
+<p id="section-6.1-1">A server that is willing to accept RESET_TOKEN frames
+(<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>) from its client advertises the reset_token transport
+parameter (0x-TBD).<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">The reset_token transport parameter has a zero-length value; its presence alone
 conveys that willingness. A client <span class="bcp14">MUST NOT</span> send this transport parameter.
 Receipt of this parameter from a client, or receipt of a non-zero value, <span class="bcp14">MUST</span> be
-treated as a connection error of type TRANSPORT_PARAMETER_ERROR.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+treated as a connection error of type TRANSPORT_PARAMETER_ERROR.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="reset-token-frame">
-<section id="section-7.2">
+<section id="section-6.2">
         <h3 id="name-the-reset_token-frame">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-the-reset_token-frame" class="section-name selfRef">The RESET_TOKEN Frame</a>
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-the-reset_token-frame" class="section-name selfRef">The RESET_TOKEN Frame</a>
         </h3>
-<p id="section-7.2-1">The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token that a
-client associates with the connection rather than with any Connection ID.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-1">The RESET_TOKEN frame (type 0x-TBD) carries a Stateless Reset Token that a
+client associates with the connection rather than with any Connection ID.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <span id="name-reset_token-frame-format"></span><div id="reset-token-format">
 <figure id="figure-4">
-          <div class="alignLeft art-text artwork" id="section-7.2-2.1">
+          <div class="alignLeft art-text artwork" id="section-6.2-2.1">
 <pre>
 RESET_TOKEN Frame {
   Type (i) = 0x-TBD,
@@ -1704,91 +1644,86 @@ RESET_TOKEN Frame {
 <a href="#name-reset_token-frame-format" class="selfRef">RESET_TOKEN Frame Format</a>
           </figcaption></figure>
 </div>
-<p id="section-7.2-3">The frame contains the following field:<a href="#section-7.2-3" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-7.2-4">
-          <dt id="section-7.2-4.1">Stateless Reset Token:</dt>
-          <dd style="margin-left: 1.5em" id="section-7.2-4.2">
-            <p id="section-7.2-4.2.1">A 128-bit value that the sender will use to construct a Stateless Reset
+<p id="section-6.2-3">The frame contains the following field:<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.2-4">
+          <dt id="section-6.2-4.1">Stateless Reset Token:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.2-4.2">
+            <p id="section-6.2-4.2.1">A 128-bit value that the sender will use to construct a Stateless Reset
 (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) for this connection. The token <span class="bcp14">MUST</span> be
-generated so that it is hard to guess, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>. The client or its delegate can generate the value.<a href="#section-7.2-4.2.1" class="pilcrow">¶</a></p>
+generated so that it is hard to guess, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-6.2-4.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
-<p id="section-7.2-5">RESET_TOKEN frames are ack-eliciting; a sender that detects the loss of a
+<p id="section-6.2-5">RESET_TOKEN frames are ack-eliciting; a sender that detects the loss of a
 RESET_TOKEN frame retransmits the token it carried. A RESET_TOKEN frame <span class="bcp14">MUST</span>
-only be sent in a 1-RTT packet.<a href="#section-7.2-5" class="pilcrow">¶</a></p>
-<p id="section-7.2-6">A client <span class="bcp14">MUST NOT</span> send a RESET_TOKEN frame unless the server advertised the
-reset_token transport parameter.<a href="#section-7.2-6" class="pilcrow">¶</a></p>
-<p id="section-7.2-7">Only a client that uses a zero-length Connection ID may send a RESET_TOKEN
+only be sent in a 1-RTT packet.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.2-6">A client <span class="bcp14">MUST NOT</span> send a RESET_TOKEN frame unless the server advertised the
+reset_token transport parameter.<a href="#section-6.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.2-7">Only a client that uses a zero-length Connection ID may send a RESET_TOKEN
 frame; the mechanism substitutes for the tokens that a Connection ID-issuing
 client sends in NEW_CONNECTION_ID frames. A client that uses a non-zero-length
 Connection ID <span class="bcp14">MUST NOT</span> send a RESET_TOKEN frame. A server that receives a
 RESET_TOKEN frame from such a client <span class="bcp14">MUST</span> treat this as a connection error of
-type PROTOCOL_VIOLATION.<a href="#section-7.2-7" class="pilcrow">¶</a></p>
-<p id="section-7.2-8">An endpoint that has not advertised the reset_token transport parameter treats a
+type PROTOCOL_VIOLATION.<a href="#section-6.2-7" class="pilcrow">¶</a></p>
+<p id="section-6.2-8">An endpoint that has not advertised the reset_token transport parameter treats a
 received RESET_TOKEN frame as a frame of unknown type, which is a connection
 error of type FRAME_ENCODING_ERROR (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-12.4" class="relref">Section 12.4</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). A server <span class="bcp14">MUST NOT</span> send a RESET_TOKEN frame. Because a client cannot advertise the transport
 parameter, it treats a RESET_TOKEN frame from a server as a frame of unknown
-type.<a href="#section-7.2-8" class="pilcrow">¶</a></p>
-<p id="section-7.2-9">A server that receives a RESET_TOKEN frame recognizes the contained value as
+type.<a href="#section-6.2-8" class="pilcrow">¶</a></p>
+<p id="section-6.2-9">A server that receives a RESET_TOKEN frame recognizes the contained value as
 a Stateless Reset Token for this connection and thereafter processes it exactly
 as a token received in a NEW_CONNECTION_ID frame, following the requirements of
 <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> for retaining the token and for detecting a
 Stateless Reset that carries it, except that this token is immediately usable
-and is not subject to the rule that excludes tokens for unused Connection IDs.<a href="#section-7.2-9" class="pilcrow">¶</a></p>
-<p id="section-7.2-10">A client uses a single Stateless Reset Token for the lifetime of a
+and is not subject to the rule that excludes tokens for unused Connection IDs.<a href="#section-6.2-9" class="pilcrow">¶</a></p>
+<p id="section-6.2-10">A client uses a single Stateless Reset Token for the lifetime of a
 connection. It <span class="bcp14">MAY</span> send more than one RESET_TOKEN frame -- for example, to
 retransmit a frame that was lost -- but every RESET_TOKEN frame it sends on a
 connection <span class="bcp14">MUST</span> carry the same token value. A server that receives a
 RESET_TOKEN frame carrying a token value different from one it received earlier
 on the same connection <span class="bcp14">MUST</span> treat this as a connection error of type
 PROTOCOL_VIOLATION. Receipt of the same value more than once is idempotent. The
-token <span class="bcp14">MUST NOT</span> be used for another connection or for a Connection ID.<a href="#section-7.2-10" class="pilcrow">¶</a></p>
+token <span class="bcp14">MUST NOT</span> be used for another connection or for a Connection ID.<a href="#section-6.2-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-8">
+<section id="section-7">
       <h2 id="name-security-considerations">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-8-1">Knowledge of a Stateless Reset Token allows an entity to terminate the
+<p id="section-7-1">Knowledge of a Stateless Reset Token allows an entity to terminate the
 connection. A token <span class="bcp14">MUST</span> be difficult to guess and <span class="bcp14">MUST NOT</span> be reused. A sender
 can generate a token using a cryptographically secure random number generator.
 It can also use a pseudorandom function with a secret key and unique input for
 each connection. A zero-length Connection ID <span class="bcp14">MUST NOT</span> be the only input used to
 derive a connection-level token. <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.2" class="relref">Section 10.3.2</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> describes token
-generation for non-zero-length Connection IDs.<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">The endpoint and delegate need to protect their coordination interface. The
+generation for non-zero-length Connection IDs.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">The endpoint and delegate need to protect their coordination interface. The
 token and routing information <span class="bcp14">MUST</span> have confidentiality and integrity in
-transit and at rest. The delegate also needs to authenticate requests that
-create, update, activate, or remove a registration. A compromised delegate can
-terminate every connection for which it holds a usable token.<a href="#section-8-2" class="pilcrow">¶</a></p>
-<p id="section-8-3">A RESET_TOKEN frame is protected by 1-RTT packet protection. A Stateless Reset
+transit and at rest.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">A RESET_TOKEN frame is protected by 1-RTT packet protection. A Stateless Reset
 reveals its token to an on-path observer. This does not create a new termination
 capability because the peer enters the draining state after accepting the
-reset. The token cannot be used for another connection.<a href="#section-8-3" class="pilcrow">¶</a></p>
-<p id="section-8-4">A delegate sends using the source and destination addresses of a path on which
+reset. The token cannot be used for another connection.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">A delegate sends using the source and destination addresses of a path on which
 the endpoint recently received packets from the peer. This allows the peer to
-apply the remote-address check in <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-8-4" class="pilcrow">¶</a></p>
-<p id="section-8-5">A token or unpredictable field can provide a covert channel when an application
-controls its value. A delegate can prevent this by generating those values. The
-operating system design in <a href="#os-offload" class="auto internal xref">Section 3.1</a> uses this approach.<a href="#section-8-5" class="pilcrow">¶</a></p>
+apply the remote-address check in <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-7-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-9">
+<section id="section-8">
       <h2 id="name-iana-considerations">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-9-1">TBD<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">TBD<a href="#section-8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
-<section id="section-10">
+<section id="section-9">
       <h2 id="name-normative-references">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
 <dt id="RFC9000">[RFC9000]</dt>
