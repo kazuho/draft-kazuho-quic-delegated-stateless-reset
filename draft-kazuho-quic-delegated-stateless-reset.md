@@ -68,28 +68,16 @@ The same property permits a different arrangement, and it is the subject of
 this document: the entity that sends a Stateless Reset need not be the endpoint
 that ran the connection.
 
-The ability to send a Stateless Reset is valuable precisely when connection state
-has been lost involuntarily -- for example, when an application exits or is
-terminated by the operating system. After the application is gone, the peer may
-continue to send packets on the connection until its idle timeout expires. To cover
-these scenarios, an endpoint can delegate the termination of the connection to a
-component that outlives its own connection state, and that component can reset
-the peer long after the endpoint is gone ({{delegation}}).
-
-Until it detects the failure, the peer can buffer data that will never be
-delivered. It can also delay fallback delivery, such as a push notification or
-a secondary connection. At scale, abandoned connections consume memory and
-connection-table capacity.
-terminated by the operating system. After the application is gone, the peer may
-buffer data and
-continue to send packets on the connection until its idle timeout expires.
-It can also delay fallback delivery, such as a push notification or
-a secondary connection. At scale, abandoned connections consume memory and
-connection-table capacity.
-To cover
-these scenarios, an endpoint can delegate the termination of the connection to a
-component that outlives its own connection state, and that component can reset
-the peer long after the endpoint is gone ({{delegation}}).
+The ability to send a Stateless Reset is valuable precisely when connection
+state has been lost involuntarily -- for example, when an application exits or
+is terminated by the operating system. After the application is gone, the peer
+may buffer data that will never be delivered and continue to send packets on
+the connection until its idle timeout expires. It can also delay fallback
+delivery, such as a push notification or a secondary connection. At scale,
+abandoned connections consume memory and connection-table capacity. To cover
+these scenarios, an endpoint can delegate the termination of the connection to
+a component that outlives its own connection state, and that component can
+reset the peer long after the endpoint is gone ({{delegation}}).
 
 A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
 such a packet is difficult to manage for a delegate. It is protected under the
@@ -109,7 +97,7 @@ load-balanced deployment ({{constructing}}).
 
 With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs.
 An endpoint that uses zero-length Connection IDs cannot issue one in a
-NEW_CONNECTION_ID frame ({{Section 5.1.1 of RFC9000}}). Only servers can provide a
+NEW_CONNECTION_ID frame ({{Section 5.1.1 of RFC9000}}). Only a server can provide a
 token for its handshake Connection ID in the stateless_reset_token transport
 parameter; clients cannot because client transport parameters are not
 confidential.
@@ -147,15 +135,11 @@ stateless_reset_token transport parameter or in a NEW_CONNECTION_ID frame. A
 client that uses a zero-length Connection ID cannot issue a token under QUIC
 version 1; {{advertising}} defines how it does so.
 
-For each connection, the delegate maintains at most one token registration at
-a time. A token from a NEW_CONNECTION_ID frame can be registered only after the
-peer uses the associated Connection ID and only until that Connection ID is
-retired.
+A token from a NEW_CONNECTION_ID frame can be registered only after the peer
+uses the associated Connection ID and only until that Connection ID is retired.
 
 A client that uses a zero-length Connection ID can advertise a token for the
-whole connection using the extension in {{advertising}}. The client MUST NOT
-authorize the delegate to use that token before a packet containing the
-RESET_TOKEN frame is acknowledged.
+whole connection using the extension in {{advertising}}.
 
 The endpoint updates the registration when the selected token, Connection ID,
 or network path changes. A reset sent before the delegate receives an update
@@ -276,10 +260,8 @@ the peer.
 # Constructing a Routable Stateless Reset {#constructing}
 
 When constructing a Stateless Reset, the endpoint or its delegate SHOULD place a
-Connection ID issued by the peer in the position in which a 1-RTT packet carries
-the Destination Connection ID field. The endpoint supplies a Connection ID that
-the peer currently accepts, and the delegate uses the most recently supplied
-value.
+Connection ID that the peer currently accepts in the position in which a 1-RTT
+packet carries the Destination Connection ID field.
 
 If the peer uses a zero-length Connection ID, the Destination Connection ID
 field is empty.
@@ -415,6 +397,10 @@ can generate a token using a cryptographically secure random number generator.
 The endpoint and delegate need to protect their coordination interface. The
 token and routing information MUST have confidentiality and integrity in
 transit and at rest.
+
+A delegate can retain multiple registrations for a connection, such as one for
+each path. Implementations SHOULD limit the number of registrations to avoid
+resource exhaustion.
 
 A RESET_TOKEN frame is protected by 1-RTT packet protection. A Stateless Reset
 reveals its token to an on-path observer. This does not create a new termination
