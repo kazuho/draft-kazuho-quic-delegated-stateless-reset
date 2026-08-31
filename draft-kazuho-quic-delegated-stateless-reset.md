@@ -80,6 +80,16 @@ Until it detects the failure, the peer can buffer data that will never be
 delivered. It can also delay fallback delivery, such as a push notification or
 a secondary connection. At scale, abandoned connections consume memory and
 connection-table capacity.
+terminated by the operating system. After the application is gone, the peer may
+buffer data and
+continue to send packets on the connection until its idle timeout expires.
+It can also delay fallback delivery, such as a push notification or
+a secondary connection. At scale, abandoned connections consume memory and
+connection-table capacity.
+To cover
+these scenarios, an endpoint can delegate the termination of the connection to a
+component that outlives its own connection state, and that component can reset
+the peer long after the endpoint is gone ({{delegation}}).
 
 A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
 such a packet is difficult to manage for a delegate. It is protected under the
@@ -99,18 +109,17 @@ load-balanced deployment ({{constructing}}).
 
 With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs.
 An endpoint that uses zero-length Connection IDs cannot issue one in a
-NEW_CONNECTION_ID frame ({{Section 5.1.1 of RFC9000}}). A server can provide a
+NEW_CONNECTION_ID frame ({{Section 5.1.1 of RFC9000}}). Only servers can provide a
 token for its handshake Connection ID in the stateless_reset_token transport
-parameter, including when that Connection ID is zero length. A client cannot use
-that transport parameter because client transport parameters are not
-confidential. A server therefore does not need the extension in {{advertising}}
-when it uses a zero-length Connection ID.
+parameter; clients cannot because client transport parameters are not
+confidential.
 
 Zero-length Connection IDs are common for clients. A client that identifies connections
 solely by the 5-tuple has no need to issue Connection IDs and can reduce
 per-packet overhead by using zero-length Connection IDs. To allow such clients
 to issue Stateless Reset Tokens and delegate them, this document defines a
 transport parameter and a frame ({{advertising}}).
+Servers can issue a stateless reset token using the transport parameter and therefore do not use this extension.
 
 
 # Conventions and Definitions
@@ -150,7 +159,7 @@ RESET_TOKEN frame is acknowledged.
 
 The endpoint updates the registration when the selected token, Connection ID,
 or network path changes. A reset sent before the delegate receives an update
-might be lost or rejected.
+might be dropped.
 
 This document does not define an interface between an endpoint and a delegate.
 
@@ -273,7 +282,7 @@ the peer currently accepts, and the delegate uses the most recently supplied
 value.
 
 If the peer uses a zero-length Connection ID, the Destination Connection ID
-field is empty. The delegate uses the registered 5-tuple.
+field is empty.
 
 {{Section 10.3 of RFC9000}} calls for unpredictable bits, rather than the
 Destination Connection ID, because an endpoint that has lost its state cannot
@@ -402,10 +411,6 @@ token MUST NOT be used for another connection or for a Connection ID.
 Knowledge of a Stateless Reset Token allows an entity to terminate the
 connection. A token MUST be difficult to guess and MUST NOT be reused. A sender
 can generate a token using a cryptographically secure random number generator.
-It can also use a pseudorandom function with a secret key and unique input for
-each connection. A zero-length Connection ID MUST NOT be the only input used to
-derive a connection-level token. {{Section 10.3.2 of RFC9000}} describes token
-generation for non-zero-length Connection IDs.
 
 The endpoint and delegate need to protect their coordination interface. The
 token and routing information MUST have confidentiality and integrity in
