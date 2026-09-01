@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-30T02:25:42.408734+00:00",
+  "timestamp": "2026-09-01T02:37:34.918965+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -770,13 +770,13 @@
       "labels": [],
       "body": "https://github.com/jbeshay/draft-beshay-quic-client-stateless-reset was a concurrent attempt at writing a very similar draft based upon prior offline discussions.\r\n\r\nThe drafts mostly agreed on the new frame and the goal of the draft, with some differences in emphasis on delegation in this repo vs. more use-case and usage discussion in the other repo. \r\n\r\nThis merges both draft so we can continue with one more comprehensive draft.",
       "createdAt": "2026-08-27T17:30:13Z",
-      "updatedAt": "2026-08-28T05:01:55Z",
+      "updatedAt": "2026-08-31T20:10:08Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "ad817377085452cae9a1be693ff5b5a1a7373202",
       "headRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "merge-jbeshay-draft",
-      "headRefOid": "2144d0a1976c7619e3b063702e8d9221aa71d3e8",
+      "headRefOid": "81778ed9d43016f32617a337fbeb15e33adf5f9e",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -809,9 +809,9 @@
             },
             {
               "originalPosition": 71,
-              "body": "```suggestion\ntransport parameter and a frame ({{advertising}}).\nServers can issue a stateless reset token using the transport parameter and therefore does not use this extension.\n```",
+              "body": "```suggestion\ntransport parameter and a frame ({{advertising}}).\nServers can issue a stateless reset token using the transport parameter and therefore do not use this extension.\n```",
               "createdAt": "2026-08-28T04:40:49Z",
-              "updatedAt": "2026-08-28T05:01:55Z"
+              "updatedAt": "2026-08-31T18:22:33Z"
             },
             {
               "originalPosition": 91,
@@ -848,6 +848,46 @@
               "body": "```suggestion\n```\n\nI'm not sure if we'd use of a keyed function.\n\nThe original stateless reset is stateless and therefore needs the received Connection ID as the input.\n\nIn the case of delegated resets, the state is remembered by the delegate and the Connection ID is _sent_ - so no need to calculate the token using the Connection ID as the input.",
               "createdAt": "2026-08-28T04:57:34Z",
               "updatedAt": "2026-08-28T05:01:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABLjwoJQ",
+          "commit": {
+            "abbreviatedOid": "fa64e75"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-31T20:03:00Z",
+          "updatedAt": "2026-08-31T20:03:00Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "The intention is to mirror the behavior with non-zero CIDs: when a new_connection_id frame is used, the CID and its reset token are not valid until they are acknowledged. Given that I was suggesting allowing only one registration at a time, it made sense to only allow the token to be used after it has been acknowledged.\n\nThat said, if we drop the limit on one active registration, this doesn't make a lot of sense anymore. I will remove it",
+              "createdAt": "2026-08-31T20:03:00Z",
+              "updatedAt": "2026-08-31T20:03:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABLjw1LA",
+          "commit": {
+            "abbreviatedOid": "fa64e75"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-31T20:03:19Z",
+          "updatedAt": "2026-08-31T20:03:20Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "Good point. I didn't think of Multipath. Let me move this to security considerations",
+              "createdAt": "2026-08-31T20:03:19Z",
+              "updatedAt": "2026-08-31T20:03:20Z"
             }
           ]
         }
