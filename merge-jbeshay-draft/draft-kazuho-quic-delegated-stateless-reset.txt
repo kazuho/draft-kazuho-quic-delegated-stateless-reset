@@ -5,11 +5,11 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 4 March 2027                                             Google
+Expires: 6 March 2027                                             Google
                                                                J. Beshay
                                                                 M. Joras
                                                                     Meta
-                                                          31 August 2026
+                                                        2 September 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 March 2027.
+   This Internet-Draft will expire on 6 March 2027.
 
 Copyright Notice
 
@@ -190,9 +190,12 @@ Table of Contents
    ID cannot issue a token under QUIC version 1; Section 6 defines how
    it does so.
 
-   A token from a NEW_CONNECTION_ID frame can be registered only after
-   the peer uses the associated Connection ID and only until that
-   Connection ID is retired.
+   A token from a NEW_CONNECTION_ID frame is usable only after the peer
+   uses the associated Connection ID and until that Connection ID is
+   retired (Section 10.3.1 of [RFC9000]).  A delegate decides whether to
+   track when the peer uses the Connection ID.  If it sends a Stateless
+   Reset containing the registered token before that happens, the peer
+   will ignore the token.
 
    A client that uses a zero-length Connection ID can advertise a token
    for the whole connection using the extension in Section 6.
