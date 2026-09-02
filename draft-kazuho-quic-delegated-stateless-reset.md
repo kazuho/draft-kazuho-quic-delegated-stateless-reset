@@ -135,8 +135,11 @@ stateless_reset_token transport parameter or in a NEW_CONNECTION_ID frame. A
 client that uses a zero-length Connection ID cannot issue a token under QUIC
 version 1; {{advertising}} defines how it does so.
 
-A token from a NEW_CONNECTION_ID frame can be registered only after the peer
-uses the associated Connection ID and only until that Connection ID is retired.
+A token from a NEW_CONNECTION_ID frame is usable only after the peer uses the
+associated Connection ID and until that Connection ID is retired
+({{Section 10.3.1 of RFC9000}}). A delegate decides whether to track when the
+peer uses the Connection ID. If it sends a Stateless Reset containing the
+registered token before that happens, the peer will ignore the token.
 
 A client that uses a zero-length Connection ID can advertise a token for the
 whole connection using the extension in {{advertising}}.
