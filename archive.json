@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-01T02:37:34.918965+00:00",
+  "timestamp": "2026-09-03T02:03:34.761278+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -770,13 +770,13 @@
       "labels": [],
       "body": "https://github.com/jbeshay/draft-beshay-quic-client-stateless-reset was a concurrent attempt at writing a very similar draft based upon prior offline discussions.\r\n\r\nThe drafts mostly agreed on the new frame and the goal of the draft, with some differences in emphasis on delegation in this repo vs. more use-case and usage discussion in the other repo. \r\n\r\nThis merges both draft so we can continue with one more comprehensive draft.",
       "createdAt": "2026-08-27T17:30:13Z",
-      "updatedAt": "2026-08-31T20:10:08Z",
+      "updatedAt": "2026-09-02T21:33:27Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "ad817377085452cae9a1be693ff5b5a1a7373202",
       "headRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "merge-jbeshay-draft",
-      "headRefOid": "81778ed9d43016f32617a337fbeb15e33adf5f9e",
+      "headRefOid": "1f1d99680bfb87a05c708cfb114bd56d4001aeb7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -888,6 +888,86 @@
               "body": "Good point. I didn't think of Multipath. Let me move this to security considerations",
               "createdAt": "2026-08-31T20:03:19Z",
               "updatedAt": "2026-08-31T20:03:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABLrKAng",
+          "commit": {
+            "abbreviatedOid": "81778ed"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-01T13:10:22Z",
+          "updatedAt": "2026-09-01T14:40:09Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "Is this strictly necessary? Currently this clashes with the suggestion in the OS delegation section that follows:\n> The operating system exposes an interface through which an application\nregisters, for one of its connections, a Connection ID that the peer has issued\nand currently accepts, together with what identifies that connection in the\ndatagrams the peer sends -- the socket, and the Connection ID that the\napplication is issuing, if any.\n>\n> From that registration, the operating system generates a Stateless Reset Token,\nforms and retains a Stateless Reset datagram ({{constructing}}), and returns the\ntoken to the application. The application makes the token known to its peer,\neither as the token associated with the issued Connection ID or, if it is a\nclient that uses zero-length Connection IDs, in a RESET_TOKEN frame\n({{reset-token-frame}}).\n\nPerhaps we should relax this and say \"sent\" instead of \"registered\"?\n\n```suggestion\nA token from a NEW_CONNECTION_ID frame can be sent by a delegate only after the\npeer uses the associated Connection ID and only until that Connection ID is retired.\n```",
+              "createdAt": "2026-09-01T13:12:23Z",
+              "updatedAt": "2026-09-01T14:40:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABLtL-HQ",
+          "commit": {
+            "abbreviatedOid": "81778ed"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-01T16:28:34Z",
+          "updatedAt": "2026-09-01T16:28:34Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "I am fine with the change but I think it adds a new responsibility for the delegate to track when the CID is used. \r\n\r\nFundamentally, this sentence is an attempt to break this circular dependency:\r\n1. The delegate generates the token for a specific connection id provided by the client\r\n2. The client needs the token in order to send the connection id in a new_connection_id frame\r\n3. The token cannot be used until the new_connection_id frame is delivered including both the connection id and token.",
+              "createdAt": "2026-09-01T16:28:34Z",
+              "updatedAt": "2026-09-01T16:28:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABLzfalw",
+          "commit": {
+            "abbreviatedOid": "81778ed"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T08:07:41Z",
+          "updatedAt": "2026-09-02T08:27:36Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "I agree with you, but at the same time, that responsibility is added to the delegate only if the delegate chooses to do so (via the interface it exposes to the endpoint). If the delegate wants to generate the stateless reset token itself, it will have to own this complexity. If it does not want to own this complexity, it will have to accept an endpoint-generated stateless reset token.\n\nIn this scenario my preference would be to state the requirement (waiting for the associated Connection ID to have been used, otherwise the peer will ignore the associated reset token; from Section 10.3.1 of RFC 9000?) and defer to the delegate on how this requirement will be satisfied. Having said that, I can be convinced otherwise.\n\nWhat do you think?",
+              "createdAt": "2026-09-02T08:07:41Z",
+              "updatedAt": "2026-09-02T08:27:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABL4nC1w",
+          "commit": {
+            "abbreviatedOid": "81778ed"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T16:50:08Z",
+          "updatedAt": "2026-09-02T16:50:09Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "That sounds good to me. The delegate can decide how to satisfy the requirement. Ultimately, the success of the stateless reset is on best-effort basis, so a delegate could choose to ignore that requirement altogether.",
+              "createdAt": "2026-09-02T16:50:08Z",
+              "updatedAt": "2026-09-02T16:50:09Z"
             }
           ]
         }
