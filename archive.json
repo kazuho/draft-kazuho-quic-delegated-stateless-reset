@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-03T02:03:34.761278+00:00",
+  "timestamp": "2026-09-06T01:55:28.026619+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -763,24 +763,26 @@
       "id": "PR_kwDOTgCtSc8AAAABBPVBKg",
       "title": "Merge draft-beshay-quic-client-stateless-reset",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/14",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "jbeshay",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/jbeshay/draft-beshay-quic-client-stateless-reset was a concurrent attempt at writing a very similar draft based upon prior offline discussions.\r\n\r\nThe drafts mostly agreed on the new frame and the goal of the draft, with some differences in emphasis on delegation in this repo vs. more use-case and usage discussion in the other repo. \r\n\r\nThis merges both draft so we can continue with one more comprehensive draft.",
       "createdAt": "2026-08-27T17:30:13Z",
-      "updatedAt": "2026-09-02T21:33:27Z",
+      "updatedAt": "2026-09-03T20:54:08Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "ad817377085452cae9a1be693ff5b5a1a7373202",
       "headRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "merge-jbeshay-draft",
-      "headRefOid": "1f1d99680bfb87a05c708cfb114bd56d4001aeb7",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0b4a282ffc2e197f5835ffaa1def27c4bc9d1b2a",
+      "closedAt": "2026-09-03T20:54:01Z",
+      "mergedAt": "2026-09-03T20:54:01Z",
+      "mergedBy": "jbeshay",
+      "mergeCommit": {
+        "oid": "d28497bb66a2e932c6b4cf240f7778a0bed60068"
+      },
       "comments": [],
       "reviews": [
         {
@@ -970,6 +972,39 @@
               "updatedAt": "2026-09-02T16:50:09Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABL-J7Zw",
+          "commit": {
+            "abbreviatedOid": "1f1d996"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thank you for all the changes! Looks good.",
+          "createdAt": "2026-09-03T05:59:46Z",
+          "updatedAt": "2026-09-03T05:59:58Z",
+          "comments": [
+            {
+              "originalPosition": 103,
+              "body": "This is purely editorial, I would not mind if you ignored.\n\n```suggestion\n{{Section 10.3.1 of RFC9000}} requires a peer to compare the trailing bytes of a\nreceived datagram only against the tokens of Connection IDs that it has used and\nhas not retired. A Stateless Reset carrying any other token is therefore\nindistinguishable from a packet that cannot be decrypted and is discarded. A\ndelegate MAY track when the peer starts using a Connection ID, and send a\nStateless Reset carrying the associated token only once that happens.\n```",
+              "createdAt": "2026-09-03T05:59:46Z",
+              "updatedAt": "2026-09-03T05:59:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABL_JQEg",
+          "commit": {
+            "abbreviatedOid": "1f1d996"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-09-03T08:06:37Z",
+          "updatedAt": "2026-09-03T08:06:37Z",
+          "comments": []
         }
       ]
     }
