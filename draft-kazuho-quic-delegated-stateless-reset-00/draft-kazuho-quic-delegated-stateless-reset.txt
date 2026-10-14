@@ -5,11 +5,11 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 7 March 2027                                             Google
+Expires: 17 April 2027                                            Google
                                                                J. Beshay
                                                                 M. Joras
                                                                     Meta
-                                                        3 September 2026
+                                                         14 October 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 March 2027.
+   This Internet-Draft will expire on 17 April 2027.
 
 Copyright Notice
 
