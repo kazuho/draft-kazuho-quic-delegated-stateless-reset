@@ -398,9 +398,22 @@ Knowledge of a Stateless Reset Token allows an entity to terminate the
 connection. A token MUST be difficult to guess and MUST NOT be reused. A sender
 can generate a token using a cryptographically secure random number generator.
 
+Delegation entrusts the delegate with the ability to terminate the associated
+connection. Even if the delegate already has that ability, giving another
+component access to the token creates an additional opportunity for disclosure.
+The endpoint needs to account for that exposure when selecting a delegate.
+
 The endpoint and delegate need to protect their coordination interface. The
 token and routing information MUST have confidentiality and integrity in
-transit and at rest.
+transit and at rest. The delegate MUST verify that a caller is authorized to
+register, update, or cancel delegation for the relevant socket or connection.
+It MUST prevent unauthorized access to tokens and registrations belonging to
+other applications.
+
+A token advertised in a RESET_TOKEN frame remains valid for the lifetime of the
+connection ({{reset-token-frame}}). Removing a local registration does not
+revoke the termination capability of a delegate that retained a copy of that
+token: the peer continues to recognize it.
 
 A delegate can retain multiple registrations for a connection, such as one for
 each path. Implementations SHOULD limit the number of registrations to avoid
