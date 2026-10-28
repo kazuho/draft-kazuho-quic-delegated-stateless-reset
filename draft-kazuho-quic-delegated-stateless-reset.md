@@ -39,8 +39,9 @@ This document specifies how a QUIC endpoint may delegate the emission of
 Stateless Resets to a component that outlives the QUIC stack -- for example, an
 operating system that resets the peers of an application that has exited. As such
 delegation is most useful on the client side, where endpoints often use
-zero-length Connection IDs, this document also defines a transport parameter and
-a frame that allow those clients to advertise a Stateless Reset Token.
+zero-length Connection IDs, this document also defines a frame through which
+those clients can advertise a Stateless Reset Token. A transport parameter
+indicates support for receiving the frame; it does not carry a token.
 
 
 --- middle
@@ -67,6 +68,9 @@ Connection ID, the resetting endpoint need not retain any per-connection state.
 The same property permits a different arrangement, and it is the subject of
 this document: the entity that sends a Stateless Reset need not be the endpoint
 that ran the connection.
+The delegate retains a small amount of state for each registration, including
+the token and routing information, but needs no packet-protection keys or packet
+numbers. The peer authenticates the reset using the token in the usual way.
 
 The ability to send a Stateless Reset is valuable precisely when connection
 state has been lost involuntarily -- for example, when an application exits or
@@ -78,6 +82,22 @@ abandoned connections consume memory and connection-table capacity. To cover
 these scenarios, an endpoint can delegate the termination of the connection to
 a component that outlives its own connection state, and that component can
 reset the peer long after the endpoint is gone ({{delegation}}).
+
+Another motivating case is application lifecycle management on mobile devices.
+An operating system can withdraw an application's network access before the
+application has an opportunity to send CONNECTION_CLOSE. The peer can then
+continue sending traffic that the application will not receive. Once the
+affected connection has been abandoned, a delegate that retains network access
+can signal its termination, as described in {{proactive}}.
+
+Delegation is optional and depends on platform support. An operating system,
+system service, or application helper can act as a delegate if it survives the
+event that ends the connection and retains the ability to send on its network
+path. A helper subject to the same lifecycle or network restrictions as the
+application might not meet these conditions. This document specifies the wire
+behavior and delegation requirements, while leaving the local interface to
+implementations. If a delegate is unavailable or a reset cannot be delivered,
+the peer still relies on the usual QUIC termination and timeout mechanisms.
 
 A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
 such a packet is difficult to manage for a delegate. It is protected under the
@@ -106,8 +126,17 @@ Zero-length Connection IDs are common for clients. A client that identifies conn
 solely by the 5-tuple has no need to issue Connection IDs and can reduce
 per-packet overhead by using zero-length Connection IDs. To allow such clients
 to issue Stateless Reset Tokens and delegate them, this document defines a
-transport parameter and a frame ({{advertising}}).
-Servers can issue a stateless reset token using the transport parameter and therefore do not use this extension.
+frame for advertising a token and a transport parameter through which servers
+indicate support for receiving that frame ({{advertising}}).
+Servers can advertise a token in the existing stateless_reset_token transport
+parameter; the new frame is limited to clients that use zero-length Connection
+IDs.
+
+The mechanisms in this document apply to QUIC version 1 and QUIC version 2
+({{!RFC9369}}). QUIC version 2 retains the Stateless Reset format and the
+short-header fields used by these mechanisms. Use with other QUIC versions
+requires compatible packet formats, Stateless Reset rules, and extension
+semantics.
 
 
 # Conventions and Definitions
