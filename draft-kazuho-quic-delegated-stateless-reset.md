@@ -118,13 +118,20 @@ Servers can issue a stateless reset token using the transport parameter and ther
 # Delegating a Stateless Reset {#delegation}
 
 An endpoint can delegate the sending of a Stateless Reset to a component that
-outlives its connection state. The delegate retains the Stateless Reset Token,
-rather than recomputing it from a Connection ID as a resetting endpoint would,
-together with whatever the endpoint uses to match a received packet to the
-connection -- a Connection ID, or the 5-tuple when a client uses a zero-length
-Connection ID ({{Section 5.2 of RFC9000}}). To construct a reset that
-can be routed to the peer, it also needs a Connection ID that the peer issued
-({{constructing}}). It needs no packet-protection keys and no packet number.
+outlives its connection state. The delegate retains a registration containing:
+
+* Information that identifies incoming datagrams for the connection, such as
+  the socket and Connection IDs issued by the endpoint, or the 5-tuple when
+  using zero-length Connection IDs ({{Section 5.2 of RFC9000}}).
+* The path on which to send the reset and a Connection ID issued by the peer
+  that the peer currently accepts, so that the reset can be routed to the peer
+  ({{constructing}}).
+* A Stateless Reset Token that the peer will recognize for the connection.
+
+The Connection IDs used to identify incoming datagrams serve a different purpose
+from the peer-issued Connection ID placed in the reset. The delegate retains the
+token rather than recomputing it from a Connection ID. It needs no
+packet-protection keys and no packet number.
 
 Both clients and servers can delegate a Stateless Reset in this way.
 
@@ -145,9 +152,23 @@ Stateless Reset carrying the associated token only once that happens.
 A client that uses a zero-length Connection ID can advertise a token for the
 whole connection using the extension in {{advertising}}.
 
-The endpoint updates the registration when the selected token, Connection ID,
-or network path changes. A reset sent before the delegate receives an update
-might be dropped.
+The endpoint updates or replaces affected registrations when the information
+used to identify incoming datagrams, the selected peer-issued Connection ID,
+or the network path changes. A reset sent with stale routing information might
+be dropped. Changing the path or peer-issued Connection ID does not by itself
+require changing the token. If the endpoint selects a token associated with a
+different Connection ID that it issued, that token is distinct and is advertised
+to the peer with that Connection ID. Registration can precede advertisement, but
+the peer cannot recognize the reset until it has learned the token and the
+acceptance rules above are satisfied. A token advertised using RESET_TOKEN
+remains the same for the lifetime of the connection ({{reset-token-frame}}).
+
+A connection can have registrations for multiple paths. Closing a socket or
+retiring a path during migration does not imply that the connection has ended.
+The endpoint and delegate need to update or cancel affected registrations so
+that an obsolete registration cannot trigger a reset of a connection that
+continues on another path. Cancellation or expiration of a registration ends
+the delegate's authority to send resets using that registration.
 
 This document does not define an interface between an endpoint and a delegate.
 
@@ -167,22 +188,28 @@ and currently accepts, together with what identifies that connection in the
 datagrams the peer sends -- the socket, and the Connection ID that the
 application is issuing, if any.
 
-From that registration, the operating system generates a Stateless Reset Token,
-forms and retains a Stateless Reset datagram ({{constructing}}), and returns the
-token to the application. The application makes the token known to its peer,
-either as the token associated with the issued Connection ID or, if it is a
-client that uses zero-length Connection IDs, in a RESET_TOKEN frame
-({{reset-token-frame}}).
+For a new connection or a new Connection ID issued by the application, the
+operating system generates a Stateless Reset Token, forms and retains a
+Stateless Reset datagram ({{constructing}}), and returns the token to the
+application. The application makes the token known to its peer, either as the
+token associated with the issued Connection ID or, if it is a client that uses
+zero-length Connection IDs, in a RESET_TOKEN frame ({{reset-token-frame}}).
 
-Once the application is no longer able to process packets for the connection,
+The application updates or cancels registrations as described in {{delegation}}.
+Updating the registered path or peer-issued Connection ID can require rebuilding
+the retained datagram, but does not require generating a new token.
+
+Once the application has lost or abandoned the connection state,
 the operating system sends the retained datagram once ({{proactive}}), and
 thereafter responds to datagrams matching that registration by sending it again,
 but does so only if the retained datagram is smaller than the one that triggered
 it, as required by {{Section 10.3.3 of RFC9000}}.
 
-Eventually, the operating system discards the stateless reset and the
-registration, as the peer will nevertheless abandon the connection due to not
-making progress.
+The operating system bounds how long it retains the reset and registration
+after the connection ends, as the peer will nevertheless abandon the connection
+due to not making progress. A retained registration does not transfer to a new
+connection when a socket or address tuple is reused, and must not prevent
+delivery of packets to that new connection.
 
 ~~~ aasvg
 +-----------------------------------------------------------------+
@@ -310,7 +337,12 @@ one; an endpoint or delegate that retains the token knows which connections it
 may need to reset before any packet arrives.
 
 A delegate MUST NOT send a Stateless Reset while the endpoint can still process
-packets for the connection.
+packets for the connection on any path. Loss of one path, or temporary suspension
+of the application, does not by itself mean that the connection has been
+abandoned. If suspension or withdrawal of network access causes the connection
+to be abandoned and delegated teardown to begin, the application cannot resume
+that connection when it regains network access; it needs to establish a new
+connection.
 
 
 # Advertising a Token with Zero-Length Connection IDs {#advertising}
