@@ -35,12 +35,11 @@ informative:
 
 --- abstract
 
-This document specifies how a QUIC endpoint may delegate the emission of
-Stateless Resets to a component that outlives the QUIC stack -- for example, an
-operating system that resets the peers of an application that has exited. As such
-delegation is most useful on the client side, where endpoints often use
-zero-length Connection IDs, this document also defines a transport parameter and
-a frame that allow those clients to advertise a Stateless Reset Token.
+This document specifies how a QUIC endpoint can delegate sending Stateless
+Resets to a component that outlives its connection state. It also defines a
+frame for clients using zero-length Connection IDs to advertise a Stateless
+Reset Token and a transport parameter for servers to indicate support for
+receiving the frame.
 
 
 --- middle
@@ -54,7 +53,7 @@ keys or tied to its packet number spaces: the signal is authenticated solely by
 the 128-bit Stateless Reset Token it ends with, which the receiver matches
 against the tokens it retains.
 
-QUIC version 1 uses that property to avoid retaining state. An endpoint
+QUIC uses that property to avoid retaining state. An endpoint
 associates a Stateless Reset Token with each Connection ID it issues, delivering
 the token to the peer either in the stateless_reset_token transport parameter or
 in a NEW_CONNECTION_ID frame. When such an endpoint later receives a packet that
@@ -79,15 +78,25 @@ these scenarios, an endpoint can delegate the termination of the connection to
 a component that outlives its own connection state, and that component can
 reset the peer long after the endpoint is gone ({{delegation}}).
 
-A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
-such a packet is difficult to manage for a delegate. It is protected under the
+A mobile operating system can withdraw an application's network access before
+the application can send a CONNECTION_CLOSE frame. Once the connection has been
+abandoned, a delegate that retains network access can reset the peer
+({{proactive}}).
+
+Delegation is optional. A delegate, such as an operating system, system service,
+or application helper, needs to survive the loss of connection state and retain
+access to the connection's network path. If a reset cannot be delivered, the
+peer relies on the usual QUIC termination and timeout mechanisms.
+
+A CONNECTION_CLOSE packet could be recorded for a delegate to send, but such a
+packet is difficult to manage. It is protected under the
 connection's packet-protection keys that endpoints periodically rotate, and it
 carries a packet number that must fall within a dynamic range the peer will accept;
 thus, the recorded packet would need constant refreshing to remain usable.
 
-In contrast, sending a Stateless Reset requires only the static Stateless Reset
-Token and the 5-tuple on which to send it. The token remains valid until the
-associated Connection ID is retired.
+In contrast, a Stateless Reset does not depend on packet-protection keys or
+packet numbers. The delegate retains the token and the information needed to
+match and route packets ({{delegation}}).
 
 A delegated Stateless Reset can also be better formed than one sent by an
 endpoint that has lost its state: the delegate can remember a Connection ID that
@@ -95,7 +104,7 @@ the peer has issued and place it where a 1-RTT packet carries the Destination
 Connection ID, so that the Stateless Reset reaches the intended peer in a
 load-balanced deployment ({{constructing}}).
 
-With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs.
+In {{RFC9000}}, Stateless Reset Tokens are issued alongside Connection IDs.
 An endpoint that uses zero-length Connection IDs cannot issue one in a
 NEW_CONNECTION_ID frame ({{Section 5.1.1 of RFC9000}}). Only a server can provide a
 token for its handshake Connection ID in the stateless_reset_token transport
@@ -106,8 +115,14 @@ Zero-length Connection IDs are common for clients. A client that identifies conn
 solely by the 5-tuple has no need to issue Connection IDs and can reduce
 per-packet overhead by using zero-length Connection IDs. To allow such clients
 to issue Stateless Reset Tokens and delegate them, this document defines a
-transport parameter and a frame ({{advertising}}).
-Servers can issue a stateless reset token using the transport parameter and therefore do not use this extension.
+frame for advertising a token and a transport parameter through which servers
+indicate support for receiving that frame ({{advertising}}).
+Servers can advertise a token in the existing stateless_reset_token transport
+parameter; the new frame is limited to clients that use zero-length Connection
+IDs.
+
+The mechanisms in this document apply to QUIC versions 1 and 2 ({{!RFC9369}}),
+which use the same Stateless Reset format and short-header fields.
 
 
 # Conventions and Definitions
@@ -315,10 +330,10 @@ packets for the connection.
 
 # Advertising a Token with Zero-Length Connection IDs {#advertising}
 
-A client that uses zero-length Connection IDs cannot advertise a Stateless
-Reset Token by any means available in QUIC version 1. This section defines a
-transport parameter and a frame through which it can do so. The token is bound
-to the connection and can be delegated as described in {{delegation}}.
+The RESET_TOKEN frame lets a client using zero-length Connection IDs advertise
+a Stateless Reset Token. Servers indicate support with the reset_token
+transport parameter. The token is bound to the connection and can be delegated
+as described in {{delegation}}.
 
 
 ## The reset_token Transport Parameter {#reset-token-tp}
