@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-27T02:54:15.931550+00:00",
+  "timestamp": "2026-10-29T03:29:13.391289+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -1084,6 +1084,295 @@
           "body": "LGTM!",
           "createdAt": "2026-09-03T08:06:37Z",
           "updatedAt": "2026-09-03T08:06:37Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOTgCtSc8AAAABLLTF7w",
+      "title": "Clarify token negotiation, deployment scope, and QUIC version support",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/20",
+      "state": "CLOSED",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "\r\nClarify that RESET_TOKEN carries the token and the reset_token transport parameter negotiates support for receiving the frame. Explain retained delegate state, the mobile application lifecycle use case, optional platform support, and best-effort delivery. Explicitly cover QUIC v1 and v2.\r\n\r\nCloses #15.\r\nCloses #16.",
+      "createdAt": "2026-10-28T04:02:31Z",
+      "updatedAt": "2026-10-28T04:45:32Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "codex/dsr-scope-and-versions",
+      "headRefOid": "9667e12cacb383e4d1946df46d277fa7cc1a0094",
+      "closedAt": "2026-10-28T04:21:59Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOTgCtSc8AAAABLLTHwg",
+      "title": "Clarify registration updates and delegated teardown lifetime",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/21",
+      "state": "CLOSED",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Superseded by #24 with a renamed source branch and the review revisions.\n\nA socket can close during migration while its QUIC connection remains usable on another path.\r\n\r\nClarify that changing the path or peer-issued CID does not itself require a new token, and that registration can precede token advertisement. Preserve the existing connection-lifetime RESET_TOKEN rule.\r\n\r\nCloses #17. Addresses the registration inconsistency discussed in #19; token replacement semantics remain a separate design question.",
+      "createdAt": "2026-10-28T04:02:35Z",
+      "updatedAt": "2026-10-28T04:43:49Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "codex/dsr-registration-lifecycle",
+      "headRefOid": "e5d617b4bc14f963c09be5cb91c7f24edb14e892",
+      "closedAt": "2026-10-28T04:22:02Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOTgCtSc8AAAABLLTJcg",
+      "title": "Clarify delegated token authority and registration security",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/22",
+      "state": "CLOSED",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Superseded by #25 with a renamed source branch and the review revisions.\n\nDelegation exposes a connection's termination token to another component, and removing a registration cannot revoke a copied token while the peer still accepts it. Describe that authority and disclosure risk, require authorization for registration/update/cancellation, and protect tokens and registrations across applications.\n\nAddresses the security concern raised in the mailing-list discussion while keeping implementation placement and the local interface platform-specific.\n\nValidation: text and HTML rendering with kramdown-rfc/xml2rfc and aasvg 0.4.3, repository lint targets, rendered internal links, and `git diff --check` all pass.\n",
+      "createdAt": "2026-10-28T04:02:38Z",
+      "updatedAt": "2026-10-28T04:43:51Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "codex/dsr-delegation-security",
+      "headRefOid": "cdd9b69bc1c5cb09541b98bcc21cee98b34443a5",
+      "closedAt": "2026-10-28T04:22:05Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 23,
+      "id": "PR_kwDOTgCtSc8AAAABLLmiig",
+      "title": "Clarify token advertisement and QUIC version support",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/23",
+      "state": "OPEN",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarify that RESET_TOKEN carries the token and reset_token advertises support for receiving the frame. Describe delegate state and deployment conditions, and state applicability to QUIC versions 1 and 2.\n\nCloses #15. Closes #16.\n",
+      "createdAt": "2026-10-28T04:43:30Z",
+      "updatedAt": "2026-10-28T15:48:46Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "dsr-scope-and-versions",
+      "headRefOid": "9635d5917b68baa554f638c17419582815891bb3",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUpI4BQ",
+          "commit": {
+            "abbreviatedOid": "e777e3b"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-28T09:16:59Z",
+          "updatedAt": "2026-10-28T09:16:59Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUp--ow",
+          "commit": {
+            "abbreviatedOid": "e777e3b"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Sorry, I meant to send these comments/questions alongside my previous approval. Thanks for solving this!",
+          "createdAt": "2026-10-28T10:28:13Z",
+          "updatedAt": "2026-10-28T13:42:24Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "Question: is it common/good practice to make a more forward looking statement here?\nFor example:\n>  The mechanisms in this document apply to QUIC versions 1 and 2 ({{!RFC9369}}),\n> and to any future QUIC version that uses the same Stateless Reset format and\n> short-header structure",
+              "createdAt": "2026-10-28T10:29:23Z",
+              "updatedAt": "2026-10-28T13:42:24Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Now that we explicitly state\n> The mechanisms in this document apply to QUIC versions 1 and 2 ({{!RFC9369}}),\n> which use the same Stateless Reset format and short-header fields.\n\nShould we drop every other reference to QUIC versions in the text?\n\n```suggestion\nQUIC uses that property to avoid retaining state. An endpoint\n```",
+              "createdAt": "2026-10-28T13:21:12Z",
+              "updatedAt": "2026-10-28T13:42:24Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Ditto here, should we drop \"version 1\"?\n```suggestion\nIn {{RFC9000}}, Stateless Reset Tokens are issued alongside Connection IDs.\n```",
+              "createdAt": "2026-10-28T13:22:42Z",
+              "updatedAt": "2026-10-28T13:42:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUtw_BA",
+          "commit": {
+            "abbreviatedOid": "e777e3b"
+          },
+          "author": "mjoras",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-28T15:21:40Z",
+          "updatedAt": "2026-10-28T15:21:40Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "I\u2019d keep v1+v2 here and let future versions declare applicability, since that's the usual expectation. Just matching packet formats doesn\u2019t guarantee compatible extension semantics.",
+              "createdAt": "2026-10-28T15:21:40Z",
+              "updatedAt": "2026-10-28T15:21:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUuKIKQ",
+          "commit": {
+            "abbreviatedOid": "9635d59"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-28T15:48:46Z",
+          "updatedAt": "2026-10-28T15:48:46Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "PR_kwDOTgCtSc8AAAABLLmj5Q",
+      "title": "Clarify registration updates and teardown",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/24",
+      "state": "OPEN",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Closing a socket or losing a path need not end a connection. Clarify registration updates, token advertisement ordering, and teardown conditions while preserving the connection-lifetime RESET_TOKEN rule.\r\n\r\nCloses #17. Addresses the registration inconsistency in #19.",
+      "createdAt": "2026-10-28T04:43:32Z",
+      "updatedAt": "2026-10-28T16:13:52Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "dsr-registration-lifecycle",
+      "headRefOid": "f575c2564c316f98a3b65513feff35cb6bc74896",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUpnbwg",
+          "commit": {
+            "abbreviatedOid": "63db5d8"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thank you for tightening this up!",
+          "createdAt": "2026-10-28T09:56:44Z",
+          "updatedAt": "2026-10-28T14:13:46Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I think referring specifically to the OS here is doing more harm than good. Should we just drop the \"Operating System\" part, making this more generic?\n\nFor example, this section could instead refer to a generic delegate and be called something like \"Division of labor\". It could then keep including a couple of examples like we already do, possibly extending the diagram to cover updating a registration.\n\nIt does not need to happen in this PR (I can work on it myself as a follow-up). I'm asking just to understand whether we would like to go in this direction instead.",
+              "createdAt": "2026-10-28T09:56:44Z",
+              "updatedAt": "2026-10-28T14:13:46Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "I worry that this might be interpreted as being the single Stateless Reset Token supported by RESET_TOKEN for clients that use 0-length CIDs.\n\nPerhaps we can avoid mentioning connection? What about:\n```suggestion\n* A Stateless Reset Token that the endpoint has advertised, or will advertise, to the peer.```",
+              "createdAt": "2026-10-28T13:59:47Z",
+              "updatedAt": "2026-10-28T14:13:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUuhAyQ",
+          "commit": {
+            "abbreviatedOid": "f575c25"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-28T16:13:52Z",
+          "updatedAt": "2026-10-28T16:13:52Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "PR_kwDOTgCtSc8AAAABLLmlJw",
+      "title": "Clarify token disclosure and registration security",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/25",
+      "state": "OPEN",
+      "author": "mjoras",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Explain the disclosure risk of delegation and require authorization for registration operations. Deleting a registration does not revoke a token retained by the delegate.\n",
+      "createdAt": "2026-10-28T04:43:35Z",
+      "updatedAt": "2026-10-28T16:14:53Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
+      "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
+      "headRefName": "dsr-delegation-security",
+      "headRefOid": "8fe6b2c544bbdfe42b52d717ef83c6180b71e964",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABUuh3hg",
+          "commit": {
+            "abbreviatedOid": "8fe6b2c"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-28T16:14:53Z",
+          "updatedAt": "2026-10-28T16:14:53Z",
           "comments": []
         }
       ]
