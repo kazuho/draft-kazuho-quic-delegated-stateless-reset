@@ -10,30 +10,29 @@
 <meta content="Joseph Beshay" name="author">
 <meta content="Matt Joras" name="author">
 <meta content="
-       This document specifies how a QUIC endpoint may delegate the emission of
-Stateless Resets to a component that outlives the QUIC stack -- for example, an
-operating system that resets the peers of an application that has exited. As such
-delegation is most useful on the client side, where endpoints often use
-zero-length Connection IDs, this document also defines a transport parameter and
-a frame that allow those clients to advertise a Stateless Reset Token. 
+       This document specifies how a QUIC endpoint can delegate sending Stateless
+Resets to a component that outlives its connection state. It also defines a
+frame for clients using zero-length Connection IDs to advertise a Stateless
+Reset Token and a transport parameter for servers to indicate support for
+receiving the frame. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="internet-draft" name="keyword">
 <meta content="draft-kazuho-quic-delegated-stateless-reset-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.7
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.7
+    platformdirs 4.13.4
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.3
+    wcwidth 0.9.2
 -->
 <link href="draft-kazuho-quic-delegated-stateless-reset.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1049,11 +1048,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Delegating QUIC Stateless Resets</td>
-<td class="right">September 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Oku, et al.</td>
-<td class="center">Expires 7 March 2027</td>
+<td class="center">Expires 5 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1065,12 @@ svg {
 <dd class="internet-draft">draft-kazuho-quic-delegated-stateless-reset-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-03" class="published">3 September 2026</time>
+<time datetime="2026-11-01" class="published">1 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-07">7 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-05">5 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1097,12 +1096,11 @@ svg {
 <h1 id="title">Delegating QUIC Stateless Resets</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document specifies how a QUIC endpoint may delegate the emission of
-Stateless Resets to a component that outlives the QUIC stack -- for example, an
-operating system that resets the peers of an application that has exited. As such
-delegation is most useful on the client side, where endpoints often use
-zero-length Connection IDs, this document also defines a transport parameter and
-a frame that allow those clients to advertise a Stateless Reset Token.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document specifies how a QUIC endpoint can delegate sending Stateless
+Resets to a component that outlives its connection state. It also defines a
+frame for clients using zero-length Connection IDs to advertise a Stateless
+Reset Token and a transport parameter for servers to indicate support for
+receiving the frame.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1134,7 +1132,7 @@ a frame that allow those clients to advertise a Stateless Reset Token.<a href="#
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 7 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1224,7 +1222,7 @@ continued. Nothing a Stateless Reset carries is protected by the connection's
 keys or tied to its packet number spaces: the signal is authenticated solely by
 the 128-bit Stateless Reset Token it ends with, which the receiver matches
 against the tokens it retains.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">QUIC version 1 uses that property to avoid retaining state. An endpoint
+<p id="section-1-2">QUIC uses that property to avoid retaining state. An endpoint
 associates a Stateless Reset Token with each Connection ID it issues, delivering
 the token to the peer either in the stateless_reset_token transport parameter or
 in a NEW_CONNECTION_ID frame. When such an endpoint later receives a packet that
@@ -1246,31 +1244,44 @@ abandoned connections consume memory and connection-table capacity. To cover
 these scenarios, an endpoint can delegate the termination of the connection to
 a component that outlives its own connection state, and that component can
 reset the peer long after the endpoint is gone (<a href="#delegation" class="auto internal xref">Section 3</a>).<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">A CONNECTION_CLOSE packet could be recorded and used for this scenario, but
-such a packet is difficult to manage for a delegate. It is protected under the
+<p id="section-1-5">A mobile operating system can withdraw an application's network access before
+the application can send a CONNECTION_CLOSE frame. Once the connection has been
+abandoned, a delegate that retains network access can reset the peer
+(<a href="#proactive" class="auto internal xref">Section 5</a>).<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">Delegation is optional. A delegate, such as an operating system, system service,
+or application helper, needs to survive the loss of connection state and retain
+access to the connection's network path. If a reset cannot be delivered, the
+peer relies on the usual QUIC termination and timeout mechanisms.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">A CONNECTION_CLOSE packet could be recorded for a delegate to send, but such a
+packet is difficult to manage. It is protected under the
 connection's packet-protection keys that endpoints periodically rotate, and it
 carries a packet number that must fall within a dynamic range the peer will accept;
-thus, the recorded packet would need constant refreshing to remain usable.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">In contrast, sending a Stateless Reset requires only the static Stateless Reset
-Token and the 5-tuple on which to send it. The token remains valid until the
-associated Connection ID is retired.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">A delegated Stateless Reset can also be better formed than one sent by an
+thus, the recorded packet would need constant refreshing to remain usable.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">In contrast, a Stateless Reset does not depend on packet-protection keys or
+packet numbers. The delegate retains the token and the information needed to
+match and route packets (<a href="#delegation" class="auto internal xref">Section 3</a>).<a href="#section-1-8" class="pilcrow">¶</a></p>
+<p id="section-1-9">A delegated Stateless Reset can also be better formed than one sent by an
 endpoint that has lost its state: the delegate can remember a Connection ID that
 the peer has issued and place it where a 1-RTT packet carries the Destination
 Connection ID, so that the Stateless Reset reaches the intended peer in a
-load-balanced deployment (<a href="#constructing" class="auto internal xref">Section 4</a>).<a href="#section-1-7" class="pilcrow">¶</a></p>
-<p id="section-1-8">With QUIC version 1, Stateless Reset Tokens are issued alongside Connection IDs.
+load-balanced deployment (<a href="#constructing" class="auto internal xref">Section 4</a>).<a href="#section-1-9" class="pilcrow">¶</a></p>
+<p id="section-1-10">In <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>, Stateless Reset Tokens are issued alongside Connection IDs.
 An endpoint that uses zero-length Connection IDs cannot issue one in a
 NEW_CONNECTION_ID frame (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.1.1" class="relref">Section 5.1.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). Only a server can provide a
 token for its handshake Connection ID in the stateless_reset_token transport
 parameter; clients cannot because client transport parameters are not
-confidential.<a href="#section-1-8" class="pilcrow">¶</a></p>
-<p id="section-1-9">Zero-length Connection IDs are common for clients. A client that identifies connections
+confidential.<a href="#section-1-10" class="pilcrow">¶</a></p>
+<p id="section-1-11">Zero-length Connection IDs are common for clients. A client that identifies connections
 solely by the 5-tuple has no need to issue Connection IDs and can reduce
 per-packet overhead by using zero-length Connection IDs. To allow such clients
 to issue Stateless Reset Tokens and delegate them, this document defines a
-transport parameter and a frame (<a href="#advertising" class="auto internal xref">Section 6</a>).
-Servers can issue a stateless reset token using the transport parameter and therefore do not use this extension.<a href="#section-1-9" class="pilcrow">¶</a></p>
+frame for advertising a token and a transport parameter through which servers
+indicate support for receiving that frame (<a href="#advertising" class="auto internal xref">Section 6</a>).
+Servers can advertise a token in the existing stateless_reset_token transport
+parameter; the new frame is limited to clients that use zero-length Connection
+IDs.<a href="#section-1-11" class="pilcrow">¶</a></p>
+<p id="section-1-12">The mechanisms in this document apply to QUIC versions 1 and 2 (<span>[<a href="#RFC9369" class="cite xref">RFC9369</a>]</span>),
+which use the same Stateless Reset format and short-header fields.<a href="#section-1-12" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1601,10 +1612,10 @@ packets for the connection.<a href="#section-5-3" class="pilcrow">¶</a></p>
       <h2 id="name-advertising-a-token-with-ze">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-advertising-a-token-with-ze" class="section-name selfRef">Advertising a Token with Zero-Length Connection IDs</a>
       </h2>
-<p id="section-6-1">A client that uses zero-length Connection IDs cannot advertise a Stateless
-Reset Token by any means available in QUIC version 1. This section defines a
-transport parameter and a frame through which it can do so. The token is bound
-to the connection and can be delegated as described in <a href="#delegation" class="auto internal xref">Section 3</a>.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">The RESET_TOKEN frame lets a client using zero-length Connection IDs advertise
+a Stateless Reset Token. Servers indicate support with the reset_token
+transport parameter. The token is bound to the connection and can be delegated
+as described in <a href="#delegation" class="auto internal xref">Section 3</a>.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <div id="reset-token-tp">
 <section id="section-6.1">
         <h3 id="name-the-reset_token-transport-p">
@@ -1724,6 +1735,10 @@ apply the remote-address check in <span><a href="https://rfc-editor.org/rfc/rfc9
 <dt id="RFC9000">[RFC9000]</dt>
       <dd>
 <span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9369">[RFC9369]</dt>
+      <dd>
+<span class="refAuthor">Duke, M.</span>, <span class="refTitle">"QUIC Version 2"</span>, <span class="seriesInfo">RFC 9369</span>, <span class="seriesInfo">DOI 10.17487/RFC9369</span>, <time datetime="2023-05" class="refDate">May 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9369">https://www.rfc-editor.org/rfc/rfc9369</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
       <dd>

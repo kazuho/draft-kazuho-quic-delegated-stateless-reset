@@ -5,11 +5,11 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 7 March 2027                                             Google
+Expires: 5 May 2027                                               Google
                                                                J. Beshay
                                                                 M. Joras
                                                                     Meta
-                                                        3 September 2026
+                                                         1 November 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -17,13 +17,11 @@ Expires: 7 March 2027                                             Google
 
 Abstract
 
-   This document specifies how a QUIC endpoint may delegate the emission
-   of Stateless Resets to a component that outlives the QUIC stack --
-   for example, an operating system that resets the peers of an
-   application that has exited.  As such delegation is most useful on
-   the client side, where endpoints often use zero-length Connection
-   IDs, this document also defines a transport parameter and a frame
-   that allow those clients to advertise a Stateless Reset Token.
+   This document specifies how a QUIC endpoint can delegate sending
+   Stateless Resets to a component that outlives its connection state.
+   It also defines a frame for clients using zero-length Connection IDs
+   to advertise a Stateless Reset Token and a transport parameter for
+   servers to indicate support for receiving the frame.
 
 Discussion Venues
 
@@ -52,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 March 2027.
+   This Internet-Draft will expire on 5 May 2027.
 
 Copyright Notice
 
@@ -95,17 +93,17 @@ Table of Contents
    Reset Token it ends with, which the receiver matches against the
    tokens it retains.
 
-   QUIC version 1 uses that property to avoid retaining state.  An
-   endpoint associates a Stateless Reset Token with each Connection ID
-   it issues, delivering the token to the peer either in the
-   stateless_reset_token transport parameter or in a NEW_CONNECTION_ID
-   frame.  When such an endpoint later receives a packet that it cannot
-   associate with any active connection, it recomputes the token from
-   the Destination Connection ID carried in that packet -- typically by
-   applying a static key to the Connection ID (Section 10.3.2 of
-   [RFC9000]) -- and emits a Stateless Reset carrying that token.
-   Because the token is derived from the Connection ID, the resetting
-   endpoint need not retain any per-connection state.
+   QUIC uses that property to avoid retaining state.  An endpoint
+   associates a Stateless Reset Token with each Connection ID it issues,
+   delivering the token to the peer either in the stateless_reset_token
+   transport parameter or in a NEW_CONNECTION_ID frame.  When such an
+   endpoint later receives a packet that it cannot associate with any
+   active connection, it recomputes the token from the Destination
+   Connection ID carried in that packet -- typically by applying a
+   static key to the Connection ID (Section 10.3.2 of [RFC9000]) -- and
+   emits a Stateless Reset carrying that token.  Because the token is
+   derived from the Connection ID, the resetting endpoint need not
+   retain any per-connection state.
 
    The same property permits a different arrangement, and it is the
    subject of this document: the entity that sends a Stateless Reset
@@ -124,16 +122,27 @@ Table of Contents
    that component can reset the peer long after the endpoint is gone
    (Section 3).
 
-   A CONNECTION_CLOSE packet could be recorded and used for this
-   scenario, but such a packet is difficult to manage for a delegate.
-   It is protected under the connection's packet-protection keys that
-   endpoints periodically rotate, and it carries a packet number that
-   must fall within a dynamic range the peer will accept; thus, the
-   recorded packet would need constant refreshing to remain usable.
+   A mobile operating system can withdraw an application's network
+   access before the application can send a CONNECTION_CLOSE frame.
+   Once the connection has been abandoned, a delegate that retains
+   network access can reset the peer (Section 5).
 
-   In contrast, sending a Stateless Reset requires only the static
-   Stateless Reset Token and the 5-tuple on which to send it.  The token
-   remains valid until the associated Connection ID is retired.
+   Delegation is optional.  A delegate, such as an operating system,
+   system service, or application helper, needs to survive the loss of
+   connection state and retain access to the connection's network path.
+   If a reset cannot be delivered, the peer relies on the usual QUIC
+   termination and timeout mechanisms.
+
+   A CONNECTION_CLOSE packet could be recorded for a delegate to send,
+   but such a packet is difficult to manage.  It is protected under the
+   connection's packet-protection keys that endpoints periodically
+   rotate, and it carries a packet number that must fall within a
+   dynamic range the peer will accept; thus, the recorded packet would
+   need constant refreshing to remain usable.
+
+   In contrast, a Stateless Reset does not depend on packet-protection
+   keys or packet numbers.  The delegate retains the token and the
+   information needed to match and route packets (Section 3).
 
    A delegated Stateless Reset can also be better formed than one sent
    by an endpoint that has lost its state: the delegate can remember a
@@ -142,22 +151,27 @@ Table of Contents
    Reset reaches the intended peer in a load-balanced deployment
    (Section 4).
 
-   With QUIC version 1, Stateless Reset Tokens are issued alongside
-   Connection IDs.  An endpoint that uses zero-length Connection IDs
-   cannot issue one in a NEW_CONNECTION_ID frame (Section 5.1.1 of
-   [RFC9000]).  Only a server can provide a token for its handshake
-   Connection ID in the stateless_reset_token transport parameter;
-   clients cannot because client transport parameters are not
-   confidential.
+   In [RFC9000], Stateless Reset Tokens are issued alongside Connection
+   IDs.  An endpoint that uses zero-length Connection IDs cannot issue
+   one in a NEW_CONNECTION_ID frame (Section 5.1.1 of [RFC9000]).  Only
+   a server can provide a token for its handshake Connection ID in the
+   stateless_reset_token transport parameter; clients cannot because
+   client transport parameters are not confidential.
 
    Zero-length Connection IDs are common for clients.  A client that
    identifies connections solely by the 5-tuple has no need to issue
    Connection IDs and can reduce per-packet overhead by using zero-
    length Connection IDs.  To allow such clients to issue Stateless
-   Reset Tokens and delegate them, this document defines a transport
-   parameter and a frame (Section 6).  Servers can issue a stateless
-   reset token using the transport parameter and therefore do not use
-   this extension.
+   Reset Tokens and delegate them, this document defines a frame for
+   advertising a token and a transport parameter through which servers
+   indicate support for receiving that frame (Section 6).  Servers can
+   advertise a token in the existing stateless_reset_token transport
+   parameter; the new frame is limited to clients that use zero-length
+   Connection IDs.
+
+   The mechanisms in this document apply to QUIC versions 1 and 2
+   ([RFC9369]), which use the same Stateless Reset format and short-
+   header fields.
 
 2.  Conventions and Definitions
 
@@ -376,11 +390,10 @@ Table of Contents
 
 6.  Advertising a Token with Zero-Length Connection IDs
 
-   A client that uses zero-length Connection IDs cannot advertise a
-   Stateless Reset Token by any means available in QUIC version 1.  This
-   section defines a transport parameter and a frame through which it
-   can do so.  The token is bound to the connection and can be delegated
-   as described in Section 3.
+   The RESET_TOKEN frame lets a client using zero-length Connection IDs
+   advertise a Stateless Reset Token.  Servers indicate support with the
+   reset_token transport parameter.  The token is bound to the
+   connection and can be delegated as described in Section 3.
 
 6.1.  The reset_token Transport Parameter
 
@@ -490,6 +503,10 @@ Table of Contents
               Multiplexed and Secure Transport", RFC 9000,
               DOI 10.17487/RFC9000, May 2021,
               <https://www.rfc-editor.org/rfc/rfc9000>.
+
+   [RFC9369]  Duke, M., "QUIC Version 2", RFC 9369,
+              DOI 10.17487/RFC9369, May 2023,
+              <https://www.rfc-editor.org/rfc/rfc9369>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
