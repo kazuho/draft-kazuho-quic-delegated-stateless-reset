@@ -1301,35 +1301,51 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-delegating-a-stateless-rese" class="section-name selfRef">Delegating a Stateless Reset</a>
       </h2>
 <p id="section-3-1">An endpoint can delegate the sending of a Stateless Reset to a component that
-outlives its connection state. The delegate retains the Stateless Reset Token,
-rather than recomputing it from a Connection ID as a resetting endpoint would,
-together with whatever the endpoint uses to match a received packet to the
-connection -- a Connection ID, or the 5-tuple when a client uses a zero-length
-Connection ID (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). To construct a reset that
-can be routed to the peer, it also needs a Connection ID that the peer issued
-(<a href="#constructing" class="auto internal xref">Section 4</a>). It needs no packet-protection keys and no packet number.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">Both clients and servers can delegate a Stateless Reset in this way.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">Any endpoint that has issued a Stateless Reset Token can delegate it, whatever
-the length of the Connection IDs it issues. An endpoint that issues Connection
-IDs delegates one of the tokens it has already distributed, in the
-stateless_reset_token transport parameter or in a NEW_CONNECTION_ID frame. A
-client that uses a zero-length Connection ID cannot issue a token under QUIC
-version 1; <a href="#advertising" class="auto internal xref">Section 6</a> defines how it does so.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<p id="section-3-4"><span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> requires a peer to compare the trailing bytes of a
-received datagram only against the tokens of Connection IDs that it has used and
-has not retired. A Stateless Reset carrying any other token is therefore
-indistinguishable from a packet that cannot be decrypted and is discarded. A
-delegate <span class="bcp14">MAY</span> track when the peer starts using a Connection ID, and send a
-Stateless Reset carrying the associated token only once that happens.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">A client that uses a zero-length Connection ID can advertise a token for the
-whole connection using the extension in <a href="#advertising" class="auto internal xref">Section 6</a>.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">The endpoint updates the registration when the selected token, Connection ID,
-or network path changes. A reset sent before the delegate receives an update
+outlives its connection state. The delegate retains a registration containing:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-2.1">
+          <p id="section-3-2.1.1">Information the endpoint uses to match incoming datagrams to the connection,
+such as endpoint-issued Connection IDs or addressing information
+(<span><a href="https://rfc-editor.org/rfc/rfc9000#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-2.2">
+          <p id="section-3-2.2.1">A return path and a peer-issued Connection ID that the peer currently accepts
+(<a href="#constructing" class="auto internal xref">Section 4</a>).<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-2.3">
+          <p id="section-3-2.3.1">A Stateless Reset Token that the endpoint has advertised, or will advertise,
+to the peer.<a href="#section-3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-3-3">The delegate retains the token rather than recomputing it from a Connection ID.
+It needs no packet-protection keys or packet numbers.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Both clients and servers can delegate resets, regardless of the length of their
+Connection IDs. Tokens are advertised in the server-only stateless_reset_token
+transport parameter or in NEW_CONNECTION_ID frames. A client using zero-length
+Connection IDs can advertise a token for the whole connection in RESET_TOKEN
+frames (<a href="#advertising" class="auto internal xref">Section 6</a>).<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Registration can precede token advertisement, but the peer recognizes a reset
+only after learning the token and associating it with the reset's source
+address (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.1" class="relref">Section 10.3.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>). For tokens associated with Connection
+IDs, the peer also needs to have used and not retired the ID. A reset carrying
+any other token is indistinguishable from a packet that cannot be decrypted and
+is discarded. A delegate <span class="bcp14">MAY</span> track when the peer starts using a Connection ID,
+and send a Stateless Reset carrying its token only once that happens.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">The endpoint updates a registration when its matching information, peer-issued
+Connection ID, or path changes. A reset sent with stale routing information
 might be dropped.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">This document does not define an interface between an endpoint and a delegate.<a href="#section-3-7" class="pilcrow">¶</a></p>
-<p id="section-3-8">Except as described in <a href="#constructing" class="auto internal xref">Section 4</a> and <a href="#proactive" class="auto internal xref">Section 5</a>, the requirements of
+<p id="section-3-7">Tokens associated with endpoint-issued Connection IDs remain bound to those
+IDs when the path or peer-issued Connection ID changes. A token advertised
+using RESET_TOKEN remains fixed for the connection's lifetime
+(<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>).<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">A connection can have registrations for multiple paths. Closing a socket or
+losing a path does not authorize resetting a connection that remains active
+on another path (<a href="#proactive" class="auto internal xref">Section 5</a>). A delegate <span class="bcp14">MUST NOT</span> use a canceled or expired
+registration to send resets.<a href="#section-3-8" class="pilcrow">¶</a></p>
+<p id="section-3-9">This document does not define an interface between an endpoint and a delegate.<a href="#section-3-9" class="pilcrow">¶</a></p>
+<p id="section-3-10">Except as described in <a href="#constructing" class="auto internal xref">Section 4</a> and <a href="#proactive" class="auto internal xref">Section 5</a>, the requirements of
 <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3" class="relref">Section 10.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> and <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> governing the
-construction and sending of a Stateless Reset apply unchanged.<a href="#section-3-8" class="pilcrow">¶</a></p>
+construction and sending of a Stateless Reset apply unchanged.<a href="#section-3-10" class="pilcrow">¶</a></p>
 <div id="os-offload">
 <section id="section-3.1">
         <h3 id="name-delegating-a-stateless-reset">
@@ -1343,24 +1359,28 @@ registers, for one of its connections, a Connection ID that the peer has issued
 and currently accepts, together with what identifies that connection in the
 datagrams the peer sends -- the socket, and the Connection ID that the
 application is issuing, if any.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">From that registration, the operating system generates a Stateless Reset Token,
-forms and retains a Stateless Reset datagram (<a href="#constructing" class="auto internal xref">Section 4</a>), and returns the
-token to the application. The application makes the token known to its peer,
-either as the token associated with the issued Connection ID or, if it is a
-client that uses zero-length Connection IDs, in a RESET_TOKEN frame
-(<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">Once the application is no longer able to process packets for the connection,
+<p id="section-3.1-3">For a new connection or a new Connection ID issued by the application, the
+operating system generates a Stateless Reset Token, forms and retains a
+Stateless Reset datagram (<a href="#constructing" class="auto internal xref">Section 4</a>), and returns the token to the
+application. The application makes the token known to its peer, either as the
+token associated with the issued Connection ID or, if it is a client that uses
+zero-length Connection IDs, in a RESET_TOKEN frame (<a href="#reset-token-frame" class="auto internal xref">Section 6.2</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">The application updates or cancels registrations as described in <a href="#delegation" class="auto internal xref">Section 3</a>.
+Updating the registered path or peer-issued Connection ID can require rebuilding
+the retained datagram, but does not require generating a new token.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">Once the application has lost or abandoned the connection state,
 the operating system sends the retained datagram once (<a href="#proactive" class="auto internal xref">Section 5</a>), and
 thereafter responds to datagrams matching that registration by sending it again,
 but does so only if the retained datagram is smaller than the one that triggered
-it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Eventually, the operating system discards the stateless reset and the
-registration, as the peer will nevertheless abandon the connection due to not
-making progress.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+it, as required by <span><a href="https://rfc-editor.org/rfc/rfc9000#section-10.3.3" class="relref">Section 10.3.3</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">The operating system limits how long it retains the reset and registration
+after the application loses or abandons connection state. A retained
+registration applies only to the old connection. It <span class="bcp14">MUST NOT</span> prevent delivery
+to a new connection that reuses the socket or 5-tuple.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 <span id="name-delegating-a-stateless-reset-"></span><div id="fig-os-offload">
 <figure id="figure-1">
-          <div id="section-3.1-6.1">
-            <div class="alignLeft art-svg artwork" id="section-3.1-6.1.1">
+          <div id="section-3.1-7.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-7.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="528" width="544" viewBox="0 0 544 528" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,512" fill="none" stroke="black"></path>
                 <path d="M 80,80 L 80,240" fill="none" stroke="black"></path>
@@ -1441,14 +1461,14 @@ making progress.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
                   <text x="288" y="484">&amp;</text>
                   <text x="352" y="484">Registration)</text>
                 </g>
-              </svg><a href="#section-3.1-6.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-3.1-7.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
 <a href="#name-delegating-a-stateless-reset-" class="selfRef">Delegating a Stateless Reset to the Operating System</a>
           </figcaption></figure>
 </div>
-<p id="section-3.1-7">In this division of labor (<a href="#fig-division-of-labor" class="auto internal xref">Figure 2</a>), it is possible to deny
+<p id="section-3.1-8">In this division of labor (<a href="#fig-division-of-labor" class="auto internal xref">Figure 2</a>), it is possible to deny
 an application the use of the Stateless Reset as a means of conveying
 information of its own. The Stateless Reset Token and the other bytes that the
 operating system generates are outside the application's control, and the
@@ -1458,11 +1478,11 @@ operating system can therefore monitor the packets that the application sends
 after the registration, and send the Stateless Reset only if those packets
 carried that Connection ID. The Stateless Reset then carries no Connection ID
 other than the one that the application's own packets were already carrying to
-the peer.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+the peer.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 <span id="name-division-of-labor-between-a"></span><div id="fig-division-of-labor">
 <figure id="figure-2">
-          <div id="section-3.1-8.1">
-            <div class="alignLeft art-svg artwork" id="section-3.1-8.1.1">
+          <div id="section-3.1-9.1">
+            <div class="alignLeft art-svg artwork" id="section-3.1-9.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="432" width="560" viewBox="0 0 560 432" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,416" fill="none" stroke="black"></path>
                 <path d="M 40,96 L 40,384" fill="none" stroke="black"></path>
@@ -1536,7 +1556,7 @@ the peer.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
                   <text x="64" y="356">(16</text>
                   <text x="108" y="356">bytes)</text>
                 </g>
-              </svg><a href="#section-3.1-8.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-3.1-9.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
@@ -1603,8 +1623,10 @@ describes a Stateless Reset only as a response to a received packet because an
 endpoint that has lost its state learns of the connection's existence only from
 one; an endpoint or delegate that retains the token knows which connections it
 may need to reset before any packet arrives.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3">A delegate <span class="bcp14">MUST NOT</span> send a Stateless Reset while the endpoint can still process
-packets for the connection.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-3">A delegate <span class="bcp14">MUST NOT</span> send a Stateless Reset unless the endpoint has lost or
+abandoned its connection state. Loss of one path or temporary suspension of
+the application does not by itself imply abandonment. Once delegated teardown
+begins, the application <span class="bcp14">MUST NOT</span> resume that connection.<a href="#section-5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="advertising">
