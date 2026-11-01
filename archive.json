@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-29T03:29:13.391289+00:00",
+  "timestamp": "2026-11-01T03:14:37.825157+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -182,15 +182,15 @@
       "id": "I_kwDOTgCtSc8AAAABaDbGgw",
       "title": "Clarify in Abstract (and Introduction) that the transport parameter only negotiates the extension",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/15",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As pointed out by Lucas Pardue on the [mailing list](https://mailarchive.ietf.org/arch/msg/quic/pzB9d6Md1sM668jrZGCCRV9NY5A/), the current wording in the Abstract (\"defines a transport parameter and a frame that allow those clients to advertise a Stateless Reset Token\") can initially read as if the client advertises the token inside a transport parameter.\n\nWe should make it clear that:\n1. The `RESET_TOKEN` frame carries the Stateless Reset Token.\n2. The `reset_token` transport parameter is only an empty parameter used to negotiate support for the frame.",
       "createdAt": "2026-10-26T16:02:04Z",
-      "updatedAt": "2026-10-26T16:02:04Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T01:27:01Z",
+      "closedAt": "2026-11-01T01:27:01Z",
       "comments": []
     },
     {
@@ -198,15 +198,15 @@
       "id": "I_kwDOTgCtSc8AAAABaDfQHA",
       "title": "Clarify how delegated stateless resets work across QUIC versions",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/16",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Feedback from Martin Thomson on the [mailing list](https://mailarchive.ietf.org/arch/msg/quic/N8peVKnCLlG20sZPVvZ0ghtXgyE/): the draft should explicitly specify how the mechanism works across QUICv1, QUICv2 (and other versions).",
       "createdAt": "2026-10-26T16:06:05Z",
-      "updatedAt": "2026-10-26T16:06:05Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T01:27:03Z",
+      "closedAt": "2026-11-01T01:27:03Z",
       "comments": []
     },
     {
@@ -214,15 +214,15 @@
       "id": "I_kwDOTgCtSc8AAAABaDo9ZA",
       "title": "Consider spelling out stateless reset token matching scope and relationship to routing/demuxing",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "From Martin Thomson on the [mailing list](https://mailarchive.ietf.org/arch/msg/quic/N8peVKnCLlG20sZPVvZ0ghtXgyE/), we should consider describing, more explicitly, how a delegated stateless reset token operates and how it maps to packet routing/demultiplexing:\n\n1. **Matching scope:** Clarify how incoming packets are matched to a registration depending on how packets are routed/demultiplexed to the endpoint (e.g., matching by UDP port / 5-tuple when zero-length CIDs are used on a socket, versus matching by `local_CID` when non-zero CIDs are used).\n2. **Proactive vs. reactive reset lifecycle:** Clarify the relationship between sending a proactive reset immediately upon socket/endpoint teardown and retaining registration state briefly to respond reactively to incoming packets (e.g., as a fallback if the proactive reset is lost, and how port reuse interacts with retained state).",
       "createdAt": "2026-10-26T16:15:20Z",
-      "updatedAt": "2026-10-26T16:15:20Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T01:30:35Z",
+      "closedAt": "2026-11-01T01:30:35Z",
       "comments": []
     },
     {
@@ -1171,24 +1171,26 @@
       "id": "PR_kwDOTgCtSc8AAAABLLmiig",
       "title": "Clarify token advertisement and QUIC version support",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/23",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "mjoras",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Clarify that RESET_TOKEN carries the token and reset_token advertises support for receiving the frame. Describe delegate state and deployment conditions, and state applicability to QUIC versions 1 and 2.\n\nCloses #15. Closes #16.\n",
       "createdAt": "2026-10-28T04:43:30Z",
-      "updatedAt": "2026-10-28T15:48:46Z",
+      "updatedAt": "2026-11-01T01:27:00Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
       "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "dsr-scope-and-versions",
       "headRefOid": "9635d5917b68baa554f638c17419582815891bb3",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-11-01T01:27:00Z",
+      "mergedAt": "2026-11-01T01:27:00Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "ba876d2a24804da771868beea80af4ec581c760f"
+      },
       "comments": [],
       "reviews": [
         {
@@ -1242,7 +1244,7 @@
             "abbreviatedOid": "e777e3b"
           },
           "author": "mjoras",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2026-10-28T15:21:40Z",
@@ -1268,6 +1270,19 @@
           "createdAt": "2026-10-28T15:48:46Z",
           "updatedAt": "2026-10-28T15:48:46Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABVUn3nw",
+          "commit": {
+            "abbreviatedOid": "9635d59"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thank you!",
+          "createdAt": "2026-11-01T01:26:44Z",
+          "updatedAt": "2026-11-01T01:26:44Z",
+          "comments": []
         }
       ]
     },
@@ -1276,24 +1291,26 @@
       "id": "PR_kwDOTgCtSc8AAAABLLmj5Q",
       "title": "Clarify registration updates and teardown",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/24",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "mjoras",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Closing a socket or losing a path need not end a connection. Clarify registration updates, token advertisement ordering, and teardown conditions while preserving the connection-lifetime RESET_TOKEN rule.\r\n\r\nCloses #17. Addresses the registration inconsistency in #19.",
       "createdAt": "2026-10-28T04:43:32Z",
-      "updatedAt": "2026-10-28T16:13:52Z",
+      "updatedAt": "2026-11-01T01:30:34Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
       "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "dsr-registration-lifecycle",
       "headRefOid": "f575c2564c316f98a3b65513feff35cb6bc74896",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-11-01T01:30:34Z",
+      "mergedAt": "2026-11-01T01:30:34Z",
+      "mergedBy": "kazuho",
+      "mergeCommit": {
+        "oid": "e69261734aafc4568b0617547681fe1e3c7dbd92"
+      },
       "comments": [],
       "reviews": [
         {
@@ -1334,6 +1351,19 @@
           "createdAt": "2026-10-28T16:13:52Z",
           "updatedAt": "2026-10-28T16:13:52Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABVUoYEA",
+          "commit": {
+            "abbreviatedOid": "f575c25"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-11-01T01:30:23Z",
+          "updatedAt": "2026-11-01T01:30:23Z",
+          "comments": []
         }
       ]
     },
@@ -1344,12 +1374,12 @@
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/25",
       "state": "OPEN",
       "author": "mjoras",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Explain the disclosure risk of delegation and require authorization for registration operations. Deleting a registration does not revoke a token retained by the delegate.\n",
       "createdAt": "2026-10-28T04:43:35Z",
-      "updatedAt": "2026-10-28T16:14:53Z",
+      "updatedAt": "2026-11-01T01:31:27Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
@@ -1373,6 +1403,19 @@
           "body": "",
           "createdAt": "2026-10-28T16:14:53Z",
           "updatedAt": "2026-10-28T16:14:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABVUoh-w",
+          "commit": {
+            "abbreviatedOid": "8fe6b2c"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-11-01T01:31:27Z",
+          "updatedAt": "2026-11-01T01:31:27Z",
           "comments": []
         }
       ]
