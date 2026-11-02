@@ -5,11 +5,11 @@
 quic                                                    奥 一穂 (K. Oku)
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                                  S. Duo
-Expires: 5 May 2027                                               Google
+Expires: 6 May 2027                                               Google
                                                                J. Beshay
                                                                 M. Joras
                                                                     Meta
-                                                         1 November 2026
+                                                         2 November 2026
 
 
                     Delegating QUIC Stateless Resets
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 May 2027.
+   This Internet-Draft will expire on 6 May 2027.
 
 Copyright Notice
 
@@ -496,9 +496,20 @@ Table of Contents
    reused.  A sender can generate a token using a cryptographically
    secure random number generator.
 
-   The endpoint and delegate need to protect their coordination
-   interface.  The token and routing information MUST have
-   confidentiality and integrity in transit and at rest.
+   Giving a delegate access to the token creates another opportunity for
+   disclosure, even if it can already terminate the connection.  The
+   endpoint needs to consider this exposure when selecting a delegate.
+
+   The token and routing information MUST have confidentiality and
+   integrity in transit and at rest.  The delegate MUST restrict
+   registration creation, update, cancellation, and access to the
+   endpoint and entities authorized to act for it.
+
+   Removing a registration does not revoke a token retained by the
+   delegate.  A token associated with a Connection ID is invalidated
+   when the peer retires that ID (Section 10.3 of [RFC9000]).  A token
+   advertised using RESET_TOKEN remains valid for the connection's
+   lifetime (Section 6.2).
 
    A delegate can retain multiple registrations for a connection, such
    as one for each path.  Implementations SHOULD limit the number of
