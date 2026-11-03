@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-01T03:14:37.825157+00:00",
+  "timestamp": "2026-11-03T04:35:14.171653+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -1372,24 +1372,26 @@
       "id": "PR_kwDOTgCtSc8AAAABLLmlJw",
       "title": "Clarify token disclosure and registration security",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/25",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "mjoras",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Explain the disclosure risk of delegation and require authorization for registration operations. Deleting a registration does not revoke a token retained by the delegate.\n",
       "createdAt": "2026-10-28T04:43:35Z",
-      "updatedAt": "2026-11-01T01:31:27Z",
+      "updatedAt": "2026-11-02T10:28:19Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "d28497bb66a2e932c6b4cf240f7778a0bed60068",
       "headRepository": "mjoras/draft-kazuho-quic-delegated-stateless-reset",
       "headRefName": "dsr-delegation-security",
       "headRefOid": "8fe6b2c544bbdfe42b52d717ef83c6180b71e964",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-11-02T10:28:18Z",
+      "mergedAt": "2026-11-02T10:28:18Z",
+      "mergedBy": "stefanoduo-google",
+      "mergeCommit": {
+        "oid": "8124fa79ab4c8219e45ce4344adde9746117ac33"
+      },
       "comments": [],
       "reviews": [
         {
@@ -1416,6 +1418,19 @@
           "body": "",
           "createdAt": "2026-11-01T01:31:27Z",
           "updatedAt": "2026-11-01T01:31:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABVdd1IA",
+          "commit": {
+            "abbreviatedOid": "8fe6b2c"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-11-02T10:27:44Z",
+          "updatedAt": "2026-11-02T10:27:44Z",
           "comments": []
         }
       ]
