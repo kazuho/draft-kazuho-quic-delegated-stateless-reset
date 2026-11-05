@@ -80,22 +80,21 @@ reset the peer long after the endpoint is gone ({{delegation}}).
 
 Delegation is optional. A delegate, such as an operating system, system service,
 or application helper, needs to survive the loss of connection state and retain
-access to the connection's network path. If a reset cannot be delivered, the
-peer relies on the usual QUIC termination and timeout mechanisms.
-
-A mobile operating system can withdraw an application's network access before
+access to the connection's network path.
+A mobile operating system could withdraw an application's network access before
 the application can send a CONNECTION_CLOSE frame. Once the connection has been
 abandoned, a delegate that retains network access can reset the peer
 ({{proactive}}).
+If a reset cannot be delivered, the
+peer relies on the usual QUIC termination and timeout mechanisms.
 
 A CONNECTION_CLOSE packet could be recorded for a delegate to send, but such a
 packet is difficult to manage. It is protected under the
 connection's packet-protection keys that endpoints periodically rotate, and it
 carries a packet number that must fall within a dynamic range the peer will accept;
 thus, the recorded packet would need constant refreshing to remain usable.
-Moreover, because the encrypted packet is opaque to the delegate, a delegate that
-has withdrawn an application's network access cannot verify that the packet only
-closes the connection rather than carrying arbitrary data.
+Moreover, because the packet is encrypted, a delegate that does not trust the
+endpoint cannot verify that it only closes the connection.
 
 In contrast, a Stateless Reset does not depend on packet-protection keys or
 packet numbers, and its contents can be generated or verified by the delegate
@@ -208,8 +207,7 @@ delegate is an operating system that can withdraw the endpoint's network
 access, the delegate can instead generate the token ({{fig-delegation-flow}}).
 When the endpoint registers a new connection or a new Connection ID it issues,
 the delegate forms and retains a Stateless Reset datagram ({{constructing}})
-and returns the Stateless Reset Token to the endpoint to advertise to its peer
-({{delegation}}).
+and returns the Stateless Reset Token to the endpoint to advertise to its peer.
 
 ~~~ aasvg
 +-----------------------------------------------------------------+
@@ -346,9 +344,9 @@ one; an endpoint or delegate that retains the token knows which connections it
 may need to reset before any packet arrives.
 
 A delegate MUST NOT send a Stateless Reset unless the endpoint has lost or
-abandoned its connection state. Loss of one path or temporary suspension of
-the application does not by itself imply abandonment. Once delegated teardown
-begins, the application MUST NOT resume that connection.
+abandoned its connection state. Loss of one path does not by itself imply
+abandonment. Once delegated teardown begins, the endpoint MUST NOT resume that
+connection.
 
 
 # Advertising a Token with Zero-Length Connection IDs {#advertising}
