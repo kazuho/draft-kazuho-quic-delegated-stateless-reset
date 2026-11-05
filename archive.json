@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-03T04:35:14.171653+00:00",
+  "timestamp": "2026-11-05T04:14:49.892641+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -1434,6 +1434,40 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 26,
+      "id": "PR_kwDOTgCtSc8AAAABM3bmEg",
+      "title": "Make the division of labor section OS agnostic",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/26",
+      "state": "OPEN",
+      "author": "stefanoduo-google",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This section started as a specific example of what motivates the changes in the draft and to better explain how delegation happens. Since then, the main delegation section has been improved, and it now fully explains the delegation registration process.\n\nWith that in mind, all that is left for this section to explain is how the work to generate a Stateless Reset packet can be divided between the endpoint and the delegate. This does not require classifying the delegate as an operating system.\n\nHaving said that, we should still briefly introduce the possible trust relationships between the endpoint and the delegate. This is necessary to explain why a delegate might want to generate the majority of the Stateless Reset packet.\n\nThis also:\n1. Moves all normative text to Section 3, making Section 3.1 purely prose that adds context to Section 3.\n2. Mentions why a delegate might want visibility/control over the Stateless reset packet in the introduction section.\n3. Moves down a paragraph in the introduction section. This better ties it with the new text that explains why sending app-controlled opaque packet, after connectivity has been taken away, complicates the security/trust boundary.",
+      "createdAt": "2026-11-04T17:09:14Z",
+      "updatedAt": "2026-11-04T17:11:23Z",
+      "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
+      "baseRefName": "main",
+      "baseRefOid": "8124fa79ab4c8219e45ce4344adde9746117ac33",
+      "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
+      "headRefName": "nov_02_26-refactor_os_delegation",
+      "headRefOid": "41b69d0342220eddeedf5ab7402fca8468351d96",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "body": "For the time being I've tried to change as little text as possible to simplify the diff/review.\r\n\r\nLet me know if you agree with the general direction and in case would like to change the text further.\r\n\r\nNote: I've remove a good portion of what was in Section 3.1, since now it's covered quite well by Section 3.",
+          "createdAt": "2026-11-04T17:11:23Z",
+          "updatedAt": "2026-11-04T17:11:23Z"
+        }
+      ],
+      "reviews": []
     }
   ]
 }
