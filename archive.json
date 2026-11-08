@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-05T04:14:49.892641+00:00",
+  "timestamp": "2026-11-08T03:22:04.949677+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -1447,13 +1447,13 @@
       "labels": [],
       "body": "This section started as a specific example of what motivates the changes in the draft and to better explain how delegation happens. Since then, the main delegation section has been improved, and it now fully explains the delegation registration process.\n\nWith that in mind, all that is left for this section to explain is how the work to generate a Stateless Reset packet can be divided between the endpoint and the delegate. This does not require classifying the delegate as an operating system.\n\nHaving said that, we should still briefly introduce the possible trust relationships between the endpoint and the delegate. This is necessary to explain why a delegate might want to generate the majority of the Stateless Reset packet.\n\nThis also:\n1. Moves all normative text to Section 3, making Section 3.1 purely prose that adds context to Section 3.\n2. Mentions why a delegate might want visibility/control over the Stateless reset packet in the introduction section.\n3. Moves down a paragraph in the introduction section. This better ties it with the new text that explains why sending app-controlled opaque packet, after connectivity has been taken away, complicates the security/trust boundary.",
       "createdAt": "2026-11-04T17:09:14Z",
-      "updatedAt": "2026-11-04T17:11:23Z",
+      "updatedAt": "2026-11-07T09:49:29Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "8124fa79ab4c8219e45ce4344adde9746117ac33",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "nov_02_26-refactor_os_delegation",
-      "headRefOid": "41b69d0342220eddeedf5ab7402fca8468351d96",
+      "headRefOid": "f554ec2c0b4290c070efceb8959d88ee78c22695",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -1467,7 +1467,142 @@
           "updatedAt": "2026-11-04T17:11:23Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWJInXg",
+          "commit": {
+            "abbreviatedOid": "41b69d0"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thank you for the PR. Looks good, I only have minor editorial suggestions.",
+          "createdAt": "2026-11-05T06:53:51Z",
+          "updatedAt": "2026-11-05T07:17:35Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "As this is an example, how about putting it right after the high-level list?\n\n```suggestion\naccess to the connection's network path.\nA mobile operating system could withdraw an application's network access before\nthe application can send a CONNECTION_CLOSE frame. Once the connection has been\nabandoned, a delegate that retains network access can reset the peer\n({{proactive}}).\nIf a reset cannot be delivered, the\npeer relies on the usual QUIC termination and timeout mechanisms.\n```",
+              "createdAt": "2026-11-05T06:53:51Z",
+              "updatedAt": "2026-11-05T07:17:35Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "\"withdraw an application's network access\" could imply a specific feature of a delegate.\n\n```suggestion\nMoreover, because the packet is encrypted, a delegate that does not trust the\nendpoint cannot verify that it only closes the connection.\n```",
+              "createdAt": "2026-11-05T07:05:27Z",
+              "updatedAt": "2026-11-05T07:17:35Z"
+            },
+            {
+              "originalPosition": 114,
+              "body": "We might not need to cite the same subsection twice in a short subsection?\n\n```suggestion\nand returns the Stateless Reset Token to the endpoint to advertise to its peer.\n```",
+              "createdAt": "2026-11-05T07:15:47Z",
+              "updatedAt": "2026-11-05T07:17:35Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Here also?\n\n```suggestion\nthe endpoint does not by itself imply abandonment. Once delegated teardown\nbegins, the endpoint MUST NOT resume that connection.\n```",
+              "createdAt": "2026-11-05T07:16:47Z",
+              "updatedAt": "2026-11-05T07:17:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWOKUsw",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Thank you for the suggestions, I've applied all of them (with a small tweak for just one of them)",
+          "createdAt": "2026-11-05T14:08:53Z",
+          "updatedAt": "2026-11-05T14:10:55Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Done!",
+              "createdAt": "2026-11-05T14:08:53Z",
+              "updatedAt": "2026-11-05T14:10:55Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "This flows much better, thank you.",
+              "createdAt": "2026-11-05T14:09:10Z",
+              "updatedAt": "2026-11-05T14:10:55Z"
+            },
+            {
+              "originalPosition": 114,
+              "body": "Done.",
+              "createdAt": "2026-11-05T14:09:20Z",
+              "updatedAt": "2026-11-05T14:10:55Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Done, but I've also dropped the \"temporary suspension\" part. I don't think that applies to the concept of \"endpoint\". Leaving this open for visibility.",
+              "createdAt": "2026-11-05T14:10:18Z",
+              "updatedAt": "2026-11-05T14:10:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWfrh5w",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-06T17:51:43Z",
+          "updatedAt": "2026-11-06T18:06:22Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "nit: we use routing information twice and addressing information once.\n```suggestion\nto a new connection that reuses the same routing information.\n```",
+              "createdAt": "2026-11-06T17:51:43Z",
+              "updatedAt": "2026-11-06T18:06:22Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\n  such as endpoint-issued Connection IDs or routing information\n```",
+              "createdAt": "2026-11-06T17:52:54Z",
+              "updatedAt": "2026-11-06T18:06:22Z"
+            },
+            {
+              "originalPosition": 210,
+              "body": "On the \"temporary suspension\" part. I agree it doesn't apply to the concept of endpoint but we may want to come back later and define what \"lost or abandoned its connection state\" means in the context of a mobile OS. \nI think a mobile OS should send the reset packet in response to an incoming packet if the app is suspended. Otherwise, it should allow the app to come back and resume the connection.",
+              "createdAt": "2026-11-06T18:04:38Z",
+              "updatedAt": "2026-11-06T18:06:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWf2m8w",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "jbeshay",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-11-06T18:06:37Z",
+          "updatedAt": "2026-11-06T18:06:37Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWmMI6w",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "kazuho",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Thank you!",
+          "createdAt": "2026-11-07T09:49:29Z",
+          "updatedAt": "2026-11-07T09:49:29Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
