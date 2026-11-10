@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-08T03:22:04.949677+00:00",
+  "timestamp": "2026-11-10T05:13:37.184291+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -254,6 +254,22 @@
       "body": "From Martin Thomson on the [mailing list](https://mailarchive.ietf.org/arch/msg/quic/N8peVKnCLlG20sZPVvZ0ghtXgyE/):\n\n> The registration needs to be updated for new paths, multipath, and whenever the application starts using a new connection ID for sending packets. Especially in cases where the application switches to a new port or otherwise circumstances change, the token might need to be different. Thus, the registration with the delegate needs to include some way to update the connection ID that will be used and to provide new tokens to the application ... and peer.\n\nSection 3 already describes how an endpoint updates its registration when the Connection ID, or network path, changes. Having said that, it currently states that a new stateless reset token is generated every time. This clashes with Section 6.2, which currently restricts a zero-length CID client to a single Stateless Reset Token for the lifetime of a connection (treating any new value in a `RESET_TOKEN` frame as a `PROTOCOL_VIOLATION`).",
       "createdAt": "2026-10-26T16:47:19Z",
       "updatedAt": "2026-10-26T16:47:19Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 27,
+      "id": "I_kwDOTgCtSc8AAAABdpRB2A",
+      "title": "Consider better defining what \"lost or abandoned its connection state\" means",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/27",
+      "state": "OPEN",
+      "author": "stefanoduo-google",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently this could be considered quite vague/unhelpful. At the same time, what this really means could be considered as an implementation detail specific to the endpoint-delegate relationship. Nevertheless, it might be useful to provide some examples?\n\nSee https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/26#discussion_r4495897205.",
+      "createdAt": "2026-11-09T10:32:33Z",
+      "updatedAt": "2026-11-09T10:32:33Z",
       "closedAt": null,
       "comments": []
     }
@@ -1440,24 +1456,26 @@
       "id": "PR_kwDOTgCtSc8AAAABM3bmEg",
       "title": "Make the division of labor section OS agnostic",
       "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/26",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "stefanoduo-google",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This section started as a specific example of what motivates the changes in the draft and to better explain how delegation happens. Since then, the main delegation section has been improved, and it now fully explains the delegation registration process.\n\nWith that in mind, all that is left for this section to explain is how the work to generate a Stateless Reset packet can be divided between the endpoint and the delegate. This does not require classifying the delegate as an operating system.\n\nHaving said that, we should still briefly introduce the possible trust relationships between the endpoint and the delegate. This is necessary to explain why a delegate might want to generate the majority of the Stateless Reset packet.\n\nThis also:\n1. Moves all normative text to Section 3, making Section 3.1 purely prose that adds context to Section 3.\n2. Mentions why a delegate might want visibility/control over the Stateless reset packet in the introduction section.\n3. Moves down a paragraph in the introduction section. This better ties it with the new text that explains why sending app-controlled opaque packet, after connectivity has been taken away, complicates the security/trust boundary.",
       "createdAt": "2026-11-04T17:09:14Z",
-      "updatedAt": "2026-11-07T09:49:29Z",
+      "updatedAt": "2026-11-09T10:42:16Z",
       "baseRepository": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
       "baseRefName": "main",
       "baseRefOid": "8124fa79ab4c8219e45ce4344adde9746117ac33",
       "headRepository": "stefanoduo-google/draft-kazuho-quic-reset-token-frame",
       "headRefName": "nov_02_26-refactor_os_delegation",
-      "headRefOid": "f554ec2c0b4290c070efceb8959d88ee78c22695",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "768da58fff62d5126f9be8f1421ffe5e1c79de16",
+      "closedAt": "2026-11-09T10:42:16Z",
+      "mergedAt": "2026-11-09T10:42:16Z",
+      "mergedBy": "stefanoduo-google",
+      "mergeCommit": {
+        "oid": "6722a6589a13be268f09cf2de3f0130d471b7532"
+      },
       "comments": [
         {
           "author": "stefanoduo-google",
@@ -1601,6 +1619,66 @@
           "createdAt": "2026-11-07T09:49:29Z",
           "updatedAt": "2026-11-07T09:49:29Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWyynjw",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-09T10:33:03Z",
+          "updatedAt": "2026-11-09T10:33:03Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "Agree. I've filed https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/27 so we don't forget to look into this again.",
+              "createdAt": "2026-11-09T10:33:03Z",
+              "updatedAt": "2026-11-09T10:33:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWyyvTg",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-09T10:33:14Z",
+          "updatedAt": "2026-11-09T10:33:14Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Done",
+              "createdAt": "2026-11-09T10:33:14Z",
+              "updatedAt": "2026-11-09T10:33:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTgCtSc8AAAABWyyxaQ",
+          "commit": {
+            "abbreviatedOid": "f554ec2"
+          },
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-09T10:33:17Z",
+          "updatedAt": "2026-11-09T10:33:17Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Done",
+              "createdAt": "2026-11-09T10:33:17Z",
+              "updatedAt": "2026-11-09T10:33:17Z"
+            }
+          ]
         }
       ]
     }
