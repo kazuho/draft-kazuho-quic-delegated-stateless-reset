@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-10T05:13:37.184291+00:00",
+  "timestamp": "2026-11-17T05:43:16.020559+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -253,9 +253,17 @@
       "labels": [],
       "body": "From Martin Thomson on the [mailing list](https://mailarchive.ietf.org/arch/msg/quic/N8peVKnCLlG20sZPVvZ0ghtXgyE/):\n\n> The registration needs to be updated for new paths, multipath, and whenever the application starts using a new connection ID for sending packets. Especially in cases where the application switches to a new port or otherwise circumstances change, the token might need to be different. Thus, the registration with the delegate needs to include some way to update the connection ID that will be used and to provide new tokens to the application ... and peer.\n\nSection 3 already describes how an endpoint updates its registration when the Connection ID, or network path, changes. Having said that, it currently states that a new stateless reset token is generated every time. This clashes with Section 6.2, which currently restricts a zero-length CID client to a single Stateless Reset Token for the lifetime of a connection (treating any new value in a `RESET_TOKEN` frame as a `PROTOCOL_VIOLATION`).",
       "createdAt": "2026-10-26T16:47:19Z",
-      "updatedAt": "2026-10-26T16:47:19Z",
+      "updatedAt": "2026-11-16T23:46:42Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "rpaulo",
+          "authorAssociation": "NONE",
+          "body": "We don't allow this for NEW_CONNECTION_ID so I would find it strange that we would allow this for RESET_TOKEN.",
+          "createdAt": "2026-11-16T23:46:42Z",
+          "updatedAt": "2026-11-16T23:46:42Z"
+        }
+      ]
     },
     {
       "number": 27,
@@ -270,6 +278,22 @@
       "body": "Currently this could be considered quite vague/unhelpful. At the same time, what this really means could be considered as an implementation detail specific to the endpoint-delegate relationship. Nevertheless, it might be useful to provide some examples?\n\nSee https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/pull/26#discussion_r4495897205.",
       "createdAt": "2026-11-09T10:32:33Z",
       "updatedAt": "2026-11-09T10:32:33Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 28,
+      "id": "I_kwDOTgCtSc8AAAABf3VpCw",
+      "title": "Client using non-zero length CIDs still can't update token for seq=0",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/28",
+      "state": "OPEN",
+      "author": "rpaulo",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This draft prohibits a client using non-zero length CIDs from using RESET_TOKEN but I would argue that this draft should specify a way for this type of client to update its token for seq=0 either by allowing RESET_TOKEN or by allowing `NEW_CONNECTION_ID seq=0 cid=<same> token=<new token>`.",
+      "createdAt": "2026-11-16T23:45:18Z",
+      "updatedAt": "2026-11-16T23:45:18Z",
       "closedAt": null,
       "comments": []
     }
