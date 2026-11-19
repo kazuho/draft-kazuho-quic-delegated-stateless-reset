@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-17T05:43:16.020559+00:00",
+  "timestamp": "2026-11-19T05:01:15.506234+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -294,6 +294,54 @@
       "body": "This draft prohibits a client using non-zero length CIDs from using RESET_TOKEN but I would argue that this draft should specify a way for this type of client to update its token for seq=0 either by allowing RESET_TOKEN or by allowing `NEW_CONNECTION_ID seq=0 cid=<same> token=<new token>`.",
       "createdAt": "2026-11-16T23:45:18Z",
       "updatedAt": "2026-11-16T23:45:18Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 29,
+      "id": "I_kwDOTgCtSc8AAAABgeC2nA",
+      "title": "Give guidance on how long implementations should keep extra state in memory",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/29",
+      "state": "OPEN",
+      "author": "rpaulo",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Similar to TCP TIME_WAIT, how long should the stateless reset token and connection routing information stay in memory in case the stateless reset packets are lost?",
+      "createdAt": "2026-11-18T18:26:05Z",
+      "updatedAt": "2026-11-18T18:26:05Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOTgCtSc8AAAABgeGBuA",
+      "title": "Idle connections and migrations",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/30",
+      "state": "OPEN",
+      "author": "rpaulo",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "- Old interface goes away\n- New interface comes up\n- Application can migrate but didn't because it's idle\n- Application crashes\n\nShould the kernel/supervisor send a stateless reset on the new interface/path? I think the draft should specify that it MUST NOT.",
+      "createdAt": "2026-11-18T18:28:52Z",
+      "updatedAt": "2026-11-18T18:28:52Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 31,
+      "id": "I_kwDOTgCtSc8AAAABgeTsKg",
+      "title": "RESET_TOKEN too similar to NEW_TOKEN",
+      "url": "https://github.com/kazuho/draft-kazuho-quic-delegated-stateless-reset/issues/31",
+      "state": "OPEN",
+      "author": "rpaulo",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I think the name of the frame may be confused with the initial packet token and perhaps it should be more explicit.\nI do wonder if we should allow `NEW_CONNECTION_ID seq=0 len=0 srt=<...token...>` instead.",
+      "createdAt": "2026-11-18T18:41:54Z",
+      "updatedAt": "2026-11-18T18:41:54Z",
       "closedAt": null,
       "comments": []
     }
