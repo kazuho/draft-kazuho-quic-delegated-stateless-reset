@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-19T05:01:15.506234+00:00",
+  "timestamp": "2026-11-22T04:01:52.270749+00:00",
   "repo": "kazuho/draft-kazuho-quic-delegated-stateless-reset",
   "labels": [
     {
@@ -293,9 +293,24 @@
       "labels": [],
       "body": "This draft prohibits a client using non-zero length CIDs from using RESET_TOKEN but I would argue that this draft should specify a way for this type of client to update its token for seq=0 either by allowing RESET_TOKEN or by allowing `NEW_CONNECTION_ID seq=0 cid=<same> token=<new token>`.",
       "createdAt": "2026-11-16T23:45:18Z",
-      "updatedAt": "2026-11-16T23:45:18Z",
+      "updatedAt": "2026-11-21T02:49:14Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Generalizing NEW_CONNECTION_ID to allow seq=0 (with len=0 or the initial client CID) could address this issue, but also brings extra complexity, for example:\n* Relaxing NEW_CONNECTION_ID invariants conditionally on a transport parameter (i.e., allow seq=0 and/or len=0 only if the server opts in via the new transport parameter)\n* More edge cases to define and validate (e.g., what if a 0-length CID client sends non-zero seq, retire_prior_to, or len; or a non-0-length CID client sends seq=0 with bytes that don't match its initial CID?)\n\n---\n\nIf we do want to support this, allowing RESET_TOKEN to bind to seq=0 (for non-zero-length CID clients) might be simpler/preferable? This would effectively mirror a server's stateless_reset_token TP.\n\nAt the same time, non-zero-length CID clients can already handle this by sending `NEW_CONNECTION_ID seq=1 cid=<new> token=<new token> retire_prior_to=1` to immediately switch off seq=0, into a new CID that supports a reset token. Are there specific scenarios where avoiding that initial CID rotation is important?",
+          "createdAt": "2026-11-20T19:32:54Z",
+          "updatedAt": "2026-11-20T19:32:54Z"
+        },
+        {
+          "author": "rpaulo",
+          "authorAssociation": "NONE",
+          "body": "I\u2019m fine using RESET_TOKEN to bind it to seq=0. I strongly believe though that we should use this opportunity to specify this rather than relying on the retire CID dance.",
+          "createdAt": "2026-11-21T02:49:14Z",
+          "updatedAt": "2026-11-21T02:49:14Z"
+        }
+      ]
     },
     {
       "number": 29,
@@ -341,9 +356,17 @@
       "labels": [],
       "body": "I think the name of the frame may be confused with the initial packet token and perhaps it should be more explicit.\nI do wonder if we should allow `NEW_CONNECTION_ID seq=0 len=0 srt=<...token...>` instead.",
       "createdAt": "2026-11-18T18:41:54Z",
-      "updatedAt": "2026-11-18T18:41:54Z",
+      "updatedAt": "2026-11-20T19:27:56Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "stefanoduo-google",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think the name of the frame may be confused with the initial packet token and perhaps it should be more explicit.\n\nWe could name it STATELESS_RESET_TOKEN, so it's harder to confuse it with NEW_TOKEN.\n\n> I do wonder if we should allow NEW_CONNECTION_ID seq=0 len=0 srt=<...token...> instead.\n\nGeneralizing NEW_CONNECTION_ID to allow seq=0 (with len=0, or the initial client CID) could also address #28. At the same time, overloading NEW_CONNECTION_ID brings extra complexity (see #28).\n\n---------\n\nI would keep this issue focused on a simple RESET_TOKEN rename, and continue discussing whether to overload NEW_CONNECTION_ID in #28.",
+          "createdAt": "2026-11-20T19:27:55Z",
+          "updatedAt": "2026-11-20T19:27:55Z"
+        }
+      ]
     }
   ],
   "pulls": [
